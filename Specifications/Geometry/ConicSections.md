@@ -1,31 +1,76 @@
 # Conic Sections
 
-## General Conics
+## General Conics Equations
 
-Different sources may use different representations for a b c d e f form of Conics:
+Different sources may use different representations for $A$ $B$ $C$ $D$ $E$ $F$ form of Conics:
 
-$Ax^2+B\color{red}xy\color{black}+C\color{red}y^2\color{black}+Dx+Ey+F=0$
-
-$Ax^2+B\color{red}y^2\color{black}+C\color{red}xy\color{black}+Dx+Ey+F=0$
+| Equation | Description |
+|---|---|
+| $Ax^2+B\color{red}xy\color{black}+C\color{red}y^2\color{black}+Dx+Ey+F=0$ | General Conics Equasion. This is a reduced form of the Homogeneous coordinats conic equasion where $z=1$. |
+| $Ax^2+B\color{red}y^2\color{black}+C\color{red}xy\color{black}+Dx+Ey+F=0$ | General Conics Equasion with $xy$ and $y^2$ swaped. |
+| $Ax^2+B\color{red}xy\color{black}+C\color{red}y^2\color{black}+Dx\color{blue}z\color{black}+Ey\color{blue}z\color{black}+F\color{blue}z^2\color{black}=0$ | Homogeneous coordinates a conic section. |
 
 You have to be alert to which form is being used.
 
 ## Types of Conics
 
+### Standard Forms of Conics
+
 | Conic Shape | General Form | Standard Form |  |
 |---|---|---|---|---|
-| **[Points](#Points)** | $$ | $$ | $$ |
 | **[Circles](#Circles)** | $x^2+y^2+Dx+Ey+F=0$ | $(x-h)^2+(y-k)^2=r^2$, $x2+y2=r2$ |  |
-| **[Ellipses](#Ellipses)** | $Ax^2+Cy^2+Dx+Ey+F=0$ | $\frac{(x-h)^2}{a^2}+\frac{(y-k)^2}{b^2}=1$ | $$ |
-| **[Parabolas](#Parabolas)** | $Ax^2+Dx+Ey=0$ | $$ | $$ |
-| **[Lines](#Lines)** | $Ax+By+C=0$ | $$ | $$ |
-| **[Crosses](#Crosses)** | $$ | $$ | $$ |
-| **[Parallel Lines](#Parallels)** | $$ | $$ | $$ |
-| **[Rectangular Hyperbolas](#RectangularHyperbolas)** | $$ | $$ | $$ |
-| **[Hyperbolas](#Hyperbolas)** | $Ax^2–Cy^2+Dx+Ey+F=0$ | $\frac{x^2}{a^2}-\frac{y^2}{b^2}=1$, $\frac{(x-h)^2}{a^2}-\frac{(y-k)^2}{b^2}=1$, $\frac{((x-h)\cos{(\alpha)}+(y-k)\sin{(\alpha)})^2}{a^2}-\frac{((x-h)\sin{(\alpha)}-(y-k)\cos{(\alpha)})^2}{b^2}=1$ | $$ |
+| **[Ellipses](#Ellipses)** | $Ax^2+Cy^2+Dx+Ey+F=0$ | $\frac{(x-h)^2}{a^2}+\frac{(y-k)^2}{b^2}=1$ | $?$ |
+| **[Parabolas](#Parabolas)** | $Ax^2+Dx+Ey=0$ | $?$ | $?$ |
+| **[Hyperbolas](#Hyperbolas)** | $Ax^2-Cy^2+Dx+Ey+F=0$ | $\frac{x^2}{a^2}-\frac{y^2}{b^2}=1$, $\frac{(x-h)^2}{a^2}-\frac{(y-k)^2}{b^2}=1$, $\frac{((x-h)\cos{(\alpha)}+(y-k)\sin{(\alpha)})^2}{a^2}-\frac{((x-h)\sin{(\alpha)}-(y-k)\cos{(\alpha)})^2}{b^2}=1$ | $$ |
+| **[Rectangular Hyperbolas](#RectangularHyperbolas)** | $?$ | $?$ | $?$ |
 
-[Conics Table](https://www.purplemath.com/modules/conics.htm)
-[Conics Information](https://www.intmath.com/plane-analytic-geometry/conic-sections-summary.php)
+- [Conics Table](https://www.purplemath.com/modules/conics.htm)
+- [Conics Information](https://www.intmath.com/plane-analytic-geometry/conic-sections-summary.php)
+
+### Degenerate Forms of Conics
+
+| Conic Shape | General Form | Standard Form |  |
+|---|---|---|---|---|
+| **[Points](#Points)** | $?$ | $\frac{(x-h)^2}{a}+\frac{(y-k)^2}{b}=0$ | $?$ |
+| **[Lines](#Lines)** | $Dx+Ey+F=0, A=B=C=0$ | $?$ | $?$ |
+| **[Parallel Lines](#Parallels)** | $?$ | $?$ | $?$ |
+| **[Crosses](#Crosses)** | $?$ | $\frac{(x-h)^2}{a}-\frac{(y-k)^2}{b}=1$ | $?$ |
+
+- [Degenerate Conics](https://www.ck12.org/book/ck-12-college-precalculus/section/11.7/)
+
+## Matrix Form
+
+$Ax^2+B\color{red}xy\color{black}+C\color{red}y^2\color{black}+Dx+Ey+F=0$
+
+The above equation can be written in matrix notation as:
+
+$\begin{pmatrix}x&y\end{pmatrix}\begin{pmatrix}A&\frac{B}{2}\\\frac{B}{2}&C\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}+\begin{pmatrix}D&E\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}+F=0$
+
+The general equation can also be written as:
+
+$\begin{pmatrix}x&y&1\end{pmatrix}\begin{pmatrix}A&\frac{B}{2}&\frac{D}{2}\\\frac{B}{2}&C&\frac{E}{2}\\\frac{D}{2}&\frac{E}{2}&F\end{pmatrix}\begin{pmatrix}x\\y\\1\end{pmatrix}=0$
+
+- See: [Wikipedia: Conic Section #General Cartesian form](https://en.wikipedia.org/wiki/Conic_section#General_Cartesian_form)
+
+## Homogeneous Coordinates
+
+In homogeneous coordinates a conic section can be represented as:
+
+$Ax^2+B\color{red}xy\color{black}+C\color{red}y^2\color{black}+Dx\color{blue}z\color{black}+Ey\color{blue}z\color{black}+F\color{blue}z^2\color{black}=0$
+
+Or in matrix notation, the 3 × 3 matrix of the conic section is:
+
+$\begin{pmatrix}x&y&z\end{pmatrix}\begin{pmatrix}A&\frac{B}{2}&\frac{D}{2}\\\frac{B}{2}&C&\frac{E}{2}\\\frac{D}{2}&\frac{E}{2}&F\end{pmatrix}\begin{pmatrix}x\\y\\z\end{pmatrix}=0$
+
+Some authors prefer to write the general homogeneous equation as below so that the matrix of the conic section has the simpler form:
+
+$Ax^2+2B\color{red}xy\color{black}+C\color{red}y^2\color{black}+2Dx\color{blue}z\color{black}+2Ey\color{blue}z\color{black}+F\color{blue}z^2\color{black}=0$
+
+$M=\begin{pmatrix}A&B&D\\B&C&E\\D&E&F\end{pmatrix}$
+
+If the determinant of the matrix of the conic section is zero, the conic section is degenerate.
+
+- See: [Wikipedia: Conic Section #In the real projective plane](https://en.wikipedia.org/wiki/Conic_section#In_the_real_projective_plane)
 
 ## Points
 
@@ -192,10 +237,10 @@ relates to ellipse $h$, $k$, $a$, $b$, $\theta$ with the following:
 
 $A=\frac{\cos^2{(\theta)}}{a^2}+\frac{\sin^2{(\theta)}}{b^2}$  
 $B=\frac{\sin^2{(\theta)}}{a^2}+\frac{\cos^2{(\theta)}}{b^2}$  
-$C=\frac{\sin{(2\theta)}}{a^2}−\frac{\sin{(2\theta)}}{b^2}$  
-$D=−\frac{2h\cos^2(\theta)}{a^2}−\frac{k\sin(2\theta)}{a^2}−\frac{2h\sin^2(\theta)}{b^2}+\frac{k\sin(2\theta)}{b^2}$  
-$E=−\frac{h\sin(2\theta)}{a^2}−\frac{2k\sin^2(\theta)}{a^2}+\frac{h\sin(2\theta)}{b^2}−\frac{2k\cos^2(\theta)}{b^2}$  
-$F=\frac{h^2\cos^2(\theta)}{a^2}+\frac{hk\sin(2\theta)}{a^2}+\frac{k^2\sin^2(\theta)}{a^2}+\frac{h^2\sin^2(\theta)}{b^2}−\frac{hk\sin(2\theta)}{b^2}+\frac{k^2\cos^2(\theta)}{b^2}−1$
+$C=\frac{\sin{(2\theta)}}{a^2}-\frac{\sin{(2\theta)}}{b^2}$  
+$D=-\frac{2h\cos^2(\theta)}{a^2}-\frac{k\sin(2\theta)}{a^2}-\frac{2h\sin^2(\theta)}{b^2}+\frac{k\sin(2\theta)}{b^2}$  
+$E=-\frac{h\sin(2\theta)}{a^2}-\frac{2k\sin^2(\theta)}{a^2}+\frac{h\sin(2\theta)}{b^2}-\frac{2k\cos^2(\theta)}{b^2}$  
+$F=\frac{h^2\cos^2(\theta)}{a^2}+\frac{hk\sin(2\theta)}{a^2}+\frac{k^2\sin^2(\theta)}{a^2}+\frac{h^2\sin^2(\theta)}{b^2}-\frac{hk\sin(2\theta)}{b^2}+\frac{k^2\cos^2(\theta)}{b^2}-1$
 
 ## Parabolas
 
@@ -262,17 +307,17 @@ $F=\frac{h^2\cos^2(\theta)}{a^2}+\frac{hk\sin(2\theta)}{a^2}+\frac{k^2\sin^2(\th
 | $y=c$? | y-intercept of standard form. |
 | $d=k-a$? | Find the Directrix. |
 
-$A(x\cos{\theta}−y\sin{\theta})^2+B(x\cos{\theta}−y\sin{\theta})(x\sin{\theta}+y\cos{\theta})+C(x\sin{\theta}+y\cos{\theta})^2+D(x\cos{\theta}−y\sin{\theta})+E(x\sin{\theta}+y\cos{\theta})+F=0$
+$A(x\cos{\theta}-y\sin{\theta})^2+B(x\cos{\theta}-y\sin{\theta})(x\sin{\theta}+y\cos{\theta})+C(x\sin{\theta}+y\cos{\theta})^2+D(x\cos{\theta}-y\sin{\theta})+E(x\sin{\theta}+y\cos{\theta})+F=0$
 
 $-x\sin{\theta}+y\cos{\theta}=a\left(x\cos{\theta}+y\sin{\theta}-h\right)^{2}+k$
 
-$-x\sin{\theta}+y\cos{\theta}=a(x\cos{\theta}−y\sin{\theta})^2+bx+c$
+$-x\sin{\theta}+y\cos{\theta}=a(x\cos{\theta}-y\sin{\theta})^2+bx+c$
 
-$x^2−2xy+y^2−x\sqrt{2}–y\sqrt{2}=0$
+$x^2-2xy+y^2-x\sqrt{2}-y\sqrt{2}=0$
 
-$b2x^2−2abxy+a^2y^2−2bcax−2b^2cy=(bc)^2$
+$b2x^2-2abxy+a^2y^2-2bcax-2b^2cy=(bc)^2$
 
-$b^2(x−h)^2−2ab(x−h)(y−k)+a^2(y−k)^2−2bca(x−h)−2b^2c(y−k)=(bc)^2$
+$b^2(x-h)^2-2ab(x-h)(y-k)+a^2(y-k)^2-2bca(x-h)-2b^2c(y-k)=(bc)^2$
 
 $y=-\frac{\csc^2{t}\sqrt{4ah\sin{2t}+4ak\cos{2t}-4ak-8ax\sin{t}+\cos{2t}+1}}{\sqrt{2}}+2ah\csc{t}-2ax\cot{t}+\frac{\cot{t}\csc{t})}{2a}$
 

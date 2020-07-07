@@ -21,3 +21,8 @@ Vectors are a special case of matrix.
 | $\widehat{v}=\frac{\overrightarrow{v}}{\begin{vmatrix}\overrightarrow{v}\end{vmatrix}}$ |  | Normalize a vector to a unit vector. |
 | $\cos{\theta}=\frac{\overrightarrow{u}\cdot\overrightarrow{w}}{\begin{vmatrix}\overrightarrow{v}\end{vmatrix}\begin{vmatrix}\overrightarrow{v}\end{vmatrix}}$ |  | cos in terms of dot product. |
 | $\sin{\theta}=\frac{\begin{vmatrix}\overrightarrow{u}\times\overrightarrow{w}\end{vmatrix}}{\begin{vmatrix}\overrightarrow{u}\end{vmatrix}\begin{vmatrix}\overrightarrow{w}\end{vmatrix}}$ |  | sin in terms of cross product. |
+
+## See Also
+
+[![Extraordinary Conics: The Most Difficult Math Problem I Ever Solved](http://img.youtube.com/vi/fNk_zzaMoSs/0.jpg)](https://www.youtube.com/embed/fNk_zzaMoSs "Vectors, what even are they? | Essence of linear algebra, chapter 1")  
+Vectors, what even are they? | Essence of linear algebra, chapter 1
