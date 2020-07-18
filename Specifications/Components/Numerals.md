@@ -18,3 +18,7 @@ Some commonly used bases are listed in the table below.
 | **Base 12** | [Dozenal](http://www.dozenal.org/) | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, a, b |
 | **Base 16** | Hexadecimal | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, a, b, c, d, e, f |
 |  |  |  |
+
+# Non-Rational Bases
+
+Are they even possible? $\pi$ maybe?

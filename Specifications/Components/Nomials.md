@@ -3,14 +3,16 @@
 | Name | Example | Definition |
 |---|---|---|
 | **Polynomial** | $\begin{matrix}3x^3-2x^2+x+1\end{matrix}$ | A **Polynomial** is a general term for the sets of expressions set up with terms containing constants, coefficients, variables, and exponents. |
-| **Term** | $\color{red}2x^2\color{black}+\color{red}y\color{black}+\color{red}1\color{black}=\color{red}z$ | **Terms** are the parts of an expression separated by addition or subtraction operators. The terms are highlighted in red. |
+| **Term** | $\color{red}2\color{red}x^\color{red}2\color{black}+\color{red}y\color{black}+\color{red}1\color{black}=\color{red}z$ | **Terms** are the parts of an expression separated by addition, subtraction or comparison operators. The terms are highlighted in red. |
 | **Constant** | $\begin{matrix}2x^2+y+\color{red}1\color{black}=z\end{matrix}$ | **Constants** are the Number terms, where the numbers are on their own, are called constants. The constant term is highlighted in red. |
 | **Coefficient** | $\begin{matrix}\color{red}2\color{black}x^2+\color{red}1\color{black}y\color{black}+\color{red}1\color{black}=z\end{matrix}$ | A **coefficient** is the number used to multiply a variable. The coefficient is highlighted below in red: |
+| **Variable** | $\begin{matrix}2\color{red}x^2+\color{red}y+1=\color{red}z\end{matrix}$ | **Variables** are the stand in letter elements. |
 
 ## Common and Uncommon Sub-Sets of Polynomials
 
 | Name | Example | Description|
 |:---:| ---: |---|
+| **Nomial** | $\begin{matrix}3x^3+2x^2+x+1\end{matrix}$ | **Monomial** is a term used to encompus the set of all and Polinomials including Monomials. |
 | **Monomial** | $\begin{matrix}x\end{matrix}$ | A **Monomial** is a polynomial that consists of only a single term. |
 | **Multinomial** | $\begin{matrix}3x^3+2x^2+x+1\end{matrix}$ | A **Multinomial** is any Polynomial consisting of multiple terms. Generally they are Polynomials grater than Trinomial, but Binomial could be considered a Multinomial. |
 | **Binomial** | $\begin{matrix}x+1\end{matrix}$ | A **Binomial** is a polynomial that consists of two terms. |
@@ -127,6 +129,6 @@
 | Septennonagintic\* | 97 |
 | Octononagintic\* | 98 |
 | Novennonagintic\* | 99 |
-| Hectic | 100|
+| Hectic | 100 |
 
-<sub>\*Names are Non-official, but based on potential convention.</sub>
+<sub>\*Names are Non-official, but based on established convention. I might have some of them wrong.</sub>

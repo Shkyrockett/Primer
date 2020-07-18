@@ -8,11 +8,11 @@ $2\color{red}\times\color{black}x^2\color{red}+\color{black}y\color{red}+\color{
 
 | Order | Operators| Name| Description|
 |:---:|:---:|---|---|
-| 0 | $()$, $[]$, $\{\}$, $\langle\rangle$ | Parenthesis, Brackets, Braces | Perform calculations within brackets first. |
+| 0 | $\|\|$, $()$, $[]$, $\{\}$, $\langle\rangle$ | Bars, Parenthesis, Brackets, Braces | Grouping Operators. Perform calculations within brackets first. |
 | 1 | $x^2$, $\sqrt[y]{x}$, $\log_{10}{x}$, Functions | Exponents, Powers, Roots, Logarithms | Exponents, Powers, Roots, and Logarithms then follow. |
 | 2 | $\times$, $\div$ | Multiply, Divide| Then Multiply and Divide. |
 | 3 | $+$, $-$ | Addition Subtraction | All Addition and Subtraction is then done from left to right. |
-| 4 | $<$, $\leq$, $=$, $\geq$, $>$ | Relationship |  |
+| 4 | $<$, $\leq$, $=$, $\geq$, $>$ | Relationship | Comparison or Relationship operations. |
 |  |  |  |  |
 
 Below are tables of common operators.
