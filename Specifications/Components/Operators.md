@@ -52,9 +52,9 @@ Below are tables of common operators.
 
 | Symbol | Name | Operation |
 |:---:|---|---|
-| $x^\color{red}2$ | Exponent | Indicates how many times the multiplication should be used. |
-| $\color{red}\sqrt[2]\color{black}{x}$ | Root, Radix, or Radical | An inverse of the exponent, in finding the zeros of a number. |
-| $\color{red}\log_{10}\color{black}{x}$ | Logarithm| An inverse of an exponential. Indicates how many of a number needs to be multiplied to get another. |
+| $x^\color{red}{2}$ | Exponent | Indicates how many times the multiplication should be used. |
+| $\color{red}{\sqrt[2]{x}}$ | Root, Radix, or Radical | An inverse of the exponent, in finding the zeros of a number. |
+| $\color{red}{\log}_{10}{x}$ | Logarithm| An inverse of an exponential. Indicates how many of a number needs to be multiplied to get another. |
 |  |  |  |
 
 ## Operators and Order of Precedence

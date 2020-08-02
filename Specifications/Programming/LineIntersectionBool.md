@@ -2,7 +2,7 @@
 
 Text explaining the intended method goes here.
 
-### Method Header Prototype
+## Method Header Prototype
 
 ```c#
     public static bool Intersecttion(double aX, double aY, double bX, double bY, double cX, double cY, double dX, double dY)
@@ -16,7 +16,7 @@ Remarks on results go here.
 |:---|---:|:---:|---:|---:|
 | IntersecttionV1 | 1000000 | aX: 0, aY:0 bX: 2, bY:2 <br/> cX: 2, cY:0 dX: 0, dY: 2 | Output | **xx ms** |
 
-## Method 1:
+## Method 1
 
 ```c#
     /// <summary>
@@ -51,12 +51,12 @@ Remarks on results go here.
     }
 ```
 
-## Method 2:
+## Method 2
 
 ```c#
 ```
 
-## Method 3:
+## Method 3
 
 ```c#
 ```

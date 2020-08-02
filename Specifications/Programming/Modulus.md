@@ -1,8 +1,8 @@
 # Speed testing Modulus Methods
 
-The Modulus, or Magnitude of a vector is the size of the vector. The bottleneck of this particular method, is getting the Square root. There are two main ways to get it, raise the result to the power of 1/2, or use the built in Square root function. 
+The Modulus, or Magnitude of a vector is the size of the vector. The bottleneck of this particular method, is getting the Square root. There are two main ways to get it, raise the result to the power of 1/2, or use the built in Square root function.  
 
-### Method Header Prototype
+## Method Header Prototype
 
 ```c#
     public static double r1 Modulus(double i, double j)

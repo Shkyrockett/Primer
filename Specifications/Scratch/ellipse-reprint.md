@@ -1,7 +1,7 @@
 
 # A closed form solution for the intersections of two ellipses
 
-Posted by [Elliot Noma](https://elliotnoma.wordpress.com/author/elliotnoma/) on April 10, 2013 at: <https://elliotnoma.wordpress.com/2013/04/10/a-closed-form-solution-for-the-intersections-of-two-ellipses/> 
+Posted by [Elliot Noma](https://elliotnoma.wordpress.com/author/elliotnoma/) on April 10, 2013 at: <https://elliotnoma.wordpress.com/2013/04/10/a-closed-form-solution-for-the-intersections-of-two-ellipses/>  
 
 <svg width="260" height="260">
  <g stroke-width="1" stroke="black" fill="transparent"  transform="translate(0 30) rotate(-45 105 105)">

@@ -66,7 +66,7 @@ namespace PrimerLibrary
 
             //base.OnPaint(e);
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            Expression?.Draw(e.Graphics, Font, Pens.Black, Brushes.Black, 0, 0);
+            Expression?.Draw(e.Graphics, Font, Brushes.Black, Pens.Black, 0, 0);
         }
     }
 }

@@ -103,12 +103,12 @@ namespace PrimerLibrary
         /// <returns></returns>
         public static Font FindFont(this Graphics graphics, string text, SizeF limits, Font font)
         {
-            var RealSize = graphics.MeasureString(text, font);
-            var HeightScaleRatio = limits.Height / RealSize.Height;
-            var WidthScaleRatio = limits.Width / RealSize.Width;
-            var ScaleRatio = (HeightScaleRatio < WidthScaleRatio) ? HeightScaleRatio : WidthScaleRatio;
-            var ScaleFontSize = font.Size * ScaleRatio;
-            return new Font(font.FontFamily, ScaleFontSize, font.Style/*, GraphicsUnit.Pixel*/);
+            var realSize = graphics.MeasureString(text, font);
+            var heightScaleRatio = limits.Height / realSize.Height;
+            var widthScaleRatio = limits.Width / realSize.Width;
+            var scaleRatio = (heightScaleRatio < widthScaleRatio) ? heightScaleRatio : widthScaleRatio;
+            var scaleFontSize = font.Size * scaleRatio;
+            return new Font(font.FontFamily, scaleFontSize, font.Style/*, GraphicsUnit.Pixel*/);
         }
 
         /// <summary>
@@ -126,5 +126,137 @@ namespace PrimerLibrary
         /// <param name="character">The character.</param>
         /// <returns></returns>
         public static string Italicize(this char character) => ItalicLetterDictionary.ContainsKey(character) ? ItalicLetterDictionary[character] : character.ToString();
+
+        /// <summary>
+        /// Bars the style strings.
+        /// </summary>
+        /// <param name="barStyles">The bar styles.</param>
+        /// <returns></returns>
+        public static (string left, string right) BarStyleStrings(BarStyles barStyles) => (BarStyleStringLeft(barStyles), BarStyleStringRight(barStyles));
+
+        /// <summary>
+        /// Bars the style string.
+        /// </summary>
+        /// <param name="barStyles">The bar styles.</param>
+        /// <returns></returns>
+        public static string BarStyleStringLeft(BarStyles barStyles) => barStyles switch
+        {
+            BarStyles.Bar => "|",
+            BarStyles.Bracket => "[",
+            BarStyles.Brace => "{",
+            BarStyles.AngleBracket => "<",
+            BarStyles.Parenthesis => "",
+            _ => ""
+        };
+
+        /// <summary>
+        /// Bars the style string.
+        /// </summary>
+        /// <param name="barStyles">The bar styles.</param>
+        /// <returns></returns>
+        public static string BarStyleStringRight(BarStyles barStyles) => barStyles switch
+        {
+            BarStyles.Bar => "|",
+            BarStyles.Bracket => "[",
+            BarStyles.Brace => "{",
+            BarStyles.AngleBracket => "<",
+            BarStyles.Parenthesis => "",
+            _ => ""
+        };
+
+        /// <summary>
+        /// Calculates the size and font of the character size for a height.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="character">The character.</param>
+        /// <param name="height">The height.</param>
+        /// <returns></returns>
+        public static (SizeF size, Font font) CalculateCharacterAndFontSizeForHeight(Graphics graphics, Font font, string character, float height)
+        {
+            var realSize = graphics.MeasureString(character, font);
+            var heightScaleRatio = height / realSize.Height;
+            var scaleFontSize = font.Size * heightScaleRatio;
+            Font newFont = new Font(font.FontFamily, scaleFontSize, font.Style/*, GraphicsUnit.Pixel*/);
+            realSize = graphics.MeasureString(character, newFont);
+            return (realSize, newFont);
+        }
+
+        /// <summary>
+        /// Calculates the size and font of the character size for a height.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="character">The character.</param>
+        /// <param name="height">The height.</param>
+        /// <returns></returns>
+        public static SizeF CalculateCharacterSizeForHeight(Graphics graphics, Font font, string character, float height)
+        {
+            var realSize = graphics.MeasureString(character, font);
+            var heightScaleRatio = height / realSize.Height;
+            var scaleFontSize = font.Size * heightScaleRatio;
+            using Font newFont = new Font(font.FontFamily, scaleFontSize, font.Style/*, GraphicsUnit.Pixel*/);
+            realSize = graphics.MeasureString(character, newFont);
+            return realSize;
+        }
+
+        /// <summary>
+        /// Calculates the grouping symbols.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="barStyles">The bar styles.</param>
+        /// <param name="contents">The contents.</param>
+        /// <param name="xMargin">The x margin.</param>
+        /// <param name="yMargin">The y margin.</param>
+        /// <returns></returns>
+        public static Font CalculateGroupingFont(Graphics graphics, Font font, BarStyles barStyles, SizeF contents, float xMargin, float yMargin)
+        {
+            var left = BarStyleStringLeft(barStyles);
+            if (string.IsNullOrEmpty(left)) return font;
+            (var size, Font newFont) = CalculateCharacterAndFontSizeForHeight(graphics, font, left, contents.Height + (yMargin * 2));
+            size.Width += xMargin * 2;
+            return newFont;
+        }
+
+        /// <summary>
+        /// Calculates the grouping symbols.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="barStyles">The bar styles.</param>
+        /// <param name="contents">The contents.</param>
+        /// <param name="xMargin">The x margin.</param>
+        /// <param name="yMargin">The y margin.</param>
+        /// <returns></returns>
+        public static SizeF CalculateGroupingSymbolsWidth(Graphics graphics, Font font, BarStyles barStyles, SizeF contents, float xMargin, float yMargin)
+        {
+            string left = BarStyleStringLeft(barStyles);
+            var size = CalculateCharacterSizeForHeight(graphics, font, left, contents.Height + (yMargin * 2));
+            size.Width += xMargin * 2;
+            return size;
+        }
+
+        /// <summary>
+        /// Calculates the limit symbols.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="leftBarStyles">The left bar styles.</param>
+        /// <param name="rightBarStyles">The right bar styles.</param>
+        /// <param name="contents">The contents.</param>
+        /// <param name="xMargin">The x margin.</param>
+        /// <param name="yMargin">The y margin.</param>
+        /// <returns></returns>
+        public static (SizeF leftSize, Font leftFont, string left, SizeF rightSize, Font rightFont, string right) CalculateLimitSymbols(Graphics graphics, Font font, BarStyles leftBarStyles, BarStyles rightBarStyles, SizeF contents, float xMargin, float yMargin)
+        {
+            (var left, var right) = (BarStyleStringLeft(leftBarStyles), BarStyleStringRight(rightBarStyles));
+            if (string.IsNullOrEmpty(left)) return (new SizeF(0, contents.Height), font, "", new SizeF(0, contents.Height), font, "");
+            (var leftSize, Font leftFont) = CalculateCharacterAndFontSizeForHeight(graphics, font, left, contents.Height + (yMargin * 2));
+            leftSize.Width += xMargin * 2;
+            (var rightSize, Font rightFont) = CalculateCharacterAndFontSizeForHeight(graphics, font, right, contents.Height + (yMargin * 2));
+            leftSize.Width += xMargin * 2;
+            return (leftSize, leftFont, left, rightSize, rightFont, right);
+        }
     }
 }

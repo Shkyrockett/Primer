@@ -1,9 +1,9 @@
 ﻿# Speed testing 2D Distance Methods
 
-The distance formula is based on the Pythagorean theorem ![][PythagoreanTheorem.Inline] where c is the length of the hypotenuse. 
-Thus ![][Distance.Inline].
+The distance formula is based on the Pythagorean theorem $c^{2}=a^{2}+b^{2}$ where c is the length of the hypotenuse. 
+Thus $c=\sqrt{a^{2}+b^{2}}$.
 
-### Method Header Prototype
+## Method Header Prototype
 
 ```c#
     public static (Type r1, Type r2) Name(Type p1, Type p2)
@@ -11,7 +11,7 @@ Thus ![][Distance.Inline].
 
 ## Results
 
-Surprisingly, caching the I and J vector delta values slows processing a little. There must be a bit of an allocation penalty for creating the double value variables to store the values. 
+Surprisingly, caching the I and J vector delta values slows processing a little. There must be a bit of an allocation penalty for creating the double value variables to store the values.  
 Calling the outside Modulus method adds even more overhead.
 
 | Method | Iterations | Input | Output | Time |
@@ -83,6 +83,3 @@ Calling the outside Modulus method adds even more overhead.
         return Math.Sqrt((i * i) + (j * j));
     }
 ```
-
-[PythagoreanTheorem.Inline]: http://latex.codecogs.com/svg.latex?\inline&space;c^{2}&space;=&space;a^{2}&space;&plus;&space;b^{2}
-[Distance.Inline]: http://latex.codecogs.com/svg.latex?\inline&space;c&space;=&space;\sqrt{a^{2}&space;&plus;&space;b^{2}}

@@ -6,8 +6,8 @@
 |---|---|---|
 | **Formula** |  | A **Formula** is a set of rules to come up with a final result. |
 | **Equation** | $\begin{matrix}2x^2+y+1=z\end{matrix}$ | An **Equation** is a formula involving the $=$ (equals) operator. The purpose of an equation is to solve it. You want to find the missing variable. <br /> An **equation** is a statement where sets of expressions are the same. |
-| **Expression** | $\begin{matrix}\color{red}2x^2+y+1\color{black}=\color{red}z\end{matrix}$ | **Expressions** are the sets of terms on both sides of the equals operator in an equation. |
-| **Solution** | $\begin{matrix}2x^2+y+1=\color{red}z\end{matrix}$ | A **Solution** is the result of a formula in an equation. |
+| **Expression** | $\begin{matrix}\color{red}{2x^2+y+1}=\color{red}{z}\end{matrix}$ | **Expressions** are the sets of terms on both sides of the equals operator in an equation. |
+| **Solution** | $\begin{matrix}2x^2+y+1=\color{red}{z}\end{matrix}$ | A **Solution** is the result of a formula in an equation. |
 
 ## References
 

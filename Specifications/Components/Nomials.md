@@ -3,10 +3,10 @@
 | Name | Example | Definition |
 |---|---|---|
 | **Polynomial** | $\begin{matrix}3x^3-2x^2+x+1\end{matrix}$ | A **Polynomial** is a general term for the sets of expressions set up with terms containing constants, coefficients, variables, and exponents. |
-| **Term** | $\color{red}2\color{red}x^\color{red}2\color{black}+\color{red}y\color{black}+\color{red}1\color{black}=\color{red}z$ | **Terms** are the parts of an expression separated by addition, subtraction or comparison operators. The terms are highlighted in red. |
-| **Constant** | $\begin{matrix}2x^2+y+\color{red}1\color{black}=z\end{matrix}$ | **Constants** are the Number terms, where the numbers are on their own, are called constants. The constant term is highlighted in red. |
-| **Coefficient** | $\begin{matrix}\color{red}2\color{black}x^2+\color{red}1\color{black}y\color{black}+\color{red}1\color{black}=z\end{matrix}$ | A **coefficient** is the number used to multiply a variable. The coefficient is highlighted below in red: |
-| **Variable** | $\begin{matrix}2\color{red}x^2+\color{red}y+1=\color{red}z\end{matrix}$ | **Variables** are the stand in letter elements. |
+| **Term** | $\color{red}{2}\color{red}{x}^\color{red}{2}+\color{red}{y}+\color{red}{1}=\color{red}z$ | **Terms** are the parts of an expression separated by addition, subtraction or comparison operators. The terms are highlighted in red. |
+| **Constant** | $\begin{matrix}2x^2+y+\color{red}{1}=z\end{matrix}$ | **Constants** are the Number terms, where the numbers are on their own, are called constants. The constant term is highlighted in red. |
+| **Coefficient** | $\begin{matrix}\color{red}{2}x^2+\color{red}{1}y+\color{red}{1}=\color{red}{2}z\end{matrix}$ | A **coefficient** is the number used to multiply a variable. The coefficient is highlighted below in red: |
+| **Variable** | $\begin{matrix}2\color{red}{x}^2+\color{red}{y}+1=\color{red}{z}\end{matrix}$ | **Variables** are the stand in letter elements. |
 
 ## Common and Uncommon Sub-Sets of Polynomials
 

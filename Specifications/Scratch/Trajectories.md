@@ -4,7 +4,7 @@ Posted by Mechanical Engineer  June 08, 2014
 
 <http://www.aboutmech.com/2014/06/equation-of-path-of-projectile.html>
 
-> Different equations used in projectile motion to calculate time of flight, horizontal range, maximum height etc. 
+> Different equations used in projectile motion to calculate time of flight, horizontal range, maximum height etc.  
 
 Let
 $O$ = Point of projection,  

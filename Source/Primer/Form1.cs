@@ -32,18 +32,18 @@ namespace Primer
         {
             InitializeComponent();
 
-            canvas1.Font = new Font("Times New Roman", 20);
+            canvas1.Font = new Font("Cambria Math", 20);
             canvas1.Expression = new IntegralExpression(
                 new RelationalExpression(ComparisonOperators.Equals,
                 new NomialExpression(
                 new GroupingExpression(
-                new FractionExpression(new NomialExpression(new VariableExpression('a')), new NomialExpression(new VariableExpression('b'))), BarStyles.Parenthesis, BarStyles.Parenthesis),
+                new FractionExpression(new NomialExpression(new LogarithmExpression(new VariableExpression('a'), new CoefficientExpression(10), new CoefficientExpression(1))), new NomialExpression(new VariableExpression('b'))), BarStyles.Parenthesis, BarStyles.Parenthesis),
                 new GroupingExpression(
-                new MatrixExpression(2, 2, false, false, new FractionExpression(new TextExpression("a"), new TextExpression("b")), new RootExpression(new TextExpression("2"), new TextExpression("2")), new SigmaExpression(new TextExpression("4"), new TextExpression("4"), new TextExpression("4")), new TextExpression("4")), BarStyles.Parenthesis, BarStyles.Parenthesis),
+                new MatrixExpression(2, 2, false, false, new FractionExpression(new TextExpression("∑"), new TextExpression("b")), new RootExpression(new TextExpression("2"), new TextExpression("2")), new SigmaExpression(new TextExpression("4"), new TextExpression("4"), new TextExpression("4")), new TextExpression("4")), BarStyles.Parenthesis, BarStyles.Parenthesis),
                 new TermExpression(4, new VariableExpression('c'))
                 ),
                 new NomialExpression(new TermExpression(new CoefficientExpression(4), new PowerExpression(new VariableExpression('b'), new TextExpression("2"))))
-                ), new TextExpression("0"), new TextExpression("1"));
+                ), new TextExpression("√"), new TextExpression("⎷"));
 
             canvas1.AutoSize = true;
         }

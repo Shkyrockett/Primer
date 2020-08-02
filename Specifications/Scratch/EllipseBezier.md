@@ -1,4 +1,4 @@
-#Test
+# Test
 
 $\frac{(x-h)^2}{a^2}+\frac{(y-k)^2}{b^2}=1$
 
@@ -47,9 +47,9 @@ g: (dx  dx  (b  b)) - (2d  dy  k  (a  a)) - (2d  dx  h  (b  b)) + ((dy  dy)  (a 
 ```
 
 <https://math.stackexchange.com/a/436276>  
-The parametric equation for B is $B(t)=(1−t)^3P_0+3t(1−t)^2P_1+3t^2(1−t)P_2+t^3P_3$. The equation for a circle is $(x-h)^2+(y-k)^2=r^2$. By projecting that onto x and y and adding the constraint of the circle's parametric equation you get a sextic  
+The parametric equation for B is $B(t)=(1-t)^3P_0+3t(1-t)^2P_1+3t^2(1-t)P_2+t^3P_3$. The equation for a circle is $(x-h)^2+(y-k)^2=r^2$. By projecting that onto x and y and adding the constraint of the circle's parametric equation you get a sextic  
 
-$$((1−t)^3x_0+…+t^3x_3−h)^2+((1−t)3y_0+…+t^3y_3−k)^2=r^2$$  
+$((1-t)^{3}x_0+...+t^3x_3-h)^2+((1-t)3y_0+...+t^3y_3-k)^2=r^2$  
 
 In general this won't be soluble algebraically, so you'll have to solve it numerically using a method like Newton-Raphson.
 
@@ -57,23 +57,20 @@ The convex hull property of Bézier curves and de Casteljau's algorithm give a g
 
 The following is the equation for an Ellipse:
 
-$$\frac{((x-h)\cos{(\alpha)}+(y-k)\sin{(\alpha)})^2}{a^2}+\frac{((x-h)\sin{(\alpha)}-(y-k)\cos{(\alpha)})^2}{b^2}=1$$  
+$\frac{((x-h)\cos{(\alpha)}+(y-k)\sin{(\alpha)})^2}{a^2}+\frac{((x-h)\sin{(\alpha)}-(y-k)\cos{(\alpha)})^2}{b^2}=1$  
 
 Let's remove the division:
 
-$$b^2((x-h)\cos(\alpha)+(y-k)\sin(\alpha))^2+a^2((x-h)\sin(\alpha)-(y-k)\cos(\alpha))^2=a^2b^2$$
+$b^2((x-h)\cos(\alpha)+(y-k)\sin(\alpha))^2+a^2((x-h)\sin(\alpha)-(y-k)\cos(\alpha))^2=a^2b^2$
 
 Then let's expand:
 
-$$a^2h^2\sin^2(\alpha)-2a^2hk\sin(\alpha)\cos(\alpha)-2a^2hx\sin^2(\alpha)+2a^2hy\sin(\alpha)\cos(\alpha)+a^2k^2\cos^2(\alpha)+2a^2kx\sin(\alpha)\cos(\alpha)-2a^2ky\cos^2(\alpha)+a^2x^2\sin(\alpha)-2a^2xy\sin(\alpha)\cos(\alpha)+a^2y^2\cos^2(\alpha)+b^2h^2\cos^2(\alpha)+2b^2hk\sin(\alpha)\cos(\alpha)-2b^2hx\cos^2(\alpha)-2b^2hy\sin(\alpha)\cos(\alpha)+b^2k^2\sin^2(\alpha)-2b^2kx\sin(\alpha)\cos(\alpha)-2b^2ky\sin^2(\alpha)+b^2x^2\cos^2(\alpha)+2b^2xy\sin(\alpha)\cos(\alpha)+b^2y^2\sin^2(\alpha)=a^2b^2$$
+$a^2h^2\sin^2(\alpha)-2a^2hk\sin(\alpha)\cos(\alpha)-2a^2hx\sin^2(\alpha)+2a^2hy\sin(\alpha)\cos(\alpha)+a^2k^2\cos^2(\alpha)+2a^2kx\sin(\alpha)\cos(\alpha)-2a^2ky\cos^2(\alpha)+a^2x^2\sin(\alpha)-2a^2xy\sin(\alpha)\cos(\alpha)+a^2y^2\cos^2(\alpha)+b^2h^2\cos^2(\alpha)+2b^2hk\sin(\alpha)\cos(\alpha)-2b^2hx\cos^2(\alpha)-2b^2hy\sin(\alpha)\cos(\alpha)+b^2k^2\sin^2(\alpha)-2b^2kx\sin(\alpha)\cos(\alpha)-2b^2ky\sin^2(\alpha)+b^2x^2\cos^2(\alpha)+2b^2xy\sin(\alpha)\cos(\alpha)+b^2y^2\sin^2(\alpha)=a^2b^2$
 
 Let's substitute x and y for the x and y parametric equations for the Bezier curve.
 
-$$\frac{(((1−t)^3x_0+3t(1−t)^2x_1+3t^2(1−t)x_2+t^3x_3-h)\cos{(\alpha)}+((1−t)^3y_0+3t(1−t)^2y_1+3t^2(1−t)y_2+t^3y_3-k)\sin{(\alpha)})^2}{a^2}+\frac{(((1−t)^3x_0+3t(1−t)^2x_1+3t^2(1−t)x_2+t^3x_3-h)\sin{(\alpha)}-((1−t)^3y_0+3t(1−t)^2y_1+3t^2(1−t)y_2+t^3y_3-k)\cos{(\alpha)})^2}{b^2}=1$$  
+$\frac{(((1-t)^{3}x_0+3t(1-t)^{2}x_1+3t^{2}(1-t)x_2+t^{3}x_3-h)\cos{(\alpha)}+((1-t)^{3}y_0+3t(1-t)^{2}y_1+3t^{2}(1-t)y_2+t^{3}y_3-k)\sin{(\alpha)})^{2}}{a^{2}}+\frac{(((1-t)^{3}x_0+3t(1-t)^{2}x_1+3t^{2}(1-t)x_2+t^{3}x_3-h)\sin{(\alpha)}-((1-t)^{3}y_0+3t(1-t)^{2}y_1+3t^{2}(1-t)y_2+t^{3}y_3-k)\cos{(\alpha)})^{2}}{b^{2}}=1$  
 
-Let's remove the 
+Let's remove the  
 
-$$b^2(((1−t)^3x_0+3t(1−t)^2x_1+3t^2(1−t)x_2+t^3x_3-h)\cos{(\alpha)}+((1−t)^3y_0+3t(1−t)^2y_1+3t^2(1−t)y_2+t^3y_3-k)\sin{(\alpha)})^2+a^2(((1−t)^3x_0+3t(1−t)^2x_1+3t^2(1−t)x_2+t^3x_3-h)\sin{(\alpha)}-((1−t)^3y_0+3t(1−t)^2y_1+3t^2(1−t)y_2+t^3y_3-k)\cos{(\alpha)})^2=a^2b^2$$  
-
-
-
+$b^{2}(((1-t)^{3}x_0+3t(1-t)^{2}x_1+3t^{2}(1-t)x_2+t^{3}x_3-h)\cos{(\alpha)}+((1-t)^{3}y_0+3t(1-t)^{2}y_1+3t^{2}(1-t)y_2+t^{3}y_3-k)\sin{(\alpha)})^{2}+a^{2}(((1-t)^{3}x_0+3t(1-t)^{2}x_1+3t^{2}(1-t)x_2+t^{3}x_3-h)\sin{(\alpha)}-((1-t)^{3}y_0+3t(1-t)^{2}y_1+3t^{2}(1-t)y_2+t^{3}y_3-k)\cos{(\alpha)})^{2}=a^{2}b^{2}$  

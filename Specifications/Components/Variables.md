@@ -2,7 +2,7 @@
 
 **Variables** are placeholder characters or text that stand in for a value, unit, or statement. The variables below are highlighted in red:
 
-$2\color{red}x\color{black}^2+\color{red}y\color{black}+1=\color{red}z$
+$2\color{red}{x}^2+\color{red}{y}+1=\color{red}{z}$
 
 ## Common Variables
 

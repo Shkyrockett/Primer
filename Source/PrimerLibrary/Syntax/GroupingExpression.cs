@@ -11,7 +11,9 @@
 // </remarks>
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace PrimerLibrary
 {
@@ -27,17 +29,7 @@ namespace PrimerLibrary
         /// <summary>
         /// The contents.
         /// </summary>
-        private readonly IExpression Contents;
-
-        /// <summary>
-        /// The bar style.
-        /// </summary>
-        private readonly BarStyles LeftBarStyle;
-
-        /// <summary>
-        /// The bar style.
-        /// </summary>
-        private readonly BarStyles RightBarStyle;
+        private readonly IExpression contents;
 
         /// <summary>
         /// Extra space around the content.
@@ -48,11 +40,6 @@ namespace PrimerLibrary
         /// Extra space around the content.
         /// </summary>
         public float MarginY = 5;
-
-        /// <summary>
-        /// The font size
-        /// </summary>
-        private float FontSize = 20;
 
         /// <summary>
         /// Width of bars.
@@ -77,15 +64,28 @@ namespace PrimerLibrary
 
         #region Constructors
         /// <summary>
-        /// Initialize the contents.
+        /// Initializes a new instance of the <see cref="GroupingExpression"/> class.
         /// </summary>
         /// <param name="contents">The contents.</param>
         /// <param name="leftBarStyle">The left bar style.</param>
         /// <param name="rightBarStyle">The right bar style.</param>
         /// <param name="editable">if set to <see langword="true" /> [editable].</param>
         public GroupingExpression(IExpression contents, BarStyles leftBarStyle, BarStyles rightBarStyle, bool editable = false)
+            : this(null, contents, leftBarStyle, rightBarStyle, editable)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GroupingExpression"/> class.
+        /// </summary>
+        /// <param name="parent">The parent.</param>
+        /// <param name="contents">The contents.</param>
+        /// <param name="leftBarStyle">The left bar style.</param>
+        /// <param name="rightBarStyle">The right bar style.</param>
+        /// <param name="editable">if set to <see langword="true" /> [editable].</param>
+        public GroupingExpression(IExpression? parent, IExpression contents, BarStyles leftBarStyle, BarStyles rightBarStyle, bool editable = false)
         {
-            Contents = contents;
+            Parent = parent;
+            this.contents = contents;
             LeftBarStyle = leftBarStyle;
             RightBarStyle = rightBarStyle;
             Editable = editable;
@@ -94,12 +94,52 @@ namespace PrimerLibrary
 
         #region Properties
         /// <summary>
+        /// Gets the left bar style.
+        /// </summary>
+        /// <value>
+        /// The left bar style.
+        /// </value>
+        public BarStyles LeftBarStyle { get; }
+
+        /// <summary>
+        /// Gets the right bar style.
+        /// </summary>
+        /// <value>
+        /// The right bar style.
+        /// </value>
+        public BarStyles RightBarStyle { get; }
+
+        /// <summary>
+        /// Gets or sets the parent.
+        /// </summary>
+        /// <value>
+        /// The parent.
+        /// </value>
+        public IExpression? Parent { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sign of the expression.
+        /// </summary>
+        /// <value>
+        /// The sign of the expression. -1 for negative, +1 for positive, 0 for 0.
+        /// </value>
+        public int Sign { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether this instance is negative.
         /// </summary>
         /// <value>
         ///   <see langword="true" /> if this instance is negative; otherwise, <see langword="false" />.
         /// </value>
         public bool IsNegative { get; set; }
+
+        /// <summary>
+        /// Gets or sets the size of the font.
+        /// </summary>
+        /// <value>
+        /// The size of the font.
+        /// </value>
+        public float FontSize { get; set; } = 20;
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="CoefficientExpression"/> is editable.
@@ -110,6 +150,31 @@ namespace PrimerLibrary
         public bool Editable { get; set; }
         #endregion
 
+        public IExpression Plus(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Add(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Negate(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Subtract(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Multiply(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Set font sizes for sub-equations.
         /// </summary>
@@ -117,7 +182,7 @@ namespace PrimerLibrary
         public void SetFontSizes(float fontSize)
         {
             FontSize = fontSize;
-            Contents.SetFontSizes(fontSize);
+            contents.SetFontSizes(fontSize);
         }
 
         /// <summary>
@@ -131,18 +196,18 @@ namespace PrimerLibrary
             using var tempFont = new Font(font.FontFamily, FontSize, font.Style);
 
             // Get the content's height.
-            SizeF item_size = Contents.GetSize(graphics, tempFont);
+            SizeF size = contents.GetSize(graphics, tempFont);
 
             // Add vertical space.
-            item_size.Height += 2 * MarginY;
+            size.Height += 2 * MarginY;
 
             // Add room for the bars.
-            item_size.Width +=
+            size.Width +=
                 2 * MarginX +
-                GetBarWidth(graphics, tempFont, item_size.Height, LeftBarStyle) +
-                GetBarWidth(graphics, tempFont, item_size.Height, RightBarStyle);
+                GetBarWidth(graphics, tempFont, size.Height, LeftBarStyle) +
+                GetBarWidth(graphics, tempFont, size.Height, RightBarStyle);
 
-            return item_size;
+            return size;
         }
 
         /// <summary>
@@ -163,7 +228,7 @@ namespace PrimerLibrary
                 BarStyles.Bar => 1,
                 BarStyles.Brace => 2 * BracesWidth,
                 BarStyles.Bracket => BracketWidth,
-                BarStyles.PointyBracket => ourHeight * PointyBracketWidthFraction,
+                BarStyles.AngleBracket => ourHeight * PointyBracketWidthFraction,
                 BarStyles.Parenthesis => ourHeight * ParenthesisWidthFraction,
                 BarStyles.None => 0,
                 _ => throw new ArgumentOutOfRangeException("bar_style", $"Unknown BarStyles value {LeftBarStyle}"),
@@ -175,31 +240,31 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
-        /// <param name="pen">The pen.</param>
         /// <param name="brush">The brush.</param>
+        /// <param name="pen">The pen.</param>
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
-        public void Draw(Graphics graphics, Font font, Pen pen, Brush brush, float x, float y)
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float x, float y)
         {
             // Get our size.
-            SizeF our_size = GetSize(graphics, font);
+            var size = GetSize(graphics, font);
             using var tempFont = new Font(font.FontFamily, FontSize, font.Style);
 
 #if DrawBox
             using (var dashed_pen = new Pen(Color.Orange, 1))
             {
-                dashed_pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-                graphics.DrawRectangle(dashed_pen, x, y, our_size.Width, our_size.Height);
+                dashed_pen.DashStyle = DashStyle.Dash;
+                graphics.DrawRectangle(dashed_pen, x, y, size.Width, size.Height);
             }
 #endif
 
             // Draw the bars.
-            DrawLeftBar(our_size, x, y, graphics, tempFont, pen, brush);
-            DrawRightBar(our_size, x, y, graphics, tempFont, pen, brush);
+            DrawLeftBar(size, x, y, graphics, tempFont, pen, brush);
+            DrawRightBar(size, x, y, graphics, tempFont, pen, brush);
 
             // Draw the contents.
-            var contents_x = x + MarginX + GetBarWidth(graphics, tempFont, our_size.Height, LeftBarStyle);
-            Contents.Draw(graphics, tempFont, pen, brush, contents_x, y + MarginY);
+            var contents_x = x + MarginX + GetBarWidth(graphics, tempFont, size.Height, LeftBarStyle);
+            contents.Draw(graphics, tempFont, brush, pen, contents_x, y + MarginY);
         }
 
         /// <summary>
@@ -255,7 +320,7 @@ namespace PrimerLibrary
                     };
                     gr.DrawCurve(pen, brace_pts);
                     break;
-                case BarStyles.PointyBracket:
+                case BarStyles.AngleBracket:
                     var pointy_bracket_width = PointyBracketWidthFraction * ourSize.Height;
                     PointF[] point_bracket_pts =
                     {
@@ -340,7 +405,7 @@ namespace PrimerLibrary
                     };
                     gr.DrawCurve(pen, brace_pts);
                     break;
-                case BarStyles.PointyBracket:
+                case BarStyles.AngleBracket:
                     var pointy_bracket_width = PointyBracketWidthFraction * ourSize.Height;
                     PointF[] point_bracket_pts =
                     {
@@ -370,6 +435,35 @@ namespace PrimerLibrary
                 default:
                     throw new ArgumentOutOfRangeException("RightBarStyle", $"Unknown BarStyles value {RightBarStyle}");
             }
+        }
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="brush">The brush.</param>
+        /// <param name="pen">The pen.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
+        /// <returns></returns>
+        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, PointF location, bool drawBorders = false)
+        {
+            var size = GetSize(graphics, font);
+            var map = new HashSet<IRenderable>();
+
+            if (drawBorders)
+            {
+                using var dashedPen = new Pen(Color.Red, 0)
+                {
+                    DashStyle = DashStyle.Dash
+                };
+                map.Add(new RectangleElement(location, size, null, dashedPen));
+            }
+
+            // ToDo: Layout here.
+
+            return map;
         }
     }
 }

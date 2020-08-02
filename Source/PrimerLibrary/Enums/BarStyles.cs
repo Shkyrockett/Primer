@@ -40,7 +40,7 @@ namespace PrimerLibrary
         /// <summary>
         /// The pointy bracket
         /// </summary>
-        PointyBracket,
+        AngleBracket,
 
         /// <summary>
         /// The parenthesis

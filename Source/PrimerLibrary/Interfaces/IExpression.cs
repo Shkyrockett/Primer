@@ -18,7 +18,16 @@ namespace PrimerLibrary
     /// 
     /// </summary>
     public interface IExpression
+        : IEditable, ILayout
     {
+        /// <summary>
+        /// Gets or sets the parent.
+        /// </summary>
+        /// <value>
+        /// The parent.
+        /// </value>
+        IExpression? Parent { get; set; }
+
         /// <summary>
         /// Gets the size.
         /// </summary>
@@ -38,10 +47,10 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The GDI graphics.</param>
         /// <param name="font">The font.</param>
-        /// <param name="pen">The pen.</param>
         /// <param name="brush">The brush.</param>
+        /// <param name="pen">The pen.</param>
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
-        void Draw(Graphics graphics, Font font, Pen pen, Brush brush, float x, float y);
+        void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float x, float y);
     }
 }

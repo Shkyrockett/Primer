@@ -6,9 +6,9 @@ Different sources may use different representations for $A$ $B$ $C$ $D$ $E$ $F$ 
 
 | Equation | Description |
 |---|---|
-| $Ax^2+B\color{red}xy\color{black}+C\color{red}y^2\color{black}+Dx+Ey+F=0$ | General Conics Equasion. This is a reduced form of the Homogeneous coordinats conic equasion where $z=1$. |
-| $Ax^2+B\color{red}y^2\color{black}+C\color{red}xy\color{black}+Dx+Ey+F=0$ | General Conics Equasion with $xy$ and $y^2$ swaped. |
-| $Ax^2+B\color{red}xy\color{black}+C\color{red}y^2\color{black}+Dx\color{blue}z\color{black}+Ey\color{blue}z\color{black}+F\color{blue}z^2\color{black}=0$ | Homogeneous coordinates a conic section. |
+| $Ax^2+B\color{red}{xy}+C\color{red}{y^2}+Dx+Ey+F=0$ | General Conics Equasion. This is a reduced form of the Homogeneous coordinats conic equasion where $z=1$. |
+| $Ax^2+B\color{red}{y^2}+C\color{red}{xy}+Dx+Ey+F=0$ | General Conics Equasion with $xy$ and $y^2$ swaped. |
+| $Ax^2+B\color{red}{xy}+C\color{red}{y^2}+Dx\color{blue}{z}+Ey\color{blue}{z}+F\color{blue}{z^2}=0$ | Homogeneous coordinates a conic section. |
 
 You have to be alert to which form is being used.
 
@@ -40,7 +40,7 @@ You have to be alert to which form is being used.
 
 ## Matrix Form
 
-$Ax^2+B\color{red}xy\color{black}+C\color{red}y^2\color{black}+Dx+Ey+F=0$
+$Ax^2+B\color{red}{xy}+C\color{red}{y^2}+Dx+Ey+F=0$
 
 The above equation can be written in matrix notation as:
 
@@ -56,7 +56,7 @@ $\begin{pmatrix}x&y&1\end{pmatrix}\begin{pmatrix}A&\frac{B}{2}&\frac{D}{2}\\\fra
 
 In homogeneous coordinates a conic section can be represented as:
 
-$Ax^2+B\color{red}xy\color{black}+C\color{red}y^2\color{black}+Dx\color{blue}z\color{black}+Ey\color{blue}z\color{black}+F\color{blue}z^2\color{black}=0$
+$Ax^2+B\color{red}{xy}+C\color{red}{y^2}+Dx\color{blue}{z}+Ey\color{blue}{z}+F\color{blue}{z^2}=0$
 
 Or in matrix notation, the 3 × 3 matrix of the conic section is:
 
@@ -64,7 +64,7 @@ $\begin{pmatrix}x&y&z\end{pmatrix}\begin{pmatrix}A&\frac{B}{2}&\frac{D}{2}\\\fra
 
 Some authors prefer to write the general homogeneous equation as below so that the matrix of the conic section has the simpler form:
 
-$Ax^2+2B\color{red}xy\color{black}+C\color{red}y^2\color{black}+2Dx\color{blue}z\color{black}+2Ey\color{blue}z\color{black}+F\color{blue}z^2\color{black}=0$
+$Ax^2+2B\color{red}{xy}+C\color{red}{y^2}+2Dx\color{blue}{z}+2Ey\color{blue}{z}+F\color{blue}{z^2}=0$
 
 $M=\begin{pmatrix}A&B&D\\B&C&E\\D&E&F\end{pmatrix}$
 
@@ -212,7 +212,7 @@ If the determinant of the matrix of the conic section is zero, the conic section
 
 [General conic formula:](https://en.wikipedia.org/wiki/Ellipse#General_ellipse)
 
-$Ax^2+B\color{red}xy\color{black}+C\color{red}y^2\color{black}+Dx+Ey+F=0$
+$Ax^2+B\color{red}{xy}+C\color{red}{y^2}+Dx+Ey+F=0$
 
 $A=a^2\sin^2{\theta}+b^2\cos^2{\theta}$  
 $B=2(b^2-a^2)\sin{\theta}\cos{\theta}$  
@@ -231,7 +231,7 @@ $E=-2ka^2$
 $F=h^2b^2+k^2a^2-a^2b^2$  
 
 [Ellipse Relationship to Conics](https://math.stackexchange.com/a/2989928)  
-$Ax^2+B\color{red}y^2\color{black}+C\color{red}xy\color{black}+Dx+Ey+F=0$
+$Ax^2+B\color{red}{y^2}+C\color{red}{xy}+Dx+Ey+F=0$
 
 relates to ellipse $h$, $k$, $a$, $b$, $\theta$ with the following:
 

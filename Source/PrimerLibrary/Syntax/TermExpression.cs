@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 using static System.Math;
 
 namespace PrimerLibrary
@@ -31,11 +32,6 @@ namespace PrimerLibrary
         /// The space between the top and bottom items.
         /// </summary>
         private const float Gap = 0;
-
-        /// <summary>
-        /// The font size
-        /// </summary>
-        public float FontSize = 20;
         #endregion
 
         #region Constructors
@@ -45,7 +41,17 @@ namespace PrimerLibrary
         /// <param name="coefficient">The coefficient.</param>
         /// <param name="expressions">The expressions.</param>
         public TermExpression(double coefficient, params IVariable[] expressions)
-            : this(new CoefficientExpression(coefficient), false, expressions)
+            : this(null, new CoefficientExpression(coefficient), false, expressions)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TermExpression"/> class.
+        /// </summary>
+        /// <param name="parent">The parent.</param>
+        /// <param name="coefficient">The coefficient.</param>
+        /// <param name="expressions">The expressions.</param>
+        public TermExpression(IExpression? parent, double coefficient, params IVariable[] expressions)
+            : this(parent, new CoefficientExpression(coefficient), false, expressions)
         { }
 
         /// <summary>
@@ -55,7 +61,18 @@ namespace PrimerLibrary
         /// <param name="editable">if set to <see langword="true" /> [editable].</param>
         /// <param name="expressions">The expressions.</param>
         public TermExpression(double coefficient, bool editable = false, params IVariable[] expressions)
-            : this(new CoefficientExpression(coefficient), editable, expressions)
+            : this(null, new CoefficientExpression(coefficient), editable, expressions)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TermExpression"/> class.
+        /// </summary>
+        /// <param name="parent">The parent.</param>
+        /// <param name="coefficient">The coefficient.</param>
+        /// <param name="editable">if set to <see langword="true" /> [editable].</param>
+        /// <param name="expressions">The expressions.</param>
+        public TermExpression(IExpression? parent, double coefficient, bool editable = false, params IVariable[] expressions)
+            : this(parent, new CoefficientExpression(coefficient), editable, expressions)
         { }
 
         /// <summary>
@@ -64,17 +81,39 @@ namespace PrimerLibrary
         /// <param name="coefficient">The coefficient.</param>
         /// <param name="expressions">The expressions.</param>
         public TermExpression(CoefficientExpression coefficient, params IVariable[] expressions)
-            : this(coefficient, false, expressions)
+            : this(null, coefficient, false, expressions)
         { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TermExpression" /> class.
+        /// Initializes a new instance of the <see cref="TermExpression"/> class.
+        /// </summary>
+        /// <param name="parent">The parent.</param>
+        /// <param name="coefficient">The coefficient.</param>
+        /// <param name="expressions">The expressions.</param>
+        public TermExpression(IExpression? parent, CoefficientExpression coefficient, params IVariable[] expressions)
+            : this(parent, coefficient, false, expressions)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TermExpression"/> class.
         /// </summary>
         /// <param name="coefficient">The coefficient.</param>
         /// <param name="editable">if set to <see langword="true" /> [editable].</param>
         /// <param name="expressions">The expressions.</param>
         public TermExpression(CoefficientExpression coefficient, bool editable = false, params IVariable[] expressions)
+            : this(null, coefficient, editable, expressions)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TermExpression" /> class.
+        /// </summary>
+        /// <param name="parent">The parent.</param>
+        /// <param name="coefficient">The coefficient.</param>
+        /// <param name="editable">if set to <see langword="true" /> [editable].</param>
+        /// <param name="expressions">The expressions.</param>
+        public TermExpression(IExpression? parent, CoefficientExpression coefficient, bool editable = false, params IVariable[] expressions)
         {
+            Parent = parent;
             Coefficient = coefficient;
             Expressions = new List<IVariable>(expressions);
             Editable = editable;
@@ -99,12 +138,36 @@ namespace PrimerLibrary
         public List<IVariable> Expressions { get; set; }
 
         /// <summary>
+        /// Gets or sets the parent.
+        /// </summary>
+        /// <value>
+        /// The parent.
+        /// </value>
+        public IExpression? Parent { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sign of the expression.
+        /// </summary>
+        /// <value>
+        /// The sign of the expression. -1 for negative, +1 for positive, 0 for 0.
+        /// </value>
+        public int Sign { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether this instance is negative.
         /// </summary>
         /// <value>
         ///   <see langword="true" /> if this instance is negative; otherwise, <see langword="false" />.
         /// </value>
         public bool IsNegative { get { return Coefficient.IsNegative; } set { Coefficient.IsNegative = value; } }
+
+        /// <summary>
+        /// Gets or sets the size of the font.
+        /// </summary>
+        /// <value>
+        /// The size of the font.
+        /// </value>
+        public float FontSize { get; set; } = 20;
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="CoefficientExpression"/> is editable.
@@ -114,6 +177,31 @@ namespace PrimerLibrary
         /// </value>
         public bool Editable { get; set; }
         #endregion
+
+        public IExpression Plus(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Add(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Negate(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Subtract(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Multiply(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Set font sizes for sub-equations.
@@ -141,11 +229,11 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The GDI graphics.</param>
         /// <param name="font">The font.</param>
-        /// <param name="pen">The pen.</param>
         /// <param name="brush">The brush.</param>
+        /// <param name="pen">The pen.</param>
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
-        public void Draw(Graphics graphics, Font font, Pen pen, Brush brush, float x, float y)
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float x, float y)
         {
             using var tempFont = new Font(font.FontFamily, FontSize, font.Style);
             var size = GetSizes(graphics, tempFont, out SizeF coefficientSize, out var operatorSizes, out var nomialSizes);
@@ -164,7 +252,7 @@ namespace PrimerLibrary
                 LineAlignment = StringAlignment.Center
             };
 
-            Coefficient.Draw(graphics, tempFont, pen, brush, x, y + size.Height - coefficientSize.Height);
+            Coefficient.Draw(graphics, tempFont, brush, pen, x, y + size.Height - coefficientSize.Height);
             x += coefficientSize.Width;
 
             var expression = Expressions?.Count > 0 ? Expressions[0] : null;
@@ -172,7 +260,7 @@ namespace PrimerLibrary
             var nomialSize = nomialSizes.Length > 0 ? nomialSizes[0] : graphics.MeasureString(" ", tempFont);
 
             // Draw the left.
-            expression?.Draw(graphics, tempFont, pen, brush, x, y + (size.Height - nomialSize.Height) / 2f);
+            expression?.Draw(graphics, tempFont, brush, pen, x, y + (size.Height - nomialSize.Height) / 2f);
             x += nomialSize.Width;
             for (int i = 1; i < (Expressions?.Count ?? 0); i++)
             {
@@ -194,7 +282,7 @@ namespace PrimerLibrary
                 }
 
                 // Draw the rest.
-                expression?.Draw(graphics, tempFont, pen, brush, x, y + (size.Height - nomialSize.Height) / 2f);
+                expression?.Draw(graphics, tempFont, brush, pen, x, y + (size.Height - nomialSize.Height) / 2f);
                 x += nomialSize.Width;
             }
         }
@@ -228,6 +316,74 @@ namespace PrimerLibrary
             }
 
             return new SizeF(width + Gap * 2, maxHeight);
+        }
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="brush">The brush.</param>
+        /// <param name="pen">The pen.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
+        /// <returns></returns>
+        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush? brush, Pen? pen, PointF location, bool drawBorders = false)
+        {
+            var size = GetSizes(graphics, font, out SizeF coefficientSize, out var operatorSizes, out var nomialSizes);
+            (var x, var y) = (location.X, location.Y);
+            var map = new HashSet<IRenderable>();
+
+            if (drawBorders)
+            {
+                using var dashedPen = new Pen(Color.Red, 0)
+                {
+                    DashStyle = DashStyle.Dash
+                };
+                map.Add(new RectangleElement(location, size, null, dashedPen));
+            }
+
+            using StringFormat stringFormat = new StringFormat
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+
+            map.UnionWith(Coefficient.Layout(graphics, font, brush, pen, new PointF(x, y + size.Height - coefficientSize.Height), drawBorders));
+            x += coefficientSize.Width;
+
+            var expression = Expressions?.Count > 0 ? Expressions[0] : null;
+            var operatorSize = operatorSizes.Length > 0 ? operatorSizes[0] : graphics.MeasureString("", font);
+            var nomialSize = nomialSizes.Length > 0 ? nomialSizes[0] : graphics.MeasureString(" ", font);
+
+            // Draw the left.
+            map.UnionWith(expression.Layout(graphics, font, brush, pen, new PointF(x, y + (size.Height - nomialSize.Height) / 2f), drawBorders));
+            x += nomialSize.Width;
+            for (int i = 1; i < (Expressions?.Count ?? 0); i++)
+            {
+                expression = Expressions?[i];
+                operatorSize = operatorSizes[i];
+                nomialSize = nomialSizes[i];
+
+                // Draw the Operator.
+                if (expression?.IsNegative ?? false)
+                {
+                    var operatorRect = new RectangleF(
+                        x + Gap,
+                        y,
+                        operatorSize.Width,
+                        size.Height
+                        );
+                    map.Add(new TextElement("-", font, brush, pen, operatorRect, stringFormat));
+                    x += operatorSize.Width;
+                }
+
+                // Draw the rest.
+                map.UnionWith(expression.Layout(graphics, font, brush, pen, new PointF(x, y + (size.Height - nomialSize.Height) / 2f), drawBorders));
+                x += nomialSize.Width;
+            }
+
+            return map;
         }
     }
 }

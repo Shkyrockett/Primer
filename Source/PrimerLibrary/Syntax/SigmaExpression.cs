@@ -10,7 +10,10 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
+using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using static System.Math;
 
 namespace PrimerLibrary
@@ -40,11 +43,6 @@ namespace PrimerLibrary
         private readonly IExpression Below;
 
         /// <summary>
-        /// The font size
-        /// </summary>
-        private float FontSize = 20;
-
-        /// <summary>
         /// Dimensions.
         /// </summary>
         private const float FootFraction = 0.2f;
@@ -57,14 +55,27 @@ namespace PrimerLibrary
 
         #region Constructors
         /// <summary>
-        /// Initialize the contents.
+        /// Initializes a new instance of the <see cref="SigmaExpression"/> class.
         /// </summary>
         /// <param name="contents">The contents.</param>
         /// <param name="above">The above.</param>
         /// <param name="below">The below.</param>
         /// <param name="editable">if set to <see langword="true" /> [editable].</param>
         public SigmaExpression(IExpression contents, IExpression above, IExpression below, bool editable = false)
+            : this(null, contents, above, below, editable)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SigmaExpression"/> class.
+        /// </summary>
+        /// <param name="parent">The parent.</param>
+        /// <param name="contents">The contents.</param>
+        /// <param name="above">The above.</param>
+        /// <param name="below">The below.</param>
+        /// <param name="editable">if set to <see langword="true" /> [editable].</param>
+        public SigmaExpression(IExpression? parent, IExpression contents, IExpression above, IExpression below, bool editable = false)
         {
+            Parent = parent;
             Contents = contents;
             Above = above;
             Below = below;
@@ -74,12 +85,36 @@ namespace PrimerLibrary
 
         #region Properties
         /// <summary>
+        /// Gets or sets the parent.
+        /// </summary>
+        /// <value>
+        /// The parent.
+        /// </value>
+        public IExpression? Parent { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sign of the expression.
+        /// </summary>
+        /// <value>
+        /// The sign of the expression. -1 for negative, +1 for positive, 0 for 0.
+        /// </value>
+        public int Sign { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether this instance is negative.
         /// </summary>
         /// <value>
         ///   <see langword="true" /> if this instance is negative; otherwise, <see langword="false" />.
         /// </value>
         public bool IsNegative { get; set; }
+
+        /// <summary>
+        /// Gets or sets the size of the font.
+        /// </summary>
+        /// <value>
+        /// The size of the font.
+        /// </value>
+        public float FontSize { get; set; } = 20;
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="CoefficientExpression"/> is editable.
@@ -89,6 +124,31 @@ namespace PrimerLibrary
         /// </value>
         public bool Editable { get; set; }
         #endregion
+
+        public IExpression Plus(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Add(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Negate(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Subtract(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Multiply(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Set font sizes for sub-equations.
@@ -108,11 +168,7 @@ namespace PrimerLibrary
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
         /// <returns></returns>
-        public SizeF GetSize(Graphics graphics, Font font)
-        {
-            GetSizes(graphics, font, out _, out _, out _, out SizeF our_size, out _, out _, out _, out _);
-            return our_size;
-        }
+        public SizeF GetSize(Graphics graphics, Font font) => GetSizes(graphics, font, out _, out _, out _, out _, out _, out _, out _);
 
         /// <summary>
         /// Get sizes.
@@ -127,7 +183,7 @@ namespace PrimerLibrary
         /// <param name="symbolAreaHeight">Height of the symbol area.</param>
         /// <param name="symbolWidth">Width of the symbol.</param>
         /// <param name="symbolHeight">Height of the symbol.</param>
-        private void GetSizes(Graphics graphics, Font font, out SizeF contentsSize, out SizeF aboveSize, out SizeF belowSize, out SizeF ourSize, out float symbolAreaWidth, out float symbolAreaHeight, out float symbolWidth, out float symbolHeight)
+        private SizeF GetSizes(Graphics graphics, Font font, out SizeF contentsSize, out SizeF aboveSize, out SizeF belowSize, out float symbolAreaWidth, out float symbolAreaHeight, out float symbolWidth, out float symbolHeight)
         {
             using var tempFont = new Font(font.FontFamily, FontSize, font.Style);
             contentsSize = Contents.GetSize(graphics, tempFont);
@@ -143,7 +199,7 @@ namespace PrimerLibrary
 
             var width = contentsSize.Width + symbolAreaWidth;
 
-            ourSize = new SizeF(width, height);
+            return new SizeF(width, height);
         }
 
         /// <summary>
@@ -151,19 +207,19 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The GDI graphics.</param>
         /// <param name="font">The font.</param>
-        /// <param name="pen">The pen.</param>
         /// <param name="brush">The brush.</param>
+        /// <param name="pen">The pen.</param>
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
-        public void Draw(Graphics graphics, Font font, Pen pen, Brush brush, float x, float y)
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float x, float y)
         {
             using var tempFont = new Font(font.FontFamily, FontSize, font.Style);
-            GetSizes(graphics, tempFont, out SizeF contents_size, out SizeF above_size, out SizeF below_size, out SizeF our_size, out var symbol_area_width, out var symbol_area_height, out var symbol_width, out var symbol_height);
+            var size = GetSizes(graphics, tempFont, out SizeF contents_size, out SizeF above_size, out SizeF below_size, out var symbol_area_width, out var symbol_area_height, out var symbol_width, out var symbol_height);
 
             // Draw Above.
             var above_x = x + (symbol_area_width - above_size.Width) / 2f;
-            var above_y = y + (our_size.Height - symbol_area_height) / 2f;
-            Above.Draw(graphics, tempFont, pen, brush, above_x, above_y);
+            var above_y = y + (size.Height - symbol_area_height) / 2f;
+            Above.Draw(graphics, tempFont, brush, pen, above_x, above_y);
 
             // Draw the sigma symbol.
             var x1 = x + (symbol_area_width - symbol_width) / 2f;
@@ -186,12 +242,41 @@ namespace PrimerLibrary
             // Draw Below.
             var below_x = x + (symbol_area_width - below_size.Width) / 2f;
             var below_y = y3;
-            Below.Draw(graphics, tempFont, pen, brush, below_x, below_y);
+            Below.Draw(graphics, tempFont, brush, pen, below_x, below_y);
 
             // Draw the contents.
             var contents_x = x + symbol_area_width;
-            var contents_y = y + (our_size.Height - contents_size.Height) / 2f;
-            Contents.Draw(graphics, tempFont, pen, brush, contents_x, contents_y);
+            var contents_y = y + (size.Height - contents_size.Height) / 2f;
+            Contents.Draw(graphics, tempFont, brush, pen, contents_x, contents_y);
+        }
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="brush">The brush.</param>
+        /// <param name="pen">The pen.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
+        /// <returns></returns>
+        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, PointF location, bool drawBorders = false)
+        {
+            var size = GetSizes(graphics, font, out SizeF contents_size, out SizeF above_size, out SizeF below_size, out var symbol_area_width, out var symbol_area_height, out var symbol_width, out var symbol_height);
+            var map = new HashSet<IRenderable>();
+
+            if (drawBorders)
+            {
+                using var dashedPen = new Pen(Color.Red, 0)
+                {
+                    DashStyle = DashStyle.Dash
+                };
+                map.Add(new RectangleElement(location, size, null, dashedPen));
+            }
+
+            // ToDo: Layout here.
+
+            return map;
         }
     }
 }

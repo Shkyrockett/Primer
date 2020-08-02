@@ -7,8 +7,8 @@ Vectors are a special case of matrix.
 | Representations | Name| Description |
 |:---:|---|---|
 | $[x\,y\,z]$ | Vector Matrix| visual representation of a vector |
-| $\overrightarrow{u},\overrightarrow{v},\overrightarrow{w}$ | Generic Vectors | common generic vectors. |
-| $\widehat{u},\widehat{v},\widehat{w}$ | Unit Vectors | common generic unit  vectors (length = 1). |
+| $\overrightarrow{u}$, $\overrightarrow{v}$, $\overrightarrow{w}$ | Generic Vectors | common generic vectors. |
+| $\widehat{u}$, $\widehat{v}$, $\widehat{w}$ | Unit Vectors | common generic unit  vectors (length = 1). |
 
 ## Vector Operations
 

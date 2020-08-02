@@ -2,7 +2,7 @@
 
 Text explaining the intended method goes here.
 
-### Method Header Prototype
+## Method Header Prototype
 
 ```c#
     public static (Type r1, Type r2) Name(Type p1, Type p2)

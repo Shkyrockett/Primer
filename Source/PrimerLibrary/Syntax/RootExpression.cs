@@ -11,7 +11,9 @@
 // </remarks>
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace PrimerLibrary
 {
@@ -48,27 +50,49 @@ namespace PrimerLibrary
         /// The angle for the radical sign.
         /// </summary>
         private readonly float Angle = 80f * MathF.PI / 180f;
-
-        /// <summary>
-        /// The font size
-        /// </summary>
-        private float FontSize = 20;
         #endregion
 
         #region Constructors
         /// <summary>
-        /// Initialize the equation.
+        /// Initializes a new instance of the <see cref="RootExpression"/> class.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="radicand">The radicand.</param>
         public RootExpression(IExpression index, IExpression radicand)
+            : this(null, index, radicand)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RootExpression"/> class.
+        /// </summary>
+        /// <param name="parent">The parent.</param>
+        /// <param name="index">The index.</param>
+        /// <param name="radicand">The radicand.</param>
+        public RootExpression(IExpression? parent, IExpression index, IExpression radicand)
         {
+            Parent = parent;
             Index = index;
             Radicand = radicand;
         }
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Gets or sets the parent.
+        /// </summary>
+        /// <value>
+        /// The parent.
+        /// </value>
+        public IExpression? Parent { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sign of the expression.
+        /// </summary>
+        /// <value>
+        /// The sign of the expression. -1 for negative, +1 for positive, 0 for 0.
+        /// </value>
+        public int Sign { get; set; }
+
         /// <summary>
         /// Gets or sets a value indicating whether this instance is negative.
         /// </summary>
@@ -78,6 +102,14 @@ namespace PrimerLibrary
         public bool IsNegative { get; set; }
 
         /// <summary>
+        /// Gets or sets the font size1.
+        /// </summary>
+        /// <value>
+        /// The font size1.
+        /// </value>
+        public float FontSize { get; set; } = 20;
+
+        /// <summary>
         /// Gets a value indicating whether this <see cref="CoefficientExpression"/> is editable.
         /// </summary>
         /// <value>
@@ -85,6 +117,31 @@ namespace PrimerLibrary
         /// </value>
         public bool Editable { get; set; }
         #endregion
+
+        public IExpression Plus(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Add(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Negate(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Subtract(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IExpression Multiply(IExpression expression)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Set font sizes for sub-equations.
@@ -139,13 +196,13 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The GDI graphics.</param>
         /// <param name="font">The font.</param>
-        /// <param name="pen">The pen.</param>
         /// <param name="brush">The brush.</param>
+        /// <param name="pen">The pen.</param>
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
-        public void Draw(Graphics graphics, Font font, Pen pen, Brush brush, float x, float y)
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float x, float y)
         {
-            var our_size = GetSizes(graphics, font, out SizeF index_size, out SizeF radicand_size);
+            var size = GetSizes(graphics, font, out SizeF index_size, out SizeF radicand_size);
             using var tempFont = new Font(font.FontFamily, FontSize, font.Style);
 
             // Draw the radical symbol.
@@ -153,11 +210,11 @@ namespace PrimerLibrary
             float sin = MathF.Sin(Angle);
             float offset = 2f;
             var x1 = x + index_size.Width + ExtraWidth;
-            var x2 = x1 + cos * our_size.Height / 2f;
-            var x3 = x2 + cos * our_size.Height;
-            var x4 = x + our_size.Width;
-            var y1 = y + our_size.Height / 2f + ExtraHeight;
-            var y2 = y + our_size.Height + ExtraHeight;
+            var x2 = x1 + cos * size.Height / 2f;
+            var x3 = x2 + cos * size.Height;
+            var x4 = x + size.Width;
+            var y1 = y + size.Height / 2f + ExtraHeight;
+            var y2 = y + size.Height + ExtraHeight;
             var y3 = y;
             var y4 = y;
             PointF[] pts =
@@ -182,13 +239,42 @@ namespace PrimerLibrary
 
             // Draw the index.
             var index_x = x + ExtraWidth;
-            var index_y = y + (our_size.Height / 2f - index_size.Height) / 2f;
-            Index.Draw(graphics, tempFont, pen, brush, index_x, index_y);
+            var index_y = y + (size.Height / 2f - index_size.Height) / 2f;
+            Index.Draw(graphics, tempFont, brush, pen, index_x, index_y);
 
             // Draw the radicand.
             var randicand_x = x3;
-            var randicand_y = y + ExtraHeight + (our_size.Height - ExtraHeight - radicand_size.Height) / 2f;
-            Radicand.Draw(graphics, tempFont, pen, brush, randicand_x, randicand_y);
+            var randicand_y = y + ExtraHeight + (size.Height - ExtraHeight - radicand_size.Height) / 2f;
+            Radicand.Draw(graphics, tempFont, brush, pen, randicand_x, randicand_y);
+        }
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="brush">The brush.</param>
+        /// <param name="pen">The pen.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
+        /// <returns></returns>
+        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, PointF location, bool drawBorders = false)
+        {
+            var size = GetSizes(graphics, font, out SizeF index_size, out SizeF radicand_size);
+            var map = new HashSet<IRenderable>();
+
+            if (drawBorders)
+            {
+                using var dashedPen = new Pen(Color.Red, 0)
+                {
+                    DashStyle = DashStyle.Dash
+                };
+                map.Add(new RectangleElement(location, size, null, dashedPen));
+            }
+
+            // ToDo: Layout here.
+
+            return map;
         }
     }
 }

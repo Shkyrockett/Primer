@@ -10,7 +10,10 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
+using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
 using static System.Math;
 
@@ -25,11 +28,6 @@ namespace PrimerLibrary
     {
         #region Fields
         /// <summary>
-        /// The font size
-        /// </summary>
-        private float FontSize = 20;
-
-        /// <summary>
         /// Dimensions.
         /// </summary>
         private const float WidthFraction = 0.2f;
@@ -37,14 +35,27 @@ namespace PrimerLibrary
 
         #region Constructors
         /// <summary>
-        /// Initialize the contents.
+        /// Initializes a new instance of the <see cref="IntegralExpression"/> class.
         /// </summary>
         /// <param name="contents">The contents.</param>
         /// <param name="above">The above.</param>
         /// <param name="below">The below.</param>
         /// <param name="editable">if set to <see langword="true" /> [editable].</param>
         public IntegralExpression(IExpression contents, IExpression above, IExpression below, bool editable = false)
+            : this(null, contents, above, below, editable)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IntegralExpression"/> class.
+        /// </summary>
+        /// <param name="parent">The parent.</param>
+        /// <param name="contents">The contents.</param>
+        /// <param name="above">The above.</param>
+        /// <param name="below">The below.</param>
+        /// <param name="editable">if set to <see langword="true" /> [editable].</param>
+        public IntegralExpression(IExpression? parent, IExpression contents, IExpression above, IExpression below, bool editable = false)
         {
+            Parent = parent;
             Contents = contents;
             Above = above;
             Below = below;
@@ -79,6 +90,23 @@ namespace PrimerLibrary
         /// </value>
         [JsonPropertyName("Below")]
         public IExpression Below { get; set; }
+
+        /// <summary>
+        /// Gets or sets the parent.
+        /// </summary>
+        /// <value>
+        /// The parent.
+        /// </value>
+        [JsonIgnore()]
+        public IExpression? Parent { get; set; }
+
+        /// <summary>
+        /// Gets or sets the size of the font.
+        /// </summary>
+        /// <value>
+        /// The size of the font.
+        /// </value>
+        public float FontSize { get; set; } = 20;
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="CoefficientExpression"/> is editable.
@@ -150,18 +178,18 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The GDI graphics.</param>
         /// <param name="font">The font.</param>
-        /// <param name="pen">The pen.</param>
         /// <param name="brush">The brush.</param>
+        /// <param name="pen">The pen.</param>
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
-        public void Draw(Graphics graphics, Font font, Pen pen, Brush brush, float x, float y)
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float x, float y)
         {
-            SizeF size = GetSizes(graphics, font, out SizeF contents_size, out SizeF above_size, out SizeF below_size, out var symbol_area_width, out _, out var symbol_width, out var symbol_height);
             using var tempFont = new Font(font.FontFamily, FontSize, font.Style);
+            var size = GetSizes(graphics, font, out SizeF contents_size, out SizeF above_size, out SizeF below_size, out var symbol_area_width, out _, out var symbol_width, out var symbol_height);
 
             // Draw Above.
             var above_x = x + (symbol_area_width - above_size.Width) / 2f;
-            Above.Draw(graphics, tempFont, pen, brush, above_x, y);
+            Above.Draw(graphics, tempFont, brush, pen, above_x, y);
 
             // Draw the sigma symbol.
             var x1 = x + (symbol_area_width + symbol_width) / 2f;
@@ -192,12 +220,41 @@ namespace PrimerLibrary
             // Draw Below.
             var below_x = x + (symbol_area_width - below_size.Width) / 2f;
             var below_y = y4;
-            Below.Draw(graphics, tempFont, pen, brush, below_x, below_y);
+            Below.Draw(graphics, tempFont, brush, pen, below_x, below_y);
 
             // Draw the contents.
             var contents_x = x + symbol_area_width;
             var contents_y = y + (size.Height - contents_size.Height) / 2f;
-            Contents.Draw(graphics, tempFont, pen, brush, contents_x, contents_y);
+            Contents.Draw(graphics, tempFont, brush, pen, contents_x, contents_y);
+        }
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="brush">The brush.</param>
+        /// <param name="pen">The pen.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
+        /// <returns></returns>
+        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, PointF location, bool drawBorders = false)
+        {
+            var size = GetSizes(graphics, font, out SizeF contents_size, out SizeF above_size, out SizeF below_size, out var symbol_area_width, out _, out var symbol_width, out var symbol_height);
+            var map = new HashSet<IRenderable>();
+
+            if (drawBorders)
+            {
+                using var dashedPen = new Pen(Color.Red, 0)
+                {
+                    DashStyle = DashStyle.Dash
+                };
+                map.Add(new RectangleElement(location, size, null, dashedPen));
+            }
+
+            // ToDo: Layout here.
+
+            return map;
         }
     }
 }
