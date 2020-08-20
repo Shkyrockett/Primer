@@ -263,7 +263,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float QuadInOut(float t, float b, float c, float d) => ((t /= d / 2f) < 1) ? (c / 2f * t * t) + b : (-c / 2f * (((--t) * (t - 2f)) - 1f)) + b;
+        public static float QuadInOut(float t, float b, float c, float d) => ((t /= d * 0.5f) < 1) ? (c * 0.5f * t * t) + b : (-c * 0.5f * (((--t) * (t - 2f)) - 1f)) + b;
 
         /// <summary>
         /// Easing equation function for a quadratic (t^2) easing in/out:
@@ -292,7 +292,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float QuadOutIn(float t, float b, float c, float d) => (t < d / 2f) ? QuadOut(t * 2f, b, c / 2f, d) : QuadIn((t * 2f) - d, b + (c / 2f), c / 2f, d);
+        public static float QuadOutIn(float t, float b, float c, float d) => (t < d * 0.5f) ? QuadOut(t * 2f, b, c * 0.5f, d) : QuadIn((t * 2f) - d, b + (c * 0.5f), c * 0.5f, d);
 
         /// <summary>
         /// Easing equation function for a quadratic (t^2) easing out/in:
@@ -381,7 +381,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float CubicInOut(float t, float b, float c, float d) => ((t /= d / 2f) < 1f) ? (c / 2f * t * t * t) + b : (c / 2f * (((t -= 2f) * t * t) + 2f)) + b;
+        public static float CubicInOut(float t, float b, float c, float d) => ((t /= d * 0.5f) < 1f) ? (c * 0.5f * t * t * t) + b : (c * 0.5f * (((t -= 2f) * t * t) + 2f)) + b;
 
         /// <summary>
         /// Cubic in and out.
@@ -409,7 +409,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float CubicOutIn(float t, float b, float c, float d) => (t < d / 2f) ? CubicOut(t * 2f, b, c / 2f, d) : CubicIn((t * 2f) - d, b + (c / 2f), c / 2f, d);
+        public static float CubicOutIn(float t, float b, float c, float d) => (t < d * 0.5f) ? CubicOut(t * 2f, b, c * 0.5f, d) : CubicIn((t * 2f) - d, b + (c * 0.5f), c * 0.5f, d);
 
         /// <summary>
         /// Easing equation function for a cubic (t^3) easing out/in:
@@ -497,7 +497,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float QuartInOut(float t, float b, float c, float d) => ((t /= d / 2f) < 1f) ? (c / 2f * t * t * t * t) + b : (-c / 2f * (((t -= 2f) * t * t * t) - 2f)) + b;
+        public static float QuartInOut(float t, float b, float c, float d) => ((t /= d * 0.5f) < 1f) ? (c * 0.5f * t * t * t * t) + b : (-c * 0.5f * (((t -= 2f) * t * t * t) - 2f)) + b;
 
         /// <summary>
         /// Quart in and out.
@@ -525,7 +525,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float QuartOutIn(float t, float b, float c, float d) => (t < d / 2d) ? QuartOut(t * 2f, b, c / 2f, d) : QuartIn((t * 2f) - d, b + (c / 2f), c / 2f, d);
+        public static float QuartOutIn(float t, float b, float c, float d) => (t < d / 2d) ? QuartOut(t * 2f, b, c * 0.5f, d) : QuartIn((t * 2f) - d, b + (c * 0.5f), c * 0.5f, d);
 
         /// <summary>
         /// Easing equation function for a quartic (t^4) easing out/in:
@@ -613,7 +613,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float QuintInOut(float t, float b, float c, float d) => ((t /= d / 2f) < 1f) ? (c / 2f * t * t * t * t * t) + b : (c / 2f * (((t -= 2f) * t * t * t * t) + 2f)) + b;
+        public static float QuintInOut(float t, float b, float c, float d) => ((t /= d * 0.5f) < 1f) ? (c * 0.5f * t * t * t * t * t) + b : (c * 0.5f * (((t -= 2f) * t * t * t * t) + 2f)) + b;
 
         /// <summary>
         /// Quint in and out.
@@ -641,7 +641,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float QuintOutIn(float t, float b, float c, float d) => (t < d / 2f) ? QuintOut(t * 2f, b, c / 2f, d) : QuintIn((t * 2f) - d, b + (c / 2f), c / 2f, d);
+        public static float QuintOutIn(float t, float b, float c, float d) => (t < d * 0.5f) ? QuintOut(t * 2f, b, c * 0.5f, d) : QuintIn((t * 2f) - d, b + (c * 0.5f), c * 0.5f, d);
 
         /// <summary>
         /// Easing equation function for a quintic (t^5) easing in/out:
@@ -729,7 +729,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float ExpoInOut(float t, float b, float c, float d) => (t == 0f) ? b : (t == d) ? b + c : ((t /= d / 2f) < 1f) ? (c / 2f * Pow(2f, 10f * (t - 1f))) + b : (c / 2f * (-Pow(2f, -10f * --t) + 2f)) + b;
+        public static float ExpoInOut(float t, float b, float c, float d) => (t == 0f) ? b : (t == d) ? b + c : ((t /= d * 0.5f) < 1f) ? (c * 0.5f * Pow(2f, 10f * (t - 1f))) + b : (c * 0.5f * (-Pow(2f, -10f * --t) + 2f)) + b;
 
         /// <summary>
         /// Exponential in and out.
@@ -757,7 +757,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float ExpoOutIn(float t, float b, float c, float d) => (t < d / 2f) ? ExpoOut(t * 2f, b, c / 2f, d) : ExpoIn((t * 2f) - d, b + (c / 2f), c / 2f, d);
+        public static float ExpoOutIn(float t, float b, float c, float d) => (t < d * 0.5f) ? ExpoOut(t * 2f, b, c * 0.5f, d) : ExpoIn((t * 2f) - d, b + (c * 0.5f), c * 0.5f, d);
 
         /// <summary>
         /// Easing equation function for an exponential (2^t) easing out/in:
@@ -960,7 +960,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float CircInOut(float t, float b, float c, float d) => ((t /= d / 2f) < 1f) ? (-c / 2f * (Sqrt(1f - (t * t)) - 1f)) + b : (c / 2f * (Sqrt(1f - ((t -= 2f) * t)) + 1f)) + b;
+        public static float CircInOut(float t, float b, float c, float d) => ((t /= d * 0.5f) < 1f) ? (-c * 0.5f * (Sqrt(1f - (t * t)) - 1f)) + b : (c * 0.5f * (Sqrt(1f - ((t -= 2f) * t)) + 1f)) + b;
 
         /// <summary>
         /// Circle in and out.
@@ -988,7 +988,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float CircOutIn(float t, float b, float c, float d) => (t < d / 2f) ? CircOut(t * 2f, b, c / 2f, d) : CircIn((t * 2f) - d, b + (c / 2f), c / 2f, d);
+        public static float CircOutIn(float t, float b, float c, float d) => (t < d * 0.5f) ? CircOut(t * 2f, b, c * 0.5f, d) : CircIn((t * 2f) - d, b + (c * 0.5f), c * 0.5f, d);
 
         /// <summary>
         /// Easing equation function for a circular (sqrt(1-t^2)) easing in/out:
@@ -1099,7 +1099,7 @@ namespace PrimerLibrary
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ElasticInOut(float t, float b, float c, float d)
         {
-            if ((t /= d / 2f) == 2f)
+            if ((t /= d * 0.5f) == 2f)
             {
                 return b + c;
             }
@@ -1141,7 +1141,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float ElasticOutIn(float t, float b, float c, float d) => (t < d / 2f) ? ElasticOut(t * 2f, b, c / 2f, d) : ElasticIn((t * 2f) - d, b + (c / 2f), c / 2f, d);
+        public static float ElasticOutIn(float t, float b, float c, float d) => (t < d * 0.5f) ? ElasticOut(t * 2f, b, c * 0.5f, d) : ElasticIn((t * 2f) - d, b + (c * 0.5f), c * 0.5f, d);
 
         /// <summary>
         /// Easing equation function for an elastic (exponentially decaying sine wave) easing out/in:
@@ -1283,7 +1283,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float BounceEaseInOut(float t, float b, float c, float d) => t < d / 2f ? (BounceIn(t * 2f, 0f, c, d) * 0.5f) + b : (BounceOut((t * 2f) - d, 0f, c, d) * 0.5f) + (c * 0.5f) + b;
+        public static float BounceEaseInOut(float t, float b, float c, float d) => t < d * 0.5f ? (BounceIn(t * 2f, 0f, c, d) * 0.5f) + b : (BounceOut((t * 2f) - d, 0f, c, d) * 0.5f) + (c * 0.5f) + b;
 
         /// <summary>
         /// Bounce in and out.
@@ -1351,7 +1351,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float BounceOutIn(float t, float b, float c, float d) => (t < d / 2f) ? BounceOut(t * 2f, b, c / 2f, d) : BounceIn((t * 2f) - d, b + (c / 2f), c / 2f, d);
+        public static float BounceOutIn(float t, float b, float c, float d) => (t < d * 0.5f) ? BounceOut(t * 2f, b, c * 0.5f, d) : BounceIn((t * 2f) - d, b + (c * 0.5f), c * 0.5f, d);
 
         /// <summary>
         /// Easing equation function for a bounce (exponentially decaying parabolic bounce) easing out/in:
@@ -1441,7 +1441,7 @@ namespace PrimerLibrary
         public static float BackInOut(float t, float b, float c, float d)
         {
             var s = 1.70158f;
-            return ((t /= d / 2f) < 1f) ? (c / 2f * (t * t * ((((s *= 1.525f) + 1f) * t) - s))) + b : (c / 2f * (((t -= 2f) * t * ((((s *= 1.525f) + 1f) * t) + s)) + 2f)) + b;
+            return ((t /= d * 0.5f) < 1f) ? (c * 0.5f * (t * t * ((((s *= 1.525f) + 1f) * t) - s))) + b : (c * 0.5f * (((t -= 2f) * t * ((((s *= 1.525f) + 1f) * t) + s)) + 2f)) + b;
         }
 
         /// <summary>
@@ -1480,7 +1480,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float BackOutIn(float t, float b, float c, float d) => (t < d / 2f) ? BackOut(t * 2f, b, c / 2f, d) : BackIn((t * 2f) - d, b + (c / 2f), c / 2f, d);
+        public static float BackOutIn(float t, float b, float c, float d) => (t < d * 0.5f) ? BackOut(t * 2f, b, c * 0.5f, d) : BackIn((t * 2f) - d, b + (c * 0.5f), c * 0.5f, d);
 
         /// <summary>
         /// Easing equation function for a back (overshooting cubic easing: (s+1)*t^3 - s*t^2) easing out/in:

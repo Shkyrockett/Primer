@@ -20,21 +20,5 @@
         /// The bar style.
         /// </value>
         BarStyles GroupingStyle { get; set; }
-
-        /// <summary>
-        /// Gets or sets the x margin.
-        /// </summary>
-        /// <value>
-        /// The x margin.
-        /// </value>
-        float XMargin { get; set; }
-
-        /// <summary>
-        /// Gets or sets the y margin.
-        /// </summary>
-        /// <value>
-        /// The y margin.
-        /// </value>
-        float YMargin { get; set; }
     }
 }

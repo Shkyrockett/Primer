@@ -1,4 +1,4 @@
-﻿// <copyright file="PowerExpression.cs" company="Shkyrockett" >
+﻿// <copyright file="PowerFactor.cs" company="Shkyrockett" >
 //     Copyright © 2020 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
@@ -10,10 +10,10 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text.Json.Serialization;
 
 namespace PrimerLibrary
 {
@@ -23,65 +23,48 @@ namespace PrimerLibrary
     /// <seealso cref="PrimerLibrary.IExpression" />
     /// <seealso cref="PrimerLibrary.INegatable" />
     /// <seealso cref="PrimerLibrary.IVariable" />
-    public class PowerExpression
+    public class PowerFactor
         : IExpression, INegatable, IVariable, IEditable
     {
-        #region Fields
-        /// <summary>
-        /// The offset
-        /// </summary>
-        public float Offset = 0.5f;
-        #endregion
-
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="PowerExpression"/> class.
+        /// Initializes a new instance of the <see cref="PowerFactor"/> class.
         /// </summary>
         /// <param name="baseText">The base text.</param>
         /// <param name="powerText">The power text.</param>
         /// <param name="editable">if set to <see langword="true" /> [editable].</param>
-        public PowerExpression(string baseText, string powerText, bool editable = false)
-            : this(null, new TextExpression(baseText), new TextExpression(powerText), editable)
+        public PowerFactor(string baseText, string powerText, bool editable = false)
+            : this(new TextExpression(baseText), new TextExpression(powerText), editable)
         { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PowerExpression"/> class.
-        /// </summary>
-        /// <param name="parent">The parent.</param>
-        /// <param name="baseText">The base text.</param>
-        /// <param name="powerText">The power text.</param>
-        /// <param name="editable">if set to <see langword="true" /> [editable].</param>
-        public PowerExpression(IExpression? parent, string baseText, string powerText, bool editable = false)
-            : this(parent, new TextExpression(baseText), new TextExpression(powerText), editable)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PowerExpression"/> class.
-        /// </summary>
-        /// <param name="baseExpression">The base expression.</param>
-        /// <param name="powerExpression">The power expression.</param>
-        /// <param name="editable">if set to <see langword="true" /> [editable].</param>
-        public PowerExpression(IExpression baseExpression, IExpression powerExpression, bool editable = false)
-            : this(null, baseExpression, powerExpression, editable)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PowerExpression"/> class.
+        /// Initializes a new instance of the <see cref="PowerFactor"/> class.
         /// </summary>
         /// <param name="parent">The parent.</param>
         /// <param name="baseExpression">The base expression.</param>
         /// <param name="powerExpression">The power expression.</param>
         /// <param name="editable">if set to <see langword="true" /> [editable].</param>
-        public PowerExpression(IExpression? parent, IExpression baseExpression, IExpression powerExpression, bool editable = false)
+        public PowerFactor(IExpression baseExpression, IExpression powerExpression, bool editable = false)
         {
-            Parent = parent;
+            Parent = null;
             Base = baseExpression;
+            if (Base is IExpression b) b.Parent = this;
             Exponent = powerExpression;
+            if (Exponent is IExpression e) e.Parent = this;
             Editable = editable;
         }
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Gets or sets the parent.
+        /// </summary>
+        /// <value>
+        /// The parent.
+        /// </value>
+        [JsonIgnore]
+        public IExpression? Parent { get; set; }
+
         /// <summary>
         /// Gets the base.
         /// </summary>
@@ -97,14 +80,6 @@ namespace PrimerLibrary
         /// The exponent.
         /// </value>
         public IExpression Exponent { get; }
-
-        /// <summary>
-        /// Gets or sets the parent.
-        /// </summary>
-        /// <value>
-        /// The parent.
-        /// </value>
-        public IExpression? Parent { get; set; }
 
         /// <summary>
         /// Gets or sets the sign of the expression.
@@ -123,15 +98,7 @@ namespace PrimerLibrary
         public bool IsNegative { get; set; }
 
         /// <summary>
-        /// Gets or sets the size of the font.
-        /// </summary>
-        /// <value>
-        /// The size of the font.
-        /// </value>
-        public float FontSize { get; set; } = 20f;
-
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="CoefficientExpression"/> is editable.
+        /// Gets a value indicating whether this <see cref="CoefficientFactor"/> is editable.
         /// </summary>
         /// <value>
         ///   <see langword="true" /> if editable; otherwise, <see langword="false" />.
@@ -139,40 +106,22 @@ namespace PrimerLibrary
         public bool Editable { get; set; }
         #endregion
 
-        public IExpression Plus(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IExpression Add(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IExpression Negate(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IExpression Subtract(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IExpression Multiply(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
-        /// Set font sizes for sub-equations.
+        /// Return various sizes.
         /// </summary>
-        /// <param name="fontSize"></param>
-        public void SetFontSizes(float fontSize)
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="scale">The scale.</param>
+        /// <param name="baseSize">Size of the base.</param>
+        /// <param name="powerSize">Size of the power.</param>
+        /// <returns></returns>
+        private SizeF Dimensions(Graphics graphics, Font font, float scale, out SizeF baseSize, out SizeF powerSize)
         {
-            FontSize = fontSize;
-            Base.SetFontSizes(fontSize);
-            Exponent.SetFontSizes(fontSize * 0.75f);
+            using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
+            baseSize = Base?.Dimensions(graphics, font, scale) ?? graphics.MeasureString(" ", tempFont, PointF.Empty, StringFormat.GenericTypographic);
+            using var smallFont = new Font(font.FontFamily, font.Size * MathConstants.ExponentScale, font.Style);
+            powerSize = Exponent?.Dimensions(graphics, font, scale * MathConstants.ExponentScale) ?? graphics.MeasureString(" ", smallFont, PointF.Empty, StringFormat.GenericTypographic);
+            return new SizeF(baseSize.Width + powerSize.Width, baseSize.Height + (powerSize.Height * MathConstants.ExponentOffsetScale));
         }
 
         /// <summary>
@@ -180,8 +129,9 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
+        /// <param name="scale">The scale.</param>
         /// <returns></returns>
-        public SizeF GetSize(Graphics graphics, Font font) => GetSizes(graphics, font, Offset, out _, out _);
+        public SizeF Dimensions(Graphics graphics, Font font, float scale) => Dimensions(graphics, font, scale, out _, out _);
 
         /// <summary>
         /// Draw the equation.
@@ -190,11 +140,13 @@ namespace PrimerLibrary
         /// <param name="font">The font.</param>
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
+        /// <param name="scale">The scale.</param>
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float x, float y)
+        /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
         {
-            var size = GetSizes(graphics, font, Offset, out SizeF baseSize, out SizeF powerSize);
+            var size = Dimensions(graphics, font, scale, out SizeF baseSize, out SizeF powerSize);
 
             if (Base is null && Exponent is null)
             {
@@ -206,10 +158,10 @@ namespace PrimerLibrary
             }
 
             // Draw the base.
-            var base_y = y + powerSize.Height * Offset;
+            var baseY = y + (powerSize.Height * MathConstants.ExponentOffsetScale);
             if (Base is not null)
             {
-                Base.Draw(graphics, font, brush, pen, x, base_y);
+                Base.Draw(graphics, font, brush, pen, scale * MathConstants.ExponentScale, x, baseY, drawBounds);
             }
             else
             {
@@ -221,10 +173,10 @@ namespace PrimerLibrary
             }
 
             // Draw the power.
-            var power_x = x + baseSize.Width;
+            var powerX = x + baseSize.Width;
             if (Exponent is not null)
             {
-                Exponent.Draw(graphics, font, brush, pen, power_x, y);
+                Exponent?.Draw(graphics, font, brush, pen, scale * MathConstants.ExponentScale, powerX, y, drawBounds);
             }
             else
             {
@@ -237,36 +189,19 @@ namespace PrimerLibrary
         }
 
         /// <summary>
-        /// Return various sizes.
-        /// </summary>
-        /// <param name="graphics">The graphics.</param>
-        /// <param name="font">The font.</param>
-        /// <param name="offset">The offset.</param>
-        /// <param name="baseSize">Size of the base.</param>
-        /// <param name="powerSize">Size of the power.</param>
-        /// <returns></returns>
-        private SizeF GetSizes(Graphics graphics, Font font, float offset, out SizeF baseSize, out SizeF powerSize)
-        {
-            using var tempFont = new Font(font.FontFamily, FontSize, font.Style);
-            baseSize = Base?.GetSize(graphics, tempFont) ?? graphics.MeasureString(" ", tempFont);
-            using var smallFont = new Font(font.FontFamily, FontSize * offset, font.Style);
-            powerSize = Exponent?.GetSize(graphics, smallFont) ?? graphics.MeasureString(" ", smallFont);
-            return new SizeF(baseSize.Width + powerSize.Width, baseSize.Height + powerSize.Height * offset);
-        }
-
-        /// <summary>
         /// Layouts the specified graphics.
         /// </summary>
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
+        /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
         /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
         /// <returns></returns>
-        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, PointF location, bool drawBorders = false)
+        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBorders = false)
         {
-            var size = GetSizes(graphics, font, Offset, out SizeF baseSize, out SizeF powerSize);
+            var size = Dimensions(graphics, font, scale, out SizeF baseSize, out SizeF powerSize);
             var map = new HashSet<IRenderable>();
 
             if (drawBorders)

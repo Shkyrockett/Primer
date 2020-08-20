@@ -1,4 +1,4 @@
-﻿// <copyright file="INegatable.cs" company="Shkyrockett" >
+﻿// <copyright file="IFactor.cs" company="Shkyrockett" >
 //     Copyright © 2020 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
@@ -9,23 +9,21 @@
 // <remarks>
 // </remarks>
 
-using static System.Math;
-
 namespace PrimerLibrary
 {
     /// <summary>
     /// 
     /// </summary>
     /// <seealso cref="PrimerLibrary.IExpression" />
-    public interface INegatable
-        : IExpression, IArithmatic
+    public interface IFactor
+        : IExpression
     {
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is negative.
+        /// Gets or sets the sequence.
         /// </summary>
         /// <value>
-        ///   <see langword="true" /> if this instance is negative; otherwise, <see langword="false" />.
+        /// The sequence.
         /// </value>
-        bool IsNegative { get { return Sign(Sign) == -1d; } set { Sign *= value == (Sign(Sign) == -1d) ? 1 : -1; } }
+        ICoefficient? Sequence { get; set; }
     }
 }

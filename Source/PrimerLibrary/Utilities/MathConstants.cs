@@ -8,6 +8,81 @@ namespace PrimerLibrary
     public static class MathConstants
     {
         /// <summary>
+        /// The limit scale.
+        /// </summary>
+        public const float LimitScale = 1f / 2f;
+
+        /// <summary>
+        /// The index scale.
+        /// </summary>
+        public const float IndexScale = 1f / 2f;
+
+        /// <summary>
+        /// The exponent scale.
+        /// </summary>
+        public const float ExponentScale = 3f / 4f;
+
+        /// <summary>
+        /// The exponent offset scale.
+        /// </summary>
+        public const float ExponentOffsetScale = 1f / 4f;
+
+        /// <summary>
+        /// The sequence scale.
+        /// </summary>
+        public const float SequenceScale = 3f / 4f;
+
+        /// <summary>
+        /// The sequence offset scale.
+        /// </summary>
+        public const float SequenceOffsetScale = 1f / 4f;
+
+        /// <summary>
+        /// The zero.
+        /// </summary>
+        public const float Zero = 0f;
+
+        /// <summary>
+        /// The one quarter.
+        /// </summary>
+        public const float OneQuarter = 1f / 4f;
+
+        /// <summary>
+        /// The one third.
+        /// </summary>
+        public static float OneThird = 1f / 3f;
+
+        /// <summary>
+        /// The one half.
+        /// </summary>
+        public static float OneHalf = 1f / 2f;
+
+        /// <summary>
+        /// The three quarters.
+        /// </summary>
+        public static float ThreeQuarters = 3f / 4f;
+
+        /// <summary>
+        /// The two thirds.
+        /// </summary>
+        public static float TwoThirds = 2f / 3f;
+
+        /// <summary>
+        /// The one.
+        /// </summary>
+        public static float One = 1f;
+
+        /// <summary>
+        /// The one and a half.
+        /// </summary>
+        public static float OneAndAHalf = 3f / 2f;
+
+        /// <summary>
+        /// The two.
+        /// </summary>
+        public static float Two = 2f;
+
+        /// <summary>
         /// Represents the ratio of the radius of a circle to the first quarter of that circle.
         /// One quarter Tau or half Pi. A right angle in mathematics.
         /// </summary>

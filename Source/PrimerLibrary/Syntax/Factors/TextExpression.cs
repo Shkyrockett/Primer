@@ -1,4 +1,4 @@
-﻿// <copyright file="CoefficientExpression.cs" company="Shkyrockett" >
+﻿// <copyright file="TextExpression.cs" company="Shkyrockett" >
 //     Copyright © 2020 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
@@ -10,11 +10,10 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using static System.Math;
+using System.Text.Json.Serialization;
 
 namespace PrimerLibrary
 {
@@ -23,29 +22,19 @@ namespace PrimerLibrary
     /// </summary>
     /// <seealso cref="PrimerLibrary.IExpression" />
     /// <seealso cref="PrimerLibrary.INegatable" />
-    public class CoefficientExpression
-        : IExpression, INegatable, IEditable
+    public class TextExpression
+        : IExpression, IEditable
     {
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="CoefficientExpression"/> class.
+        /// Initializes a new instance of the <see cref="TextExpression" /> class.
         /// </summary>
-        /// <param name="value">The value.</param>
+        /// <param name="text">The text.</param>
         /// <param name="editable">if set to <see langword="true" /> [editable].</param>
-        public CoefficientExpression(double value = 1, bool editable = false)
-            : this(null, value, editable)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CoefficientExpression"/> class.
-        /// </summary>
-        /// <param name="parent">The parent.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="editable">if set to <see langword="true" /> [editable].</param>
-        public CoefficientExpression(IExpression? parent, double value = 1, bool editable = false)
+        public TextExpression(string text, bool editable = false)
         {
-            Parent = parent;
-            Value = value;
+            Parent = null;
+            Text = text;
             Editable = editable;
         }
         #endregion
@@ -57,7 +46,7 @@ namespace PrimerLibrary
         /// <value>
         /// The text.
         /// </value>
-        public double Value { get; set; } = 1;
+        public string Text { get; set; }
 
         /// <summary>
         /// Gets or sets the parent.
@@ -65,6 +54,7 @@ namespace PrimerLibrary
         /// <value>
         /// The parent.
         /// </value>
+        [JsonIgnore]
         public IExpression? Parent { get; set; }
 
         /// <summary>
@@ -76,23 +66,7 @@ namespace PrimerLibrary
         public int Sign { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is negative.
-        /// </summary>
-        /// <value>
-        ///   <see langword="true" /> if this instance is negative; otherwise, <see langword="false" />.
-        /// </value>
-        public bool IsNegative { get { return Sign(Value) == -1d; } set { Value *= value == (Sign(Value) == -1d) ? 1 : -1; } }
-
-        /// <summary>
-        /// Gets or sets the size of the font.
-        /// </summary>
-        /// <value>
-        /// The size of the font.
-        /// </value>
-        public float FontSize { get; set; } = 20;
-
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="CoefficientExpression"/> is editable.
+        /// Gets a value indicating whether this <see cref="CoefficientFactor"/> is editable.
         /// </summary>
         /// <value>
         ///   <see langword="true" /> if editable; otherwise, <see langword="false" />.
@@ -100,47 +74,17 @@ namespace PrimerLibrary
         public bool Editable { get; set; }
         #endregion
 
-        public IExpression Plus(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IExpression Add(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IExpression Negate(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IExpression Subtract(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IExpression Multiply(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Set font sizes for sub-equations.
-        /// </summary>
-        /// <param name="fontSize"></param>
-        public void SetFontSizes(float fontSize) => FontSize = fontSize;
-
         /// <summary>
         /// Return the equation's size.
         /// </summary>
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
+        /// <param name="scale">The scale.</param>
         /// <returns></returns>
-        public SizeF GetSize(Graphics graphics, Font font)
+        public SizeF Dimensions(Graphics graphics, Font font, float scale)
         {
-            using var tempFont = new Font(font.FontFamily, FontSize, font.Style);
-            return graphics.MeasureString(Value != 1 ? Value.ToString("R") : "", tempFont, Point.Empty, StringFormat.GenericTypographic);
+            using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
+            return graphics.MeasureString(string.IsNullOrEmpty(Text) ? " " : Text, tempFont);
         }
 
         /// <summary>
@@ -150,22 +94,27 @@ namespace PrimerLibrary
         /// <param name="font">The font.</param>
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
+        /// <param name="scale">The scale.</param>
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float x, float y)
+        /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
         {
-            using var tempFont = new Font(font.FontFamily, FontSize, font.Style);
-            SizeF size = GetSize(graphics, tempFont);
-#if DrawBox
-            using var dashed_pen = new Pen(Color.Red, 0)
+            var size = Dimensions(graphics, font, scale);
+            using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
+            if (drawBounds)
             {
-                DashStyle = DashStyle.Dash
-            };
-            graphics.DrawRectangle(dashed_pen, x, y, size.Width, size.Height);
-#endif
-            if (Value != 1)
+                using var dashedPen = new Pen(Color.Red, 0)
+                {
+                    DashStyle = DashStyle.Dash
+                };
+                graphics.DrawRectangle(dashedPen, x, y, size);
+            }
+
+            if (!string.IsNullOrWhiteSpace(Text))
             {
-                graphics.DrawString(Value.ToString("R"), tempFont, brush, x, y);
+                //TextRenderer.DrawText(graphics, Text, tempFont, new Point((int)x, (int)y), Color.Lime);
+                graphics.DrawString(Text, tempFont, brush, x, y);
             }
             else
             {
@@ -173,8 +122,7 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, size.Width, size.Height);
-
+                graphics.DrawRectangle(dashedPen, x, y, size);
             }
         }
 
@@ -185,12 +133,13 @@ namespace PrimerLibrary
         /// <param name="font">The font.</param>
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
+        /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
         /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
         /// <returns></returns>
-        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush? brush, Pen? pen, PointF location, bool drawBorders = false)
+        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush? brush, Pen? pen, float scale, PointF location, bool drawBorders = false)
         {
-            SizeF size = GetSize(graphics, font);
+            var size = Dimensions(graphics, font, scale);
             var map = new HashSet<IRenderable>();
 
             if (drawBorders)
@@ -202,9 +151,9 @@ namespace PrimerLibrary
                 map.Add(new RectangleElement(location, size, null, dashedPen));
             }
 
-            if (Value != 1)
+            if (!string.IsNullOrWhiteSpace(Text))
             {
-                map.Add(new TextElement(Value.ToString("R"), font, brush, pen, new RectangleF(location, size)));
+                map.Add(new TextElement(Text, font, brush, null, new RectangleF(location, size)));
             }
             else
             {

@@ -17,7 +17,7 @@ namespace PrimerLibrary
     /// <summary>
     /// The member accessors class.
     /// </summary>
-    /// <seealso cref="Engine.IMemberAccessor" />
+    /// <seealso cref="PrimerLibrary.IMemberAccessor" />
     public class MemberAccessor
         : IMemberAccessor
     {
@@ -55,7 +55,7 @@ namespace PrimerLibrary
             var targetType = target.GetType();
             MemberInfo memberInfo;
 
-            if ((memberInfo = targetType.GetField(name, flags)) != null)
+            if ((memberInfo = targetType?.GetField(name, flags)) is not null )
             {
                 // Capture the field member info.
                 var fieldInfo = memberInfo as FieldInfo;

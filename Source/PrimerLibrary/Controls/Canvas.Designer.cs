@@ -47,6 +47,8 @@ namespace PrimerLibrary
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Name = "Canvas";
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Canvas_Paint);
+            this.Move += new System.EventHandler(this.Canvas_Move);
+            this.Resize += new System.EventHandler(this.Canvas_Resize);
             this.ResumeLayout(false);
 
         }

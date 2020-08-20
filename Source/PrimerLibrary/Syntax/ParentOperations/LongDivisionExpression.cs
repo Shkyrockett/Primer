@@ -10,11 +10,11 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace PrimerLibrary
 {
@@ -65,7 +65,7 @@ namespace PrimerLibrary
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="LongDivisionExpression"/> class.
+        /// Initializes a new instance of the <see cref="LongDivisionExpression" /> class.
         /// </summary>
         /// <param name="divisor">The divisor.</param>
         /// <param name="dividend">The dividend.</param>
@@ -73,26 +73,21 @@ namespace PrimerLibrary
         /// <param name="remainder">The remainder.</param>
         /// <param name="stack">The stack.</param>
         public LongDivisionExpression(IExpression divisor, IExpression dividend, IExpression quotient, IExpression remainder, List<IExpression> stack)
-            : this(null, divisor, dividend, quotient, remainder, stack)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LongDivisionExpression"/> class.
-        /// </summary>
-        /// <param name="parent">The parent.</param>
-        /// <param name="divisor">The divisor.</param>
-        /// <param name="dividend">The dividend.</param>
-        /// <param name="quotient">The quotient.</param>
-        /// <param name="remainder">The remainder.</param>
-        /// <param name="stack">The stack.</param>
-        public LongDivisionExpression(IExpression? parent, IExpression divisor, IExpression dividend, IExpression quotient, IExpression remainder, List<IExpression> stack)
         {
-            Parent = parent;
+            Parent = null;
             Divisor = divisor;
+            if (Divisor is IExpression l) l.Parent = this;
             Dividend = dividend;
+            if (Dividend is IExpression b) b.Parent = this;
             Quotient = quotient;
+            if (Quotient is IExpression q) q.Parent = this;
             Remainder = remainder;
+            if (Remainder is IExpression r) r.Parent = this;
             Stack = stack;
+            for (int i = 0; i < Stack.Count; i++)
+            {
+                if (Stack[i] is IExpression s) s.Parent = this;
+            }
         }
         #endregion
 
@@ -103,6 +98,7 @@ namespace PrimerLibrary
         /// <value>
         /// The parent.
         /// </value>
+        [JsonIgnore]
         public IExpression? Parent { get; set; }
 
         /// <summary>
@@ -122,15 +118,7 @@ namespace PrimerLibrary
         public bool IsNegative { get; set; }
 
         /// <summary>
-        /// Gets or sets the font size1.
-        /// </summary>
-        /// <value>
-        /// The font size1.
-        /// </value>
-        public float FontSize { get; set; } = 20;
-
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="CoefficientExpression"/> is editable.
+        /// Gets a value indicating whether this <see cref="CoefficientFactor"/> is editable.
         /// </summary>
         /// <value>
         ///   <see langword="true" /> if editable; otherwise, <see langword="false" />.
@@ -138,74 +126,25 @@ namespace PrimerLibrary
         public bool Editable { get; set; }
         #endregion
 
-        public IExpression Plus(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IExpression Add(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IExpression Negate(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IExpression Subtract(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IExpression Multiply(IExpression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Set font sizes for sub-equations.
-        /// </summary>
-        /// <param name="fontSize"></param>
-        public void SetFontSizes(float fontSize)
-        {
-            FontSize = fontSize;
-            Divisor.SetFontSizes(fontSize);
-            Dividend.SetFontSizes(fontSize);
-            Quotient.SetFontSizes(fontSize);
-        }
-
-        /// <summary>
-        /// Return the equation's size.
-        /// </summary>
-        /// <param name="graphics">The graphics.</param>
-        /// <param name="font">The font.</param>
-        /// <returns></returns>
-        public SizeF GetSize(Graphics graphics, Font font)
-        {
-            return GetSizes(graphics, font, out _, out _, out _, out _, out _);
-        }
-
         /// <summary>
         /// Calculate sizes.
         /// </summary>
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
+        /// <param name="scale">The scale.</param>
         /// <param name="divisorSize">Size of the divisor.</param>
         /// <param name="dividendSize">Size of the dividend.</param>
         /// <param name="quotientSize">Size of the quotient.</param>
         /// <param name="remainderSize">Size of the remainder.</param>
         /// <param name="stackSize">Size of the stack.</param>
         /// <returns></returns>
-        private SizeF GetSizes(Graphics graphics, Font font, out SizeF divisorSize, out SizeF dividendSize, out SizeF quotientSize, out SizeF remainderSize, out SizeF stackSize)
+        private SizeF Dimensions(Graphics graphics, Font font, float scale, out SizeF divisorSize, out SizeF dividendSize, out SizeF quotientSize, out SizeF remainderSize, out SizeF stackSize)
         {
-            using var tempFont = new Font(font.FontFamily, FontSize, font.Style);
-
-            divisorSize = Divisor.GetSize(graphics, tempFont);
-            dividendSize = Dividend.GetSize(graphics, tempFont);
-            quotientSize = Quotient.GetSize(graphics, tempFont);
-            remainderSize = Remainder.GetSize(graphics, tempFont);
-            stackSize = new SizeF(dividendSize.Width, Stack.Sum((s) => s.GetSize(graphics, font).Height));
+            divisorSize = Divisor.Dimensions(graphics, font, scale);
+            dividendSize = Dividend.Dimensions(graphics, font, scale);
+            quotientSize = Quotient.Dimensions(graphics, font, scale);
+            remainderSize = Remainder.Dimensions(graphics, font, scale);
+            stackSize = new SizeF(dividendSize.Width, Stack.Sum((s) => s.Dimensions(graphics, font, scale).Height));
 
             // See how tall we must be.
             var height = ExtraHeight + divisorSize.Height + quotientSize.Height + stackSize.Height;
@@ -218,18 +157,29 @@ namespace PrimerLibrary
         }
 
         /// <summary>
+        /// Return the equation's size.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="scale">The scale.</param>
+        /// <returns></returns>
+        public SizeF Dimensions(Graphics graphics, Font font, float scale) => Dimensions(graphics, font, scale, out _, out _, out _, out _, out _);
+
+        /// <summary>
         /// Draw the equation.
         /// </summary>
         /// <param name="graphics">The GDI graphics.</param>
         /// <param name="font">The font.</param>
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
+        /// <param name="scale">The scale.</param>
         /// <param name="x">The x.</param>
         /// <param name="y">The y.</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float x, float y)
+        /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
         {
-            var size = GetSizes(graphics, font, out SizeF divisorSize, out SizeF dividendSize, out SizeF quotientSize, out SizeF remainderSize, out SizeF stackSize);
-            using var tempFont = new Font(font.FontFamily, FontSize, font.Style);
+            var size = Dimensions(graphics, font, scale, out SizeF divisorSize, out SizeF dividendSize, out SizeF quotientSize, out SizeF remainderSize, out SizeF stackSize);
+            using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
 
             // Draw here.
             _ = size;
@@ -238,8 +188,8 @@ namespace PrimerLibrary
             _ = remainderSize;
             _ = stackSize;
 
-            Divisor.Draw(graphics, font, brush, pen, x, y + remainderSize.Height);
-            Dividend.Draw(graphics, font, brush, pen, x + divisorSize.Width + ExtraWidth, y + remainderSize.Height);
+            Divisor.Draw(graphics, font, brush, pen, scale, x, y + remainderSize.Height, drawBounds);
+            Dividend.Draw(graphics, font, brush, pen, scale, x + divisorSize.Width + ExtraWidth, y + remainderSize.Height, drawBounds);
 
         }
 
@@ -250,22 +200,14 @@ namespace PrimerLibrary
         /// <param name="font">The font.</param>
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
+        /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
         /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
         /// <returns></returns>
-        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, PointF location, bool drawBorders = false)
+        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBorders = false)
         {
-            var size = GetSizes(graphics, font, out SizeF divisorSize, out SizeF dividendSize, out SizeF quotientSize, out SizeF remainderSize, out SizeF stackSize);
+            var size = Dimensions(graphics, font, scale, out SizeF divisorSize, out SizeF dividendSize, out SizeF quotientSize, out SizeF remainderSize, out SizeF stackSize);
             var map = new HashSet<IRenderable>();
-
-            if (drawBorders)
-            {
-                using var dashedPen = new Pen(Color.Red, 0)
-                {
-                    DashStyle = DashStyle.Dash
-                };
-                map.Add(new RectangleElement(location, size, null, dashedPen));
-            }
 
             // ToDo: Layout here.
 

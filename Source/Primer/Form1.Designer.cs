@@ -78,10 +78,10 @@ namespace Primer
             // 
             // canvas1
             // 
-            this.canvas1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.canvas1.Location = new System.Drawing.Point(116, 41);
+            this.canvas1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.canvas1.Location = new System.Drawing.Point(0, 0);
             this.canvas1.Name = "canvas1";
-            this.canvas1.Size = new System.Drawing.Size(128, 128);
+            this.canvas1.Size = new System.Drawing.Size(552, 216);
             this.canvas1.TabIndex = 0;
             // 
             // splitContainer1

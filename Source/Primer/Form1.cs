@@ -26,32 +26,51 @@ namespace Primer
         : Form
     {
         /// <summary>
+        /// The render boundaries.
+        /// </summary>
+        private bool renderBoundaries = false;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Form1"/> class.
         /// </summary>
         public Form1()
         {
             InitializeComponent();
 
-            canvas1.Font = new Font("Cambria Math", 20);
-            canvas1.Expression = new IntegralExpression(
-                new RelationalExpression(ComparisonOperators.Equals,
+            canvas1.Font = new Font("Cambria Math", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            canvas1.Expression = new RelationalOperation(
+                ComparisonOperators.Equals,
                 new NomialExpression(
-                new GroupingExpression(
-                new FractionExpression(new NomialExpression(new LogarithmExpression(new VariableExpression('a'), new CoefficientExpression(10), new CoefficientExpression(1))), new NomialExpression(new VariableExpression('b'))), BarStyles.Parenthesis, BarStyles.Parenthesis),
-                new GroupingExpression(
-                new MatrixExpression(2, 2, false, false, new FractionExpression(new TextExpression("∑"), new TextExpression("b")), new RootExpression(new TextExpression("2"), new TextExpression("2")), new SigmaExpression(new TextExpression("4"), new TextExpression("4"), new TextExpression("4")), new TextExpression("4")), BarStyles.Parenthesis, BarStyles.Parenthesis),
-                new TermExpression(4, new VariableExpression('c'))
+                new ProductTerm(new FractionCoefficientFactor(1, 2) { Exponent = new CoefficientFactor(2) },
+                new QuotientFactor(
+                new NomialExpression(new ProductTerm(new CoefficientFactor(1), new VariableFactor('x', new CoefficientFactor(1), new CoefficientFactor(2))), new ProductTerm(new CoefficientFactor(-1, new CoefficientFactor(2)))),
+                new NomialExpression(new ProductTerm(new CoefficientFactor(1), new VariableFactor('a', new CoefficientFactor(1), new CoefficientFactor(2))))
+                )
                 ),
-                new NomialExpression(new TermExpression(new CoefficientExpression(4), new PowerExpression(new VariableExpression('b'), new TextExpression("2"))))
-                ), new TextExpression("√"), new TextExpression("⎷"));
-
-            canvas1.AutoSize = true;
+                new ProductTerm(new CoefficientFactor(1),
+                new QuotientFactor(
+                new NomialExpression(new ProductTerm(new CoefficientFactor(1), new VariableFactor('y', new CoefficientFactor(1), new CoefficientFactor(2))), new ProductTerm(new CoefficientFactor(-1, new CoefficientFactor(2)))),
+                new NomialExpression(new ProductTerm(new CoefficientFactor(1), new VariableFactor('b', new CoefficientFactor(1), new CoefficientFactor(2))))
+                )
+                )
+                ),
+                new NomialExpression(
+                new ProductTerm(new CoefficientFactor(1), new RootFactor(new CoefficientFactor(3), new CoefficientFactor(2), new CoefficientFactor(1), new CoefficientFactor(2))),
+                new ProductTerm(new CoefficientFactor(1), new MatrixFactor(3, 3, new CoefficientFactor(1), new CoefficientFactor(0), new CoefficientFactor(0), new CoefficientFactor(0), new CoefficientFactor(1), new CoefficientFactor(0), new CoefficientFactor(0), new CoefficientFactor(0), new CoefficientFactor(1)) { Sequence = new CoefficientFactor(1), Exponent = new CoefficientFactor(2) })
+                )
+                );
+            canvas1.RenderBoundaries = renderBoundaries;
         }
 
+        /// <summary>
+        /// Handles the ClickAsync event of the Button1 control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private async void Button1_ClickAsync(object sender, EventArgs e)
         {
-            using FileStream fs = File.Create(@"C:\Users\shkyr\Desktop\test.json");
-            await JsonSerializer.SerializeAsync(fs, canvas1.Expression);
+            var json = JsonSerializer.Serialize(canvas1.Expression);
+            await File.WriteAllTextAsync(@"C:\Users\shkyr\Desktop\test.json", json);
         }
     }
 }

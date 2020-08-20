@@ -14,7 +14,7 @@
         {
             foreach (var subExpression in nomial.Terms)
             {
-                subExpression.Multiply(expression);
+                //subExpression.Multiply(expression);
             }
         }
     }

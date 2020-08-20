@@ -89,8 +89,8 @@ namespace PrimerLibrary
         /// </summary>
         private void split()
         {
-            int subWidth = (int)(bounds.Width / 2);
-            int subHeight = (int)(bounds.Height / 2);
+            int subWidth = (int)(bounds.Width * 0.5f);
+            int subHeight = (int)(bounds.Height * 0.5f);
             int x = (int)bounds.X;
             int y = (int)bounds.Y;
 
@@ -110,13 +110,13 @@ namespace PrimerLibrary
         private int getIndex(IBoundable rect)
         {
             int index = -1;
-            double verticalMidpoint = bounds.X + (bounds.Width / 2);
-            double horizontalMidpoint = bounds.Y + (bounds.Height / 2);
+            double verticalMidpoint = bounds.X + (bounds.Width * 0.5f);
+            double horizontalMidpoint = bounds.Y + (bounds.Height * 0.5f);
 
             // Object can completely fit within the top quadrants
-            bool topQuadrant = (rect.Bounds.Y < horizontalMidpoint && rect.Bounds.Y + rect.Bounds.Height < horizontalMidpoint);
+            bool topQuadrant = rect.Bounds.Y < horizontalMidpoint && rect.Bounds.Y + rect.Bounds.Height < horizontalMidpoint;
             // Object can completely fit within the bottom quadrants
-            bool bottomQuadrant = (rect.Bounds.Y > horizontalMidpoint);
+            bool bottomQuadrant = rect.Bounds.Y > horizontalMidpoint;
 
             // Object can completely fit within the left quadrants
             if (rect.Bounds.X < verticalMidpoint && rect.Bounds.X + rect.Bounds.Width < verticalMidpoint)
