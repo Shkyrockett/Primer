@@ -66,7 +66,7 @@ namespace PrimerLibrary
         /// <value>
         /// The <see cref="RectangleF" />.
         /// </value>
-        public RectangleF Bounds { get; }
+        public RectangleF? Bounds { get; set; }
 
         /// <summary>
         /// Gets or sets the string format.
@@ -90,7 +90,7 @@ namespace PrimerLibrary
         /// <param name="pen">The pen.</param>
         public void Draw(Graphics graphics, Brush? brush, Pen? pen)
         {
-            if (brush is not null) graphics.DrawString(Text, Font, brush, Bounds, StringFormat);
+            if (brush is not null) graphics.DrawString(Text, Font, brush, Bounds?.Location ?? PointF.Empty, StringFormat);
         }
     }
 }

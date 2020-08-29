@@ -11,7 +11,6 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -55,8 +54,6 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="rows">The rows.</param>
         /// <param name="cols">The cols.</param>
-        /// <param name="group">if set to <see langword="true" /> [group].</param>
-        /// <param name="groupingStyle">The grouping style.</param>
         /// <param name="items">The items.</param>
         public MatrixFactor(int rows, int cols, params IExpression[] items)
             : this(rows, cols, true, true, true, BarStyles.Bracket, false, items)
@@ -182,6 +179,42 @@ namespace PrimerLibrary
         ///   <see langword="true" /> if editable; otherwise, <see langword="false" />.
         /// </value>
         public bool Editable { get; set; }
+
+        /// <summary>
+        /// Gets the bounds.
+        /// </summary>
+        /// <value>
+        /// The bounds.
+        /// </value>
+        [JsonIgnore]
+        public RectangleF? Bounds { get; set; }
+
+        /// <summary>
+        /// Gets the location.
+        /// </summary>
+        /// <value>
+        /// The location.
+        /// </value>
+        [JsonIgnore]
+        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+
+        /// <summary>
+        /// Gets or sets the size.
+        /// </summary>
+        /// <value>
+        /// The size.
+        /// </value>
+        [JsonIgnore]
+        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+
+        /// <summary>
+        /// Gets or sets the scale.
+        /// </summary>
+        /// <value>
+        /// The scale.
+        /// </value>
+        [JsonIgnore]
+        public float? Scale { get; set; }
         #endregion
 
         /// <summary>
@@ -215,7 +248,7 @@ namespace PrimerLibrary
             {
                 for (var col = 0; col < NumCols; col++)
                 {
-                    if (Items[row, col] != null)
+                    if (Items[row, col] is not null)
                     {
                         SizeF item_size = Items[row, col].Dimensions(graphics, font, scale);
                         if (rowHeights[row] < item_size.Height) rowHeights[row] = item_size.Height;
@@ -330,7 +363,7 @@ namespace PrimerLibrary
                 var colX = x;
                 for (var col = 0; col < NumCols; col++)
                 {
-                    if (Items[row, col] != null)
+                    if (Items[row, col] is not null)
                     {
                         // Get the item's size.
                         var itemSize = Items[row, col].Dimensions(graphics, font, scale);
@@ -355,20 +388,13 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
-        /// <param name="brush">The brush.</param>
-        /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
-        /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
         /// <returns></returns>
-        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBorders = false)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
         {
-            var size = Dimensions(graphics, font, scale, out SizeF matrixSize, out var gap, out var rowHeights, out var colWidths, out var leftGroup, out var leftScale, out var rightGroup, out var rightScale, out var sequenceSize, out var exponentSize);
-            var map = new HashSet<IRenderable>();
-
-            // ToDo: Layout here.
-
-            return map;
+            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out SizeF matrixSize, out var gap, out var rowHeights, out var colWidths, out var leftGroup, out var leftScale, out var rightGroup, out var rightScale, out var sequenceSize, out var exponentSize));
+            return Bounds ?? Rectangle.Empty;
         }
     }
 }

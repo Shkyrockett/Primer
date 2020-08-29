@@ -60,7 +60,6 @@ namespace PrimerLibrary
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductTerm" /> class.
         /// </summary>
-        /// <param name="parent">The parent.</param>
         /// <param name="coefficient">The coefficient.</param>
         /// <param name="editable">if set to <see langword="true" /> [editable].</param>
         /// <param name="expressions">The expressions.</param>
@@ -107,11 +106,30 @@ namespace PrimerLibrary
         public List<IFactor> Factors { get; set; }
 
         /// <summary>
+        /// Gets a value indicating whether this instance is first term.
+        /// </summary>
+        /// <value>
+        ///   <see langword="true" /> if this instance is first term; otherwise, <see langword="false" />.
+        /// </value>
+        [JsonIgnore]
+        public bool IsFirstTerm => (Parent is not NomialExpression) || (Parent is NomialExpression p) && ReferenceEquals(p.Terms?[0], this);
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is constant.
+        /// </summary>
+        /// <value>
+        /// <see langword="true" /> if this instance is constant; otherwise, <see langword="false" />.
+        /// </value>
+        [JsonIgnore]
+        public bool IsConstant => Coefficient is not null && (Factors is null || Factors.Count < 1);
+
+        /// <summary>
         /// Gets or sets the sign of the expression.
         /// </summary>
         /// <value>
         /// The sign of the expression. -1 for negative, +1 for positive, 0 for 0.
         /// </value>
+        [JsonIgnore]
         public int Sign
         {
             get { return Coefficient?.Sign ?? 1; }
@@ -134,6 +152,7 @@ namespace PrimerLibrary
         /// <value>
         ///   <see langword="true" /> if this instance is negative; otherwise, <see langword="false" />.
         /// </value>
+        [JsonIgnore]
         public bool IsNegative
         {
             get { return Coefficient?.IsNegative ?? false; }
@@ -159,20 +178,40 @@ namespace PrimerLibrary
         public bool Editable { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is first term.
+        /// Gets the bounds.
         /// </summary>
         /// <value>
-        ///   <see langword="true" /> if this instance is first term; otherwise, <see langword="false" />.
+        /// The bounds.
         /// </value>
-        public bool IsFirstTerm => (Parent is not NomialExpression) || (Parent is NomialExpression p) && ReferenceEquals(p.Terms?[0], this);
+        [JsonIgnore]
+        public RectangleF? Bounds { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is constant.
+        /// Gets the location.
         /// </summary>
         /// <value>
-        /// <see langword="true" /> if this instance is constant; otherwise, <see langword="false" />.
+        /// The location.
         /// </value>
-        public bool IsConstant => Coefficient is not null && (Factors is null || Factors.Count < 1);
+        [JsonIgnore]
+        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+
+        /// <summary>
+        /// Gets or sets the size.
+        /// </summary>
+        /// <value>
+        /// The size.
+        /// </value>
+        [JsonIgnore]
+        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+
+        /// <summary>
+        /// Gets or sets the scale.
+        /// </summary>
+        /// <value>
+        /// The scale.
+        /// </value>
+        [JsonIgnore]
+        public float? Scale { get; set; }
         #endregion
 
         /// <summary>
@@ -256,19 +295,13 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
-        /// <param name="brush">The brush.</param>
-        /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
-        /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
         /// <returns></returns>
-        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBorders = false)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
         {
-            var size = Dimensions(graphics, font, scale, out SizeF coefficientSize, out var nomialSizes);
-            (var x, var y) = (location.X, location.Y);
-            var map = new HashSet<IRenderable>();
-
-            return map;
+            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out SizeF coefficientSize, out var nomialSizes));
+            return Bounds ?? Rectangle.Empty;
         }
     }
 }

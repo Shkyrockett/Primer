@@ -190,7 +190,7 @@ namespace PrimerLibrary
         /// <param name="to">The to.</param>
         public void AddLerp(IMemberLerper lerper, IMemberAccessor info, object from, object to)
         {
-            varHash.Add(info.MemberName, vars.Count);
+            varHash.Add(info.MemberName ?? string.Empty, vars.Count);
             vars.Add(info);
 
             start.Add(from);
@@ -231,7 +231,7 @@ namespace PrimerLibrary
                     }
                 }
 
-                if (time == 0 && timesRepeated == 0 && begin != null)
+                if (time == 0 && timesRepeated == 0 && begin is not null)
                 {
                     begin();
                 }
@@ -265,7 +265,7 @@ namespace PrimerLibrary
                     }
                 }
 
-                if (ease != null)
+                if (ease is not null)
                 {
                     t = ease(t);
                 }
@@ -273,9 +273,9 @@ namespace PrimerLibrary
                 var i = vars.Count;
                 while (i-- > 0)
                 {
-                    if (vars[i] != null)
+                    if (vars[i] is not null && vars[i]?.Value is not null)
                     {
-                        vars[i].Value = lerpers[i]?.Interpolate(t, vars[i]?.Value, behavior);
+                        vars[i].Value = lerpers[i]?.Interpolate(t, vars[i].Value, behavior);
                     }
                 }
 
@@ -290,7 +290,7 @@ namespace PrimerLibrary
 
                 update?.Invoke();
 
-                if (doComplete && complete != null)
+                if (doComplete && complete is not null)
                 {
                     complete();
                 }

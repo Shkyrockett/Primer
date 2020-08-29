@@ -96,7 +96,7 @@ namespace PrimerLibrary
                 value = Round(value);
             }
 
-            var type = currentValue?.GetType();
+            var type = currentValue?.GetType() ?? default;
             return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
         }
     }

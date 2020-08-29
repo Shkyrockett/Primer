@@ -32,12 +32,12 @@ namespace PrimerLibrary
         /// <summary>
         /// The get method.
         /// </summary>
-        protected Func<object, object> getMethod;
+        protected Func<object, object>? getMethod;
 
         /// <summary>
         /// The set method.
         /// </summary>
-        protected Action<object, object> setMethod;
+        protected Action<object, object>? setMethod;
         #endregion Fields
 
         #region Constructors
@@ -53,54 +53,76 @@ namespace PrimerLibrary
             if (target is null) return;
             Target = target;
             var targetType = target.GetType();
-            MemberInfo memberInfo;
 
-            if ((memberInfo = targetType?.GetField(name, flags)) is not null )
+            if (targetType.GetField(name, flags) is FieldInfo fieldInfo)
             {
                 // Capture the field member info.
-                var fieldInfo = memberInfo as FieldInfo;
                 MemberType = fieldInfo.FieldType;
                 MemberName = fieldInfo.Name;
+                var self = Expression.Parameter(typeof(object));
 
                 // Set up for reading
-                var self = Expression.Parameter(typeof(object));
-                var instance = Expression.Convert(self, fieldInfo.DeclaringType);
-                var field = Expression.Field(instance, fieldInfo);
-                var convert = Expression.TypeAs(field, typeof(object));
-                getMethod = Expression.Lambda<Func<object, object>>(convert, self).Compile();
-
-                // Set up for writing
-                if (writable)
+                if (fieldInfo.DeclaringType is Type declaringType)
                 {
-                    var value = Expression.Parameter(typeof(object));
-                    var fieldExp = Expression.Field(Expression.Convert(self, fieldInfo.DeclaringType), fieldInfo);
-                    var assignExp = Expression.Assign(fieldExp, Expression.Convert(value, fieldInfo.FieldType));
-                    setMethod = Expression.Lambda<Action<object, object>>(assignExp, self, value).Compile();
+                    var instance = Expression.Convert(self, declaringType);
+                    var field = Expression.Field(instance, fieldInfo);
+                    var convert = Expression.TypeAs(field, typeof(object));
+                    getMethod = Expression.Lambda<Func<object, object>>(convert, self).Compile();
+
+                    // Set up for writing
+                    if (writable)
+                    {
+                        var value = Expression.Parameter(typeof(object));
+                        var fieldExp = Expression.Field(Expression.Convert(self, declaringType), fieldInfo);
+                        var assignExp = Expression.Assign(fieldExp, Expression.Convert(value, fieldInfo.FieldType));
+                        setMethod = Expression.Lambda<Action<object, object>>(assignExp, self, value).Compile();
+                    }
+                    else
+                    {
+                        throw new Exception($"Field or {(writable ? "read/write" : "readable")} property '{name}' not found on object of type {targetType.FullName}.");
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Field or {(writable ? "read/write" : "readable")} property '{name}' not found on object of type {targetType.FullName}.");
                 }
             }
-            else if ((memberInfo = targetType.GetProperty(name, flags)) != null)
+            else if (targetType.GetProperty(name, flags) is PropertyInfo propertyInfo)
             {
                 // Capture the property member info.
-                var propertyInfo = memberInfo as PropertyInfo;
                 MemberType = propertyInfo.PropertyType;
                 MemberName = propertyInfo.Name;
+                var param = Expression.Parameter(typeof(object));
 
                 // Set up for reading
-                var param = Expression.Parameter(typeof(object));
-                var instance = Expression.Convert(param, propertyInfo.DeclaringType);
-                var convert = Expression.TypeAs(Expression.Property(instance, propertyInfo), typeof(object));
-                getMethod = Expression.Lambda<Func<object, object>>(convert, param).Compile();
-
-                // Set up for writing
-                if (writable)
+                if (propertyInfo.DeclaringType is Type declaringType)
                 {
-                    var argument = Expression.Parameter(typeof(object));
-                    var setterCall = Expression.Call(
-                        Expression.Convert(param, propertyInfo.DeclaringType),
-                        propertyInfo.GetSetMethod(),
-                        Expression.Convert(argument, propertyInfo.PropertyType));
+                    var instance = Expression.Convert(param, declaringType);
+                    var convert = Expression.TypeAs(Expression.Property(instance, propertyInfo), typeof(object));
+                    getMethod = Expression.Lambda<Func<object, object>>(convert, param).Compile();
 
-                    setMethod = Expression.Lambda<Action<object, object>>(setterCall, param, argument).Compile();
+                    // Set up for writing
+                    if (writable)
+                    {
+                        var argument = Expression.Parameter(typeof(object));
+                        if (propertyInfo.GetSetMethod() is MethodInfo method)
+                        {
+                            var setterCall = Expression.Call(Expression.Convert(param, declaringType), method, Expression.Convert(argument, propertyInfo.PropertyType));
+                            setMethod = Expression.Lambda<Action<object, object>>(setterCall, param, argument).Compile();
+                        }
+                        else
+                        {
+                            throw new Exception($"Field or {(writable ? "read/write" : "readable")} property '{name}' not found on object of type {targetType.FullName}.");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception($"Field or {(writable ? "read/write" : "readable")} property '{name}' not found on object of type {targetType.FullName}.");
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Field or {(writable ? "read/write" : "readable")} property '{name}' not found on object of type {targetType.FullName}.");
                 }
             }
             else
@@ -117,7 +139,7 @@ namespace PrimerLibrary
         /// <value>
         /// The target.
         /// </value>
-        public object Target { get; private set; }
+        public object? Target { get; private set; }
 
         /// <summary>
         /// Gets the member name.
@@ -125,7 +147,7 @@ namespace PrimerLibrary
         /// <value>
         /// The name of the member.
         /// </value>
-        public string MemberName { get; private set; }
+        public string? MemberName { get; private set; }
 
         /// <summary>
         /// Gets the member type.
@@ -133,7 +155,7 @@ namespace PrimerLibrary
         /// <value>
         /// The type of the member.
         /// </value>
-        public Type MemberType { get; private set; }
+        public Type? MemberType { get; private set; }
 
         /// <summary>
         /// Gets or sets the value.
@@ -141,7 +163,18 @@ namespace PrimerLibrary
         /// <value>
         /// The value.
         /// </value>
-        public object Value { get { return getMethod(Target); } set { setMethod(Target, value); } }
+        public object? Value
+        {
+            get
+            {
+                return (getMethod is not null && Target is not null) ? getMethod(Target) : null;
+            }
+            set
+            {
+                if (setMethod is not null && Target is not null && value is not null)
+                    setMethod(Target, value);
+            }
+        }
         #endregion Properties
     }
 }

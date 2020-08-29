@@ -40,7 +40,7 @@ namespace PrimerLibrary
         /// <value>
         /// The bounds.
         /// </value>
-        public RectangleF Bounds { get; }
+        public RectangleF? Bounds { get; set; }
 
         /// <summary>
         /// Gets or sets the brush.
@@ -72,8 +72,11 @@ namespace PrimerLibrary
         /// <param name="pen">The pen.</param>
         public void Draw(Graphics graphics, Brush? brush, Pen? pen)
         {
-            if (brush is not null) graphics.FillRectangle(brush, Rectangle.Round(Bounds));
-            if (pen is not null) graphics.DrawRectangle(pen, Rectangle.Round(Bounds));
+            if (Bounds is RectangleF b && !b.IsEmpty)
+            {
+                if (brush is not null) graphics.FillRectangle(brush, b);
+                if (pen is not null) graphics.DrawRectangle(pen, b);
+            }
         }
     }
 }

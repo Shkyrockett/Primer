@@ -70,15 +70,15 @@ namespace PrimerLibrary
         /// <summary>
         /// Clears this instance of the <see cref="Quadtree"/>.
         /// </summary>
-        public void clear()
+        public void Clear()
         {
             objects.Clear();
 
             for (int i = 0; i < nodes.Length; i++)
             {
-                if (nodes[i] != null)
+                if (nodes[i] is not null)
                 {
-                    nodes[i]?.clear();
+                    nodes[i]?.Clear();
                     nodes[i] = null;
                 }
             }
@@ -87,7 +87,7 @@ namespace PrimerLibrary
         /// <summary>
         /// Splits this node instance into 4 sub-nodes.
         /// </summary>
-        private void split()
+        private void Split()
         {
             int subWidth = (int)(bounds.Width * 0.5f);
             int subHeight = (int)(bounds.Height * 0.5f);
@@ -107,39 +107,42 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="rect">The p rect.</param>
         /// <returns></returns>
-        private int getIndex(IBoundable rect)
+        private int GetIndex(IBoundable rect)
         {
             int index = -1;
-            double verticalMidpoint = bounds.X + (bounds.Width * 0.5f);
-            double horizontalMidpoint = bounds.Y + (bounds.Height * 0.5f);
-
-            // Object can completely fit within the top quadrants
-            bool topQuadrant = rect.Bounds.Y < horizontalMidpoint && rect.Bounds.Y + rect.Bounds.Height < horizontalMidpoint;
-            // Object can completely fit within the bottom quadrants
-            bool bottomQuadrant = rect.Bounds.Y > horizontalMidpoint;
-
-            // Object can completely fit within the left quadrants
-            if (rect.Bounds.X < verticalMidpoint && rect.Bounds.X + rect.Bounds.Width < verticalMidpoint)
+            if (rect.Bounds is RectangleF b)
             {
-                if (topQuadrant)
+                double verticalMidpoint = bounds.X + (bounds.Width * 0.5f);
+                double horizontalMidpoint = bounds.Y + (bounds.Height * 0.5f);
+
+                // Object can completely fit within the top quadrants
+                bool topQuadrant = b.Y < horizontalMidpoint && b.Y + b.Height < horizontalMidpoint;
+                // Object can completely fit within the bottom quadrants
+                bool bottomQuadrant = b.Y > horizontalMidpoint;
+
+                // Object can completely fit within the left quadrants
+                if (b.X < verticalMidpoint && b.X + b.Width < verticalMidpoint)
                 {
-                    index = 1;
+                    if (topQuadrant)
+                    {
+                        index = 1;
+                    }
+                    else if (bottomQuadrant)
+                    {
+                        index = 2;
+                    }
                 }
-                else if (bottomQuadrant)
+                // Object can completely fit within the right quadrants
+                else if (b.X > verticalMidpoint)
                 {
-                    index = 2;
-                }
-            }
-            // Object can completely fit within the right quadrants
-            else if (rect.Bounds.X > verticalMidpoint)
-            {
-                if (topQuadrant)
-                {
-                    index = 0;
-                }
-                else if (bottomQuadrant)
-                {
-                    index = 3;
+                    if (topQuadrant)
+                    {
+                        index = 0;
+                    }
+                    else if (bottomQuadrant)
+                    {
+                        index = 3;
+                    }
                 }
             }
 
@@ -152,15 +155,15 @@ namespace PrimerLibrary
         /// objects to their corresponding nodes.
         /// </summary>
         /// <param name="rect">The rect.</param>
-        public void insert(IBoundable rect)
+        public void Insert(IBoundable rect)
         {
-            if (nodes[0] != null)
+            if (nodes[0] is not null)
             {
-                int index = getIndex(rect);
+                int index = GetIndex(rect);
 
                 if (index != -1)
                 {
-                    nodes[index]?.insert(rect);
+                    nodes[index]?.Insert(rect);
 
                     return;
                 }
@@ -172,16 +175,16 @@ namespace PrimerLibrary
             {
                 if (nodes[0] == null)
                 {
-                    split();
+                    Split();
                 }
 
                 int i = 0;
                 while (i < objects.Count)
                 {
-                    int index = getIndex(objects[i]);
+                    int index = GetIndex(objects[i]);
                     if (index != -1)
                     {
-                        nodes[index]?.insert(objects[i]);
+                        nodes[index]?.Insert(objects[i]);
                         objects.RemoveAt(i);
                     }
                     else
@@ -198,12 +201,12 @@ namespace PrimerLibrary
         /// <param name="returnObjects">The return objects.</param>
         /// <param name="rect">The p rect.</param>
         /// <returns></returns>
-        public List<IBoundable> retrieve(List<IBoundable> returnObjects, IBoundable rect)
+        public List<IBoundable> Retrieve(List<IBoundable> returnObjects, IBoundable rect)
         {
-            int index = getIndex(rect);
-            if (index != -1 && nodes[0] != null)
+            int index = GetIndex(rect);
+            if (index != -1 && nodes[0] is not null)
             {
-                nodes[index]?.retrieve(returnObjects, rect);
+                nodes[index]?.Retrieve(returnObjects, rect);
             }
 
             // Wait. Is this right? This doesn't look right.

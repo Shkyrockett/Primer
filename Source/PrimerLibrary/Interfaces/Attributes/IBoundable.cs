@@ -22,6 +22,6 @@ namespace PrimerLibrary
         /// Gets the rectangle.
         /// </summary>
         /// <value>The <see cref="RectangleF"/>.</value>
-        RectangleF Bounds { get; }
+        RectangleF? Bounds { get; set; }
     }
 }

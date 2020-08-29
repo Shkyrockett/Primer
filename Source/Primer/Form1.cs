@@ -28,7 +28,7 @@ namespace Primer
         /// <summary>
         /// The render boundaries.
         /// </summary>
-        private bool renderBoundaries = false;
+        private readonly bool renderBoundaries = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Form1"/> class.
@@ -39,7 +39,7 @@ namespace Primer
 
             canvas1.Font = new Font("Cambria Math", 12F, FontStyle.Regular, GraphicsUnit.Point);
             canvas1.Expression = new RelationalOperation(
-                ComparisonOperators.Equals,
+                ComparisonOperators.NotEquals,
                 new NomialExpression(
                 new ProductTerm(new FractionCoefficientFactor(1, 2) { Exponent = new CoefficientFactor(2) },
                 new QuotientFactor(
@@ -55,7 +55,7 @@ namespace Primer
                 )
                 ),
                 new NomialExpression(
-                new ProductTerm(new CoefficientFactor(1), new RootFactor(new CoefficientFactor(3), new CoefficientFactor(2), new CoefficientFactor(1), new CoefficientFactor(2))),
+                new ProductTerm(new CoefficientFactor(1) { PlusOrMinus = true }, new RootFactor(new CoefficientFactor(3), new CoefficientFactor(2), new CoefficientFactor(1), new CoefficientFactor(2))),
                 new ProductTerm(new CoefficientFactor(1), new MatrixFactor(3, 3, new CoefficientFactor(1), new CoefficientFactor(0), new CoefficientFactor(0), new CoefficientFactor(0), new CoefficientFactor(1), new CoefficientFactor(0), new CoefficientFactor(0), new CoefficientFactor(0), new CoefficientFactor(1)) { Sequence = new CoefficientFactor(1), Exponent = new CoefficientFactor(2) })
                 )
                 );

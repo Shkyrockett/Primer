@@ -10,9 +10,7 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
 using static System.Math;
 
@@ -116,6 +114,42 @@ namespace PrimerLibrary
         ///   <see langword="true" /> if editable; otherwise, <see langword="false" />.
         /// </value>
         public bool Editable { get; set; }
+
+        /// <summary>
+        /// Gets the bounds.
+        /// </summary>
+        /// <value>
+        /// The bounds.
+        /// </value>
+        [JsonIgnore]
+        public RectangleF? Bounds { get; set; }
+
+        /// <summary>
+        /// Gets the location.
+        /// </summary>
+        /// <value>
+        /// The location.
+        /// </value>
+        [JsonIgnore]
+        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+
+        /// <summary>
+        /// Gets or sets the size.
+        /// </summary>
+        /// <value>
+        /// The size.
+        /// </value>
+        [JsonIgnore]
+        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+
+        /// <summary>
+        /// Gets or sets the scale.
+        /// </summary>
+        /// <value>
+        /// The scale.
+        /// </value>
+        [JsonIgnore]
+        public float? Scale { get; set; }
         #endregion
 
         /// <summary>
@@ -134,9 +168,9 @@ namespace PrimerLibrary
         /// <returns></returns>
         private SizeF Dimensions(Graphics graphics, Font font, float scale, out SizeF contentsSize, out SizeF aboveSize, out SizeF belowSize, out float symbolAreaWidth, out float symbolAreaHeight, out float symbolWidth, out float symbolHeight)
         {
-            contentsSize = Argument.Dimensions(graphics, font, scale);
-            aboveSize = UpperLimit.Dimensions(graphics, font, scale * 0.5f);
-            belowSize = LowerLimit.Dimensions(graphics, font, scale * 0.5f);
+            contentsSize = Argument?.Dimensions(graphics, font, scale) ?? graphics.MeasureString(" ", font, PointF.Empty, StringFormat.GenericTypographic);
+            aboveSize = UpperLimit?.Dimensions(graphics, font, scale * 0.5f) ?? graphics.MeasureString(" ", font, PointF.Empty, StringFormat.GenericTypographic);
+            belowSize = LowerLimit?.Dimensions(graphics, font, scale * 0.5f) ?? graphics.MeasureString(" ", font, PointF.Empty, StringFormat.GenericTypographic);
 
             var height = Max(1.5f * (aboveSize.Height + belowSize.Height), contentsSize.Height);
             symbolHeight = height - aboveSize.Height - belowSize.Height;
@@ -213,29 +247,13 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
-        /// <param name="brush">The brush.</param>
-        /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
-        /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
         /// <returns></returns>
-        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBorders = false)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
         {
-            var size = Dimensions(graphics, font, scale, out SizeF contents_size, out SizeF above_size, out SizeF below_size, out var symbol_area_width, out var symbol_area_height, out var symbol_width, out var symbol_height);
-            var map = new HashSet<IRenderable>();
-
-            if (drawBorders)
-            {
-                using var dashedPen = new Pen(Color.Red, 0)
-                {
-                    DashStyle = DashStyle.Dash
-                };
-                map.Add(new RectangleElement(location, size, null, dashedPen));
-            }
-
-            // ToDo: Layout here.
-
-            return map;
+            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out SizeF contents_size, out SizeF above_size, out SizeF below_size, out var symbol_area_width, out var symbol_area_height, out var symbol_width, out var symbol_height)); ;
+            return Bounds ?? Rectangle.Empty;
         }
     }
 }

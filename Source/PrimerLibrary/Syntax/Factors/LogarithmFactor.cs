@@ -11,7 +11,6 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Text.Json.Serialization;
 using static System.Math;
@@ -31,7 +30,6 @@ namespace PrimerLibrary
         /// <summary>
         /// Initializes a new instance of the <see cref="LogarithmFactor" /> class.
         /// </summary>
-        /// <param name="parent">The parent.</param>
         /// <param name="argument">The argument.</param>
         /// <param name="base">The base.</param>
         /// <param name="editable">if set to <see langword="true" /> [editable].</param>
@@ -103,6 +101,42 @@ namespace PrimerLibrary
         ///   <see langword="true" /> if editable; otherwise, <see langword="false" />.
         /// </value>
         public bool Editable { get; set; }
+
+        /// <summary>
+        /// Gets the bounds.
+        /// </summary>
+        /// <value>
+        /// The bounds.
+        /// </value>
+        [JsonIgnore]
+        public RectangleF? Bounds { get; set; }
+
+        /// <summary>
+        /// Gets the location.
+        /// </summary>
+        /// <value>
+        /// The location.
+        /// </value>
+        [JsonIgnore]
+        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+
+        /// <summary>
+        /// Gets or sets the size.
+        /// </summary>
+        /// <value>
+        /// The size.
+        /// </value>
+        [JsonIgnore]
+        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+
+        /// <summary>
+        /// Gets or sets the scale.
+        /// </summary>
+        /// <value>
+        /// The scale.
+        /// </value>
+        [JsonIgnore]
+        public float? Scale { get; set; }
         #endregion
 
         /// <summary>
@@ -173,16 +207,13 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
-        /// <param name="brush">The brush.</param>
-        /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
-        /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBorders = false)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
         {
-            throw new NotImplementedException();
+            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out var functionSize, out var baseSize, out var argumentSize));
+            return Bounds ?? Rectangle.Empty;
         }
     }
 }

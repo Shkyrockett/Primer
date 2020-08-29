@@ -11,7 +11,6 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
@@ -59,6 +58,14 @@ namespace PrimerLibrary
         /// </value>
         [JsonIgnore]
         public IExpression? Parent { get; set; }
+
+        /// <summary>
+        /// Gets the radical.
+        /// </summary>
+        /// <value>
+        /// The radical.
+        /// </value>
+        public RadicalFigure? Radical { get; private set; }
 
         /// <summary>
         /// Gets the index.
@@ -115,6 +122,42 @@ namespace PrimerLibrary
         ///   <see langword="true" /> if editable; otherwise, <see langword="false" />.
         /// </value>
         public bool Editable { get; set; }
+
+        /// <summary>
+        /// Gets the bounds.
+        /// </summary>
+        /// <value>
+        /// The bounds.
+        /// </value>
+        [JsonIgnore]
+        public RectangleF? Bounds { get; set; }
+
+        /// <summary>
+        /// Gets the location.
+        /// </summary>
+        /// <value>
+        /// The location.
+        /// </value>
+        [JsonIgnore]
+        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+
+        /// <summary>
+        /// Gets or sets the size.
+        /// </summary>
+        /// <value>
+        /// The size.
+        /// </value>
+        [JsonIgnore]
+        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+
+        /// <summary>
+        /// Gets or sets the scale.
+        /// </summary>
+        /// <value>
+        /// The scale.
+        /// </value>
+        [JsonIgnore]
+        public float? Scale { get; set; }
         #endregion
 
         /// <summary>
@@ -225,29 +268,33 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
-        /// <param name="brush">The brush.</param>
-        /// <param name="pen">The pen.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="scale">The scale.</param>
+        /// <param name="indexBounds">The index bounds.</param>
+        /// <param name="raticandBounds">The raticand bounds.</param>
+        /// <param name="radicalBounds">The radical bounds.</param>
+        /// <param name="sequenceBounds">The sequence bounds.</param>
+        /// <param name="exponentBounds">The exponent bounds.</param>
+        /// <returns></returns>
+        private RectangleF Layout(Graphics graphics, Font font, PointF location, float scale, out RectangleF indexBounds, out RectangleF raticandBounds, out RectangleF radicalBounds, out RectangleF sequenceBounds, out RectangleF exponentBounds)
+        {
+            var bounds = new RectangleF();
+            raticandBounds = Radicand?.Layout(graphics, font, location, scale) ?? RectangleF.Empty;
+            radicalBounds = Radical?.Layout(graphics, font, location, scale) ?? RectangleF.Empty;
+            indexBounds = Index?.Layout(graphics, font, location, scale) ?? RectangleF.Empty;
+            sequenceBounds = Sequence?.Layout(graphics, font, location, scale) ?? RectangleF.Empty;
+            exponentBounds = Exponent?.Layout(graphics, font, location, scale) ?? RectangleF.Empty;
+            return bounds;
+        }
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
-        /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
         /// <returns></returns>
-        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBorders = false)
-        {
-            var size = Dimensions(graphics, font, scale, out var indexSize, out var radicandSize, out SizeF radicalSize, out SizeF radicalFullSize, out var radicalScale, out var barWidth, out var sequenceSize, out var exponentSize);
-            var map = new HashSet<IRenderable>();
-
-            if (drawBorders)
-            {
-                using var dashedPen = new Pen(Color.Red, 0)
-                {
-                    DashStyle = DashStyle.Dash
-                };
-                map.Add(new RectangleElement(location, size, null, dashedPen));
-            }
-
-            // ToDo: Layout here.
-
-            return map;
-        }
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale) => (Bounds = Layout(graphics, font, location, scale, out _, out _, out _, out _, out _)) ?? Rectangle.Empty;
     }
 }

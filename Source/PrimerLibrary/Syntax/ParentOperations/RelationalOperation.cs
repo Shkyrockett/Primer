@@ -10,7 +10,6 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.CompilerServices;
@@ -94,6 +93,42 @@ namespace PrimerLibrary
         /// </value>
         [JsonInclude, JsonPropertyName("Editable")]
         public bool Editable { get; set; }
+
+        /// <summary>
+        /// Gets the bounds.
+        /// </summary>
+        /// <value>
+        /// The bounds.
+        /// </value>
+        [JsonIgnore]
+        public RectangleF? Bounds { get; set; }
+
+        /// <summary>
+        /// Gets the location.
+        /// </summary>
+        /// <value>
+        /// The location.
+        /// </value>
+        [JsonIgnore]
+        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+
+        /// <summary>
+        /// Gets or sets the size.
+        /// </summary>
+        /// <value>
+        /// The size.
+        /// </value>
+        [JsonIgnore]
+        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+
+        /// <summary>
+        /// Gets or sets the scale.
+        /// </summary>
+        /// <value>
+        /// The scale.
+        /// </value>
+        [JsonIgnore]
+        public float? Scale { get; set; }
         #endregion
 
         /// <summary>
@@ -203,27 +238,13 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
-        /// <param name="brush">The brush.</param>
-        /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
-        /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
         /// <returns></returns>
-        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBorders = false)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
         {
-            SizeF size = Dimensions(graphics, font, scale, out var comparandSize, out var operatorSize, out var comparandaSize);
-            var map = new HashSet<IRenderable>();
-
-            if (drawBorders)
-            {
-                using var dashedPen = new Pen(Color.Red, 0)
-                {
-                    DashStyle = DashStyle.Dash
-                };
-                map.Add(new RectangleElement(location, size, null, dashedPen));
-            }
-
-            return map;
+            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out var comparandSize, out var operatorSize, out var comparandaSize));
+            return Bounds ?? Rectangle.Empty;
         }
     }
 }

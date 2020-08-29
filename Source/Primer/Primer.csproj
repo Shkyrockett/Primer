@@ -4,18 +4,29 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <nullable>enable</nullable>
     <Platforms>AnyCPU;x64;x86</Platforms>
+    <StartupObject>Primer.Program</StartupObject>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <Copyright>Copyright (c) 2020 Shkyrockett</Copyright>
+    <Authors>Shkyrockett</Authors>
+    <Version>0.0.0.1</Version>
+    <PackageProjectUrl>https://github.com/Shkyrockett/Primer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Shkyrockett/Primer</RepositoryUrl>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <DocumentationFile>$(OutputPath)$(Platform)\Primer.xml</DocumentationFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>bin\AnyCPU\Release\</OutputPath>
-    <DocumentationFile>bin\AnyCPU\Release\net5.0\Primer.xml</DocumentationFile>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugType>None</DebugType>
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DocumentationFile>$(OutputPath)\Primer.xml</DocumentationFile>
-    <DebugType>None</DebugType>
     <PublishTrimmed>true</PublishTrimmed>
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishSingleFile>true</PublishSingleFile>
@@ -23,32 +34,37 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DocumentationFile>$(OutputPath)\Primer.xml</DocumentationFile>
-    <DebugType>None</DebugType>
     <PublishTrimmed>true</PublishTrimmed>
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishSingleFile>true</PublishSingleFile>
     <RuntimeIdentifier>win10-x86</RuntimeIdentifier>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DocumentationFile>$(OutputPath)\Primer.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DocumentationFile>$(OutputPath)\Primer.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>bin\AnyCPU\Debug\</OutputPath>
-    <DocumentationFile>$(OutputPath)\Primer.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
+    <None Include="..\..\.editorconfig" Link="Properties\.editorconfig" />
+    <None Include="..\..\LICENSE.md" Link="Properties\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
     <ProjectReference Include="..\PrimerLibrary\PrimerLibrary.csproj" />
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>

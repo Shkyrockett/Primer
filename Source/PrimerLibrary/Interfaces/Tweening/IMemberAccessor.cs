@@ -23,7 +23,7 @@ namespace PrimerLibrary
         /// <value>
         /// The name of the member.
         /// </value>
-        string MemberName { get; }
+        string? MemberName { get; }
 
         /// <summary>
         /// Gets the type of the member.
@@ -31,7 +31,7 @@ namespace PrimerLibrary
         /// <value>
         /// The type of the member.
         /// </value>
-        Type MemberType { get; }
+        Type? MemberType { get; }
 
         /// <summary>
         /// Gets the target.
@@ -39,7 +39,7 @@ namespace PrimerLibrary
         /// <value>
         /// The target.
         /// </value>
-        object Target { get; }
+        object? Target { get; }
 
         /// <summary>
         /// Gets or sets the value.
@@ -47,6 +47,6 @@ namespace PrimerLibrary
         /// <value>
         /// The value.
         /// </value>
-        object Value { get; set; }
+        object? Value { get; set; }
     }
 }

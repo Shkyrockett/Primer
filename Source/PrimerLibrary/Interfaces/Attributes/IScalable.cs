@@ -1,4 +1,4 @@
-﻿// <copyright file="ILocatable.cs" company="Shkyrockett" >
+﻿// <copyright file="IScalable.cs" company="Shkyrockett" >
 //     Copyright © 2020 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
@@ -9,19 +9,19 @@
 // <remarks>
 // </remarks>
 
-using System.Drawing;
-
 namespace PrimerLibrary
 {
     /// <summary>
-    /// An interface that defines and object with a location point.
+    /// 
     /// </summary>
-    public interface ILocatable
+    public interface IScalable
     {
         /// <summary>
-        /// Gets the point.
+        /// Gets or sets the scale.
         /// </summary>
-        /// <value>The <see cref="PointF"/>.</value>
-        PointF? Location { get; set; }
+        /// <value>
+        /// The scale.
+        /// </value>
+        float? Scale { get; set; }
     }
 }

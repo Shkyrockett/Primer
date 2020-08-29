@@ -11,7 +11,6 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
@@ -88,10 +87,46 @@ namespace PrimerLibrary
         ///   <see langword="true" /> if editable; otherwise, <see langword="false" />.
         /// </value>
         public bool Editable { get; set; }
+
+        /// <summary>
+        /// Gets the bounds.
+        /// </summary>
+        /// <value>
+        /// The bounds.
+        /// </value>
+        [JsonIgnore]
+        public RectangleF? Bounds { get; set; }
+
+        /// <summary>
+        /// Gets the location.
+        /// </summary>
+        /// <value>
+        /// The location.
+        /// </value>
+        [JsonIgnore]
+        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+
+        /// <summary>
+        /// Gets or sets the size.
+        /// </summary>
+        /// <value>
+        /// The size.
+        /// </value>
+        [JsonIgnore]
+        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+
+        /// <summary>
+        /// Gets or sets the scale.
+        /// </summary>
+        /// <value>
+        /// The scale.
+        /// </value>
+        [JsonIgnore]
+        public float? Scale { get; set; }
         #endregion
 
         /// <summary>
-        /// Dimensionses the specified graphics.
+        /// Return the equation's size.
         /// </summary>
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
@@ -163,7 +198,7 @@ namespace PrimerLibrary
 
             if (sequenceSize.Width > 0)
             {
-                Sequence?.Draw(graphics, font, brush, pen, scale * MathConstants.SequenceScale, x + variableSize.Width, y + variableSize.Height - (sequenceSize.Height *  MathConstants.SequenceOffsetScale), drawBounds);
+                Sequence?.Draw(graphics, font, brush, pen, scale * MathConstants.SequenceScale, x + variableSize.Width, y + variableSize.Height - (sequenceSize.Height * MathConstants.SequenceOffsetScale), drawBounds);
             }
 
             if (exponentSize.Width > 0)
@@ -184,27 +219,13 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="graphics">The graphics.</param>
         /// <param name="font">The font.</param>
-        /// <param name="brush">The brush.</param>
-        /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
-        /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
         /// <returns></returns>
-        public HashSet<IRenderable> Layout(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBorders = false)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
         {
-            SizeF size = Dimensions(graphics, font, scale, out var variableSize, out var sequenceSize, out var exponentSize);
-            var map = new HashSet<IRenderable>();
-
-            if (drawBorders)
-            {
-                using var dashedPen = new Pen(Color.Red, 0)
-                {
-                    DashStyle = DashStyle.Dash
-                };
-                map.Add(new RectangleElement(location, size, null, dashedPen));
-            }
-
-            return map;
+            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out var variableSize, out var sequenceSize, out var exponentSize));
+            return Bounds ?? Rectangle.Empty;
         }
     }
 }
