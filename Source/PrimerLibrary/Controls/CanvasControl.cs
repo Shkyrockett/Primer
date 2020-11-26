@@ -1,4 +1,4 @@
-﻿// <copyright file="Canvas.cs" company="Shkyrockett" >
+﻿// <copyright file="CanvasControl.cs" company="Shkyrockett" >
 //     Copyright © 2020 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
@@ -21,14 +21,15 @@ namespace PrimerLibrary
     /// 
     /// </summary>
     /// <seealso cref="System.Windows.Forms.UserControl" />
-    public partial class Canvas
+    public partial class CanvasControl
         : UserControl
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Canvas"/> class.
+        /// Initializes a new instance of the <see cref="CanvasControl"/> class.
         /// </summary>
-        public Canvas()
+        public CanvasControl()
         {
+            DoubleBuffered = true;
             InitializeComponent();
 
             Expression = new RelationalOperation(ComparisonOperators.Equals, null, null);
@@ -73,7 +74,7 @@ namespace PrimerLibrary
             var scale = Utilities.FitSizeWithin(inner, outer);
             inner = Expression.Dimensions(e.Graphics, Font, scale);
 
-            (var x, var y) = ((window.Width - inner.Width) * 0.5f, (window.Height - inner.Height) * 0.5f);
+            PointF location = new((window.Width - inner.Width) * 0.5f, (window.Height - inner.Height) * 0.5f);
 
             e.Graphics.ResetTransform();
             e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
@@ -81,7 +82,7 @@ namespace PrimerLibrary
             e.Graphics.CompositingQuality = CompositingQuality.HighQuality;
             e.Graphics.CompositingMode = CompositingMode.SourceOver;
 
-            Expression?.Draw(e.Graphics, Font, Brushes.Black, Pens.Black, scale, x, y, RenderBoundaries);
+            Expression?.Draw(e.Graphics, Font, Brushes.Black, Pens.Black, scale, location, RenderBoundaries);
         }
 
         /// <summary>

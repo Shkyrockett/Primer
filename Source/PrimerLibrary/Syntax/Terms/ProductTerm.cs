@@ -22,7 +22,8 @@ namespace PrimerLibrary
     /// <summary>
     /// 
     /// </summary>
-    /// <seealso cref="PrimerLibrary.IExpression" />
+    /// <seealso cref="PrimerLibrary.ITerm" />
+    /// <seealso cref="PrimerLibrary.IEditable" />
     /// <seealso cref="PrimerLibrary.INegatable" />
     [JsonConverter(typeof(ProductTerm))]
     public class ProductTerm
@@ -69,7 +70,7 @@ namespace PrimerLibrary
             Coefficient = coefficient;
             if (Coefficient is IExpression c) c.Parent = this;
             Factors = new List<IFactor>(expressions);
-            for (int i = 0; i < Factors.Count; i++)
+            for (var i = 0; i < Factors.Count; i++)
             {
                 if (Factors[i] is IExpression f) f.Parent = this;
             }
@@ -132,7 +133,7 @@ namespace PrimerLibrary
         [JsonIgnore]
         public int Sign
         {
-            get { return Coefficient?.Sign ?? 1; }
+            get => Coefficient?.Sign ?? 1;
             set
             {
                 if (Coefficient is null)
@@ -155,7 +156,7 @@ namespace PrimerLibrary
         [JsonIgnore]
         public bool IsNegative
         {
-            get { return Coefficient?.IsNegative ?? false; }
+            get => Coefficient?.IsNegative ?? false;
             set
             {
                 if (Coefficient is null)
@@ -193,7 +194,7 @@ namespace PrimerLibrary
         /// The location.
         /// </value>
         [JsonIgnore]
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -202,7 +203,7 @@ namespace PrimerLibrary
         /// The size.
         /// </value>
         [JsonIgnore]
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -228,7 +229,7 @@ namespace PrimerLibrary
             var (width, maxHeight) = coefficientSize = Coefficient.Dimensions(graphics, font, scale);
 
             factorsSizes = new SizeF[Factors.Count];
-            for (int i = 0; i < Factors.Count; i++)
+            for (var i = 0; i < Factors.Count; i++)
             {
                 var factorSize = factorsSizes[i] = Factors[i].Dimensions(graphics, font, scale);
                 maxHeight = Max(maxHeight, factorSize.Height);
@@ -255,12 +256,12 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
+        /// <returns></returns>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBounds = false)
         {
-            var size = Dimensions(graphics, font, scale, out SizeF coefficientSize, out var factorsSizes);
+            var bounds = Layout(graphics, font, location, scale, out RectangleF coefficientBounds, out Span<RectangleF> factorsBounds);
 
             if (drawBounds)
             {
@@ -268,25 +269,15 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, size.Width, size.Height);
+
+                graphics.DrawRectangle(dashedPen, bounds);
             }
 
-            Coefficient?.Draw(graphics, font, brush, pen, scale, x, y + ((size.Height - coefficientSize.Height) * MathConstants.OneHalf), drawBounds);
-            x += coefficientSize.Width;
-
-            using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
-            var factor = Factors?.Count > 0 ? Factors[0] : null;
-            var factorSize = factorsSizes.Length > 0 ? factorsSizes[0] : graphics.MeasureString(" ", tempFont, PointF.Empty, StringFormat.GenericTypographic);
-            factor?.Draw(graphics, font, brush, pen, scale, x, y + ((size.Height - factorSize.Height) * MathConstants.OneHalf), drawBounds);
-            x += factorSize.Width;
-
-            for (int i = 1; i < (Factors?.Count ?? 0); i++)
+            Coefficient?.Draw(graphics, font, brush, pen, scale, coefficientBounds.Location, drawBounds);
+            for (var i = 0; i < (Factors?.Count ?? 0); i++)
             {
-                factor = Factors?[i];
-                factorSize = factorsSizes[i];
-
-                factor?.Draw(graphics, font, brush, pen, scale, x, y + (size.Height - (factorSize.Height * MathConstants.OneHalf)), drawBounds);
-                x += factorSize.Width;
+                var factor = Factors?[i];
+                factor?.Draw(graphics, font, brush, pen, scale, factorsBounds[i].Location, drawBounds);
             }
         }
 
@@ -298,10 +289,48 @@ namespace PrimerLibrary
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
         /// <returns></returns>
-        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale) => Layout(graphics, font, location, scale, out _, out _);
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="scale">The scale.</param>
+        /// <param name="coefficientBounds">The coefficient bounds.</param>
+        /// <param name="factorsBounds">The factors bounds.</param>
+        /// <returns></returns>
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale, out RectangleF coefficientBounds, out Span<RectangleF> factorsBounds)
         {
-            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out SizeF coefficientSize, out var nomialSizes));
+            var size = Dimensions(graphics, font, scale, out var coefficientSize, out var factorsSizes);
+            Bounds = new RectangleF(location, size);
+            coefficientBounds = new RectangleF(new(location.X, location.Y + ((size.Height - coefficientSize.Height) * MathConstants.OneHalf)), coefficientSize);
+            location.X += coefficientSize.Width;
+            factorsBounds = new RectangleF[factorsSizes.Length];
+            for (var i = 0; i < (Factors?.Count ?? 0); i++)
+            {
+                var factorSize = factorsSizes[i];
+                factorsBounds[i] = new RectangleF(new(location.X, location.Y + ((size.Height - factorSize.Height) * MathConstants.OneHalf)), factorSize);
+                location.X += factorSize.Width;
+            }
+
             return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            set.UnionWith(Coefficient.Expressions());
+            foreach (var factor in Factors)
+            {
+                set.UnionWith(factor.Expressions());
+            }
+            return set;
         }
     }
 }

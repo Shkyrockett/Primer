@@ -10,6 +10,7 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
@@ -117,7 +118,7 @@ namespace PrimerLibrary
         /// The location.
         /// </value>
         [JsonIgnore]
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -126,7 +127,7 @@ namespace PrimerLibrary
         /// The size.
         /// </value>
         [JsonIgnore]
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -155,7 +156,8 @@ namespace PrimerLibrary
             contentsSize = Contents.Dimensions(graphics, font, scale);
             (leftSize, leftScale) = Utilities.CalculateCharacterSizeForHeight(graphics, font, Utilities.BarStyleStringLeft(LeftBarStyle), contentsSize.Height, StringFormat.GenericTypographic);
             (rightSize, rightScale) = Utilities.CalculateCharacterSizeForHeight(graphics, font, Utilities.BarStyleStringRight(RightBarStyle), contentsSize.Height, StringFormat.GenericTypographic);
-            return new SizeF(contentsSize.Width + leftSize.Width + rightSize.Width, contentsSize.Height);
+            Size = new SizeF(contentsSize.Width + leftSize.Width + rightSize.Width, contentsSize.Height);
+            return Size.Value;
         }
 
         /// <summary>
@@ -175,12 +177,12 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
+        /// <returns></returns>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBounds = false)
         {
-            var size = Dimensions(graphics, font, scale, out SizeF contentsSize, out SizeF leftSize, out float leftScale, out SizeF rightSize, out float rightScale);
+            var bounds = Layout(graphics, font, location, scale, out var contentsBounds, out var leftBounds, out var leftScale, out var rightBounds, out var rightScale);
 
             if (drawBounds)
             {
@@ -188,16 +190,16 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, size);
-                graphics.DrawRectangle(dashedPen, x + leftSize.Width, y, contentsSize);
-                graphics.DrawRectangle(dashedPen, x + leftSize.Width + contentsSize.Width, y, rightSize);
+
+                graphics.DrawRectangle(dashedPen, bounds);
+                graphics.DrawRectangle(dashedPen, leftBounds);
+                graphics.DrawRectangle(dashedPen, contentsBounds);
+                graphics.DrawRectangle(dashedPen, rightBounds);
             }
 
-            Utilities.DrawLeftBar(graphics, font, pen, brush, leftScale, x, y, LeftBarStyle);
-            x += leftSize.Width;
-            Contents.Draw(graphics, font, brush, pen, scale, x, y, drawBounds);
-            x += contentsSize.Width;
-            Utilities.DrawRightBar(graphics, font, pen, brush, rightScale, x, y, RightBarStyle);
+            Utilities.DrawLeftBar(graphics, font, pen, brush, leftScale, leftBounds.Location, LeftBarStyle);
+            Contents.Draw(graphics, font, brush, pen, scale, contentsBounds.Location, drawBounds);
+            Utilities.DrawRightBar(graphics, font, pen, brush, rightScale, rightBounds.Location, RightBarStyle);
         }
 
         /// <summary>
@@ -212,6 +214,42 @@ namespace PrimerLibrary
         {
             Bounds = new RectangleF(location, Dimensions(graphics, font, scale));
             return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="scale">The scale.</param>
+        /// <param name="contentsBounds">The contents bounds.</param>
+        /// <param name="leftBounds">The left bounds.</param>
+        /// <param name="leftScale">The left scale.</param>
+        /// <param name="rightBounds">The right bounds.</param>
+        /// <param name="rightScale">The right scale.</param>
+        /// <returns></returns>
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale, out RectangleF contentsBounds, out RectangleF leftBounds, out float leftScale, out RectangleF rightBounds, out float rightScale)
+        {
+            var size = Dimensions(graphics, font, scale, out SizeF contentsSize, out SizeF leftSize, out leftScale, out SizeF rightSize, out rightScale);
+            Bounds = new RectangleF(location, size);
+            leftBounds = new RectangleF(location, leftSize);
+            location.X += leftSize.Width;
+            contentsBounds = new RectangleF(location, contentsSize);
+            location.X += contentsSize.Width;
+            rightBounds = new RectangleF(location, rightSize);
+            return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            if (Contents is not null) set.UnionWith(Contents.Expressions());
+            return set;
         }
     }
 }

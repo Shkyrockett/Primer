@@ -37,12 +37,12 @@ namespace PrimerLibrary
         /// <summary>
         /// The level
         /// </summary>
-        private int level;
+        private readonly int level;
 
         /// <summary>
         /// The objects
         /// </summary>
-        private List<IBoundable> objects;
+        private readonly List<IBoundable> objects;
 
         /// <summary>
         /// The bounds
@@ -52,7 +52,7 @@ namespace PrimerLibrary
         /// <summary>
         /// The nodes
         /// </summary>
-        private Quadtree?[] nodes;
+        private readonly Quadtree?[] nodes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Quadtree"/> class.
@@ -117,6 +117,7 @@ namespace PrimerLibrary
 
                 // Object can completely fit within the top quadrants
                 bool topQuadrant = b.Y < horizontalMidpoint && b.Y + b.Height < horizontalMidpoint;
+
                 // Object can completely fit within the bottom quadrants
                 bool bottomQuadrant = b.Y > horizontalMidpoint;
 

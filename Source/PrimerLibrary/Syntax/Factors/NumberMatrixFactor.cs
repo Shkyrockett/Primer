@@ -22,8 +22,11 @@ namespace PrimerLibrary
     /// <summary>
     /// 
     /// </summary>
+    /// <seealso cref="PrimerLibrary.IExponentableFactor" />
+    /// <seealso cref="PrimerLibrary.IGroupable" />
+    /// <seealso cref="PrimerLibrary.IEditable" />
     /// <seealso cref="PrimerLibrary.IExpression" />
-    public class MatrixFactor
+    public class NumberMatrixFactor
         : IExponentableFactor, IGroupable, IEditable
     {
         #region Fields
@@ -37,82 +40,95 @@ namespace PrimerLibrary
         /// </summary>
         private readonly int NumCols;
 
-        /// <summary>
-        /// True if we should make rows/columns have the same sizes.
-        /// </summary>
-        private readonly bool UniformRowSize;
+        ///// <summary>
+        ///// True if we should make rows/columns have the same sizes.
+        ///// </summary>
+        //private readonly bool UniformRowSize;
 
-        /// <summary>
-        /// True if we should make rows/columns have the same sizes.
-        /// </summary>
-        private readonly bool UniformColSize;
+        ///// <summary>
+        ///// True if we should make rows/columns have the same sizes.
+        ///// </summary>
+        //private readonly bool UniformColSize;
         #endregion
 
         #region Constructors
         /// <summary>
-        /// Initialize the items.
+        /// Initializes a new instance of the <see cref="NumberMatrixFactor" /> class.
         /// </summary>
-        /// <param name="rows">The rows.</param>
-        /// <param name="cols">The cols.</param>
         /// <param name="items">The items.</param>
-        public MatrixFactor(int rows, int cols, params IExpression[] items)
-            : this(rows, cols, true, true, true, BarStyles.Bracket, false, items)
-        { }
-
-        /// <summary>
-        /// Initialize the items.
-        /// </summary>
-        /// <param name="rows">The rows.</param>
-        /// <param name="cols">The cols.</param>
-        /// <param name="group">if set to <see langword="true" /> [group].</param>
-        /// <param name="groupingStyle">The grouping style.</param>
-        /// <param name="items">The items.</param>
-        public MatrixFactor(int rows, int cols, bool group, BarStyles groupingStyle, params IExpression[] items)
-            : this(rows, cols, true, true, group, groupingStyle, false, items)
-        { }
-
-        /// <summary>
-        /// Initialize the items.
-        /// </summary>
-        /// <param name="rows">The rows.</param>
-        /// <param name="cols">The cols.</param>
-        /// <param name="uniformRowSize">if set to <see langword="true" /> [uniform row size].</param>
-        /// <param name="uniformColSize">if set to <see langword="true" /> [uniform col size].</param>
-        /// <param name="group">if set to <see langword="true" /> [group].</param>
-        /// <param name="groupingStyle">The grouping style.</param>
-        /// <param name="items">The items.</param>
-        public MatrixFactor(int rows, int cols, bool uniformRowSize, bool uniformColSize, bool group, BarStyles groupingStyle, params IExpression[] items)
-            : this(rows, cols, uniformRowSize, uniformColSize, group, groupingStyle, false, items)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MatrixFactor" /> class.
-        /// </summary>
-        /// <param name="rows">The rows.</param>
-        /// <param name="cols">The cols.</param>
-        /// <param name="uniformRowSize">if set to <see langword="true" /> [uniform row size].</param>
-        /// <param name="uniformColSize">if set to <see langword="true" /> [uniform col size].</param>
-        /// <param name="group">if set to <see langword="true" /> [group].</param>
-        /// <param name="groupingStyle">The grouping style.</param>
+        /// <param name="editableCells">if set to <see langword="true" /> [editable cells].</param>
         /// <param name="editable">if set to <see langword="true" /> [editable].</param>
+        public NumberMatrixFactor(float[,] items, bool editableCells = false, bool editable = false)
+            : this(true, BarStyles.Bracket, items, editableCells, editable)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NumberMatrixFactor" /> class.
+        /// </summary>
         /// <param name="items">The items.</param>
-        public MatrixFactor(int rows, int cols, bool uniformRowSize, bool uniformColSize, bool group, BarStyles groupingStyle, bool editable = false, params IExpression[] items)
+        /// <param name="editable">if set to <see langword="true" /> [editable].</param>
+        public NumberMatrixFactor(CoefficientFactor[,] items, bool editable = false)
+            : this(true, BarStyles.Bracket, items, editable)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NumberMatrixFactor" /> class.
+        /// </summary>
+        /// <param name="group">if set to <see langword="true" /> [group].</param>
+        /// <param name="groupingStyle">The grouping style.</param>
+        /// <param name="items">The items.</param>
+        /// <param name="editableCells">if set to <see langword="true" /> [editable cells].</param>
+        /// <param name="editable">if set to <see langword="true" /> [editable].</param>
+        public NumberMatrixFactor(bool group, BarStyles groupingStyle, float[,] items, bool editableCells = false, bool editable = false)
         {
             Parent = null;
-            NumRows = rows;
-            NumCols = cols;
-            UniformRowSize = uniformRowSize;
-            UniformColSize = uniformColSize;
+            NumRows = items.GetLength(0);
+            NumCols = items.GetLength(1);
+            //UniformRowSize = true;
+            //UniformColSize = true;
             Group = group;
             GroupingStyle = groupingStyle;
 
-            Items = new IExpression[rows, cols];
+            Items = new CoefficientFactor[NumRows, NumCols];
+            for (var row = 0; row < NumRows; row++)
+            {
+                for (var col = 0; col < NumCols; col++)
+                {
+                    Items[row, col] = new CoefficientFactor(items[row, col]);
+                    if (Items[row, col] is IExpression c)
+                    {
+                        c.Parent = this;
+                        c.Editable = editableCells;
+                    }
+
+                }
+            }
+
+            Editable = editable;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NumberMatrixFactor" /> class.
+        /// </summary>
+        /// <param name="group">if set to <see langword="true" /> [group].</param>
+        /// <param name="groupingStyle">The grouping style.</param>
+        /// <param name="items">The items.</param>
+        /// <param name="editable">if set to <see langword="true" /> [editable].</param>
+        public NumberMatrixFactor(bool group, BarStyles groupingStyle, CoefficientFactor[,] items, bool editable = false)
+        {
+            Parent = null;
+            NumRows = items.GetLength(0);
+            NumCols = items.GetLength(1);
+            //UniformRowSize = true;
+            //UniformColSize = true;
+            Group = group;
+            GroupingStyle = groupingStyle;
+
+            Items = items;
             for (int i = 0, row = 0; row < NumRows; row++)
             {
                 for (var col = 0; col < NumCols; col++, i++)
                 {
-                    if (i >= items.Length) break;
-                    Items[row, col] = items[i];
                     if (Items[row, col] is IExpression c) c.Parent = this;
                 }
                 if (i >= items.Length) break;
@@ -138,7 +154,31 @@ namespace PrimerLibrary
         /// <value>
         /// The items.
         /// </value>
-        public IExpression[,] Items { get; }
+        public CoefficientFactor[,] Items { get; }
+
+        /// <summary>
+        /// Gets the coefficients.
+        /// </summary>
+        /// <value>
+        /// The coefficients.
+        /// </value>
+        [JsonIgnore]
+        public float[,] Coefficients
+        {
+            get
+            {
+                var values = new float[NumRows, NumCols];
+                for (var i = 0; i < NumRows; i++)
+                {
+                    for (var j = 0; j < NumCols; j++)
+                    {
+                        values[i, j] = Items[i, j].Value;
+                    }
+                }
+
+                return values;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the exponent.
@@ -257,8 +297,8 @@ namespace PrimerLibrary
                 }
             }
 
-            // See if we want uniform row heights.
-            if (UniformRowSize)
+            //// See if we want uniform row heights.
+            //if (UniformRowSize)
             {
                 // Get the maximum row height.
                 var max_height = rowHeights.Max();
@@ -267,8 +307,8 @@ namespace PrimerLibrary
                 for (var row = 0; row < NumRows; row++) rowHeights[row] = max_height;
             }
 
-            // See if we want uniform column widths.
-            if (UniformColSize)
+            //// See if we want uniform column widths.
+            //if (UniformColSize)
             {
                 // Get the maximum col width.
                 var max_width = colWidths.Max();
@@ -301,7 +341,8 @@ namespace PrimerLibrary
             height += (Sequence is not null) ? sequenceSize.Height * MathConstants.SequenceOffsetScale : 0f;
             height += (Exponent is not null) ? exponentSize.Height * MathConstants.ExponentOffsetScale : 0f;
 
-            return new SizeF(width, Math.Max(height, leftGroup.Height));
+            Size = new SizeF(width, Math.Max(height, leftGroup.Height));
+            return Size.Value;
         }
 
         /// <summary>

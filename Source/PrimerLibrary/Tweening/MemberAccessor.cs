@@ -6,7 +6,7 @@
 //     Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // </license>
 // <summary></summary>
-// <remarks> Based on: https://bitbucket.org/jacobalbano/glide </remarks>
+// <remarks> Based on: https://github.com/jacobalbano/glide </remarks>
 
 using System;
 using System.Linq.Expressions;

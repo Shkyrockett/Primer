@@ -10,6 +10,7 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
@@ -88,7 +89,7 @@ namespace PrimerLibrary
         /// The location.
         /// </value>
         [JsonIgnore]
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -97,7 +98,7 @@ namespace PrimerLibrary
         /// The size.
         /// </value>
         [JsonIgnore]
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -130,12 +131,13 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
+        /// <returns></returns>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBounds = false)
         {
-            var size = Dimensions(graphics, font, scale);
+            var bounds = Layout(graphics, font, location, scale);
+
             using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
             if (drawBounds)
             {
@@ -143,13 +145,13 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, size);
+                graphics.DrawRectangle(dashedPen, bounds);
             }
 
             if (!string.IsNullOrWhiteSpace(Text))
             {
                 //TextRenderer.DrawText(graphics, Text, tempFont, new Point((int)x, (int)y), Color.Lime);
-                graphics.DrawString(Text, tempFont, brush, x, y);
+                graphics.DrawString(Text, tempFont, brush, bounds.Location);
             }
             else
             {
@@ -157,7 +159,7 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, size);
+                graphics.DrawRectangle(dashedPen, bounds);
             }
         }
 
@@ -173,6 +175,16 @@ namespace PrimerLibrary
         {
             Bounds = new RectangleF(location, Dimensions(graphics, font, scale));
             return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            return set;
         }
     }
 }

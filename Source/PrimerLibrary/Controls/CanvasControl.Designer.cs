@@ -1,4 +1,4 @@
-﻿// <copyright file="Canvas.Designer.cs" company="Shkyrockett" >
+﻿// <copyright file="CanvasControl.Designer.cs" company="Shkyrockett" >
 //     Copyright © 2020 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
@@ -15,7 +15,7 @@ namespace PrimerLibrary
     /// 
     /// </summary>
     /// <seealso cref="System.Windows.Forms.UserControl" />
-    partial class Canvas
+    partial class CanvasControl
     {
         /// <summary> 
         /// Required designer variable.

@@ -11,6 +11,7 @@
 // </remarks>
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
@@ -57,20 +58,20 @@ namespace PrimerLibrary
         public IExpression? Parent { get; set; }
 
         /// <summary>
-        /// Gets or sets the sequence.
-        /// </summary>
-        /// <value>
-        /// The sequence.
-        /// </value>
-        public ICoefficient? Sequence { get; set; }
-
-        /// <summary>
         /// Gets or sets the exponent.
         /// </summary>
         /// <value>
         /// The exponent.
         /// </value>
         public IExpression? Exponent { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sequence.
+        /// </summary>
+        /// <value>
+        /// The sequence.
+        /// </value>
+        public ICoefficient? Sequence { get; set; }
 
         /// <summary>
         /// Gets or sets the text.
@@ -104,7 +105,7 @@ namespace PrimerLibrary
         /// The location.
         /// </value>
         [JsonIgnore]
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -113,7 +114,7 @@ namespace PrimerLibrary
         /// The size.
         /// </value>
         [JsonIgnore]
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -144,7 +145,6 @@ namespace PrimerLibrary
             //var descent = designToUnit * tempFont.FontFamily.GetCellDescent(tempFont.Style);
             var lineSpacing = designToUnit * tempFont.FontFamily.GetLineSpacing(tempFont.Style);
 
-            variableSize = graphics.MeasureString(string.IsNullOrEmpty(Text) ? " " : Text, tempFont, Point.Empty, StringFormat.GenericTypographic);
             if (string.IsNullOrEmpty(Text))
             {
                 variableSize = new SizeF(0f, lineSpacing);
@@ -159,9 +159,10 @@ namespace PrimerLibrary
             sequenceSize = Sequence?.Dimensions(graphics, font, scale) ?? new SizeF(0f, graphics.MeasureString(" ", sequenceFont, Point.Empty, StringFormat.GenericTypographic).Height);
 
             using var exponentFont = new Font(font.FontFamily, font.Size * scale * MathConstants.ExponentScale, font.Style);
-            exponentSize = Exponent?.Dimensions(graphics, font, scale) ?? new SizeF(0f, graphics.MeasureString(" ", exponentFont, Point.Empty, StringFormat.GenericTypographic).Height);
+            exponentSize = Exponent?.Dimensions(graphics, font, scale * MathConstants.ExponentScale) ?? new SizeF(0f, graphics.MeasureString(" ", exponentFont, Point.Empty, StringFormat.GenericTypographic).Height);
 
-            return new SizeF(variableSize.Width + Math.Max(sequenceSize.Width, exponentSize.Width), variableSize.Height + ((sequenceSize.Width == 0) ? 0f : sequenceSize.Height * MathConstants.SequenceOffsetScale) + ((exponentSize.Width == 0) ? 0f : exponentSize.Height * MathConstants.ExponentOffsetScale));
+            Size = new SizeF(variableSize.Width + Math.Max(sequenceSize.Width, exponentSize.Width), variableSize.Height + ((sequenceSize.Width == 0) ? 0f : sequenceSize.Height * MathConstants.SequenceOffsetScale) + ((exponentSize.Width == 0) ? 0f : exponentSize.Height * MathConstants.ExponentOffsetScale));
+            return Size.Value;
         }
 
         /// <summary>
@@ -181,36 +182,37 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
+        /// <returns></returns>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBounds = false)
         {
-            SizeF size = Dimensions(graphics, font, scale, out var variableSize, out var sequenceSize, out var exponentSize);
+            var bounds = Layout(graphics, font, location, scale, out var variableBounds, out var sequenceBounds, out var exponentBounds);
+
             if (drawBounds)
             {
                 using var dashedPen = new Pen(Color.DarkCyan, 0)
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, size.Width, size.Height);
+
+                graphics.DrawRectangle(dashedPen, bounds);
             }
 
-            if (sequenceSize.Width > 0)
+            if (sequenceBounds.Width > 0)
             {
-                Sequence?.Draw(graphics, font, brush, pen, scale * MathConstants.SequenceScale, x + variableSize.Width, y + variableSize.Height - (sequenceSize.Height * MathConstants.SequenceOffsetScale), drawBounds);
+                Sequence?.Draw(graphics, font, brush, pen, scale * MathConstants.SequenceScale, sequenceBounds.Location, drawBounds);
             }
 
-            if (exponentSize.Width > 0)
+            if (exponentBounds.Width > 0)
             {
-                Exponent?.Draw(graphics, font, brush, pen, scale * MathConstants.ExponentScale, x + variableSize.Width, y, drawBounds);
-                y += exponentSize.Height * MathConstants.ExponentOffsetScale;
+                Exponent?.Draw(graphics, font, brush, pen, scale * MathConstants.ExponentScale, exponentBounds.Location, drawBounds);
             }
 
             if (!string.IsNullOrWhiteSpace(Text))
             {
                 using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
-                graphics.DrawString(Text, tempFont, brush, x, y, StringFormat.GenericTypographic);
+                graphics.DrawString(Text, tempFont, brush, variableBounds.Location, StringFormat.GenericTypographic);
             }
         }
 
@@ -222,10 +224,50 @@ namespace PrimerLibrary
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
         /// <returns></returns>
-        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale) => Layout(graphics, font, location, scale, out _, out _, out _);
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="scale">The scale.</param>
+        /// <param name="variableBounds">The variable bounds.</param>
+        /// <param name="sequenceBounds">The sequence bounds.</param>
+        /// <param name="exponentBounds">The exponent bounds.</param>
+        /// <returns></returns>
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale, out RectangleF variableBounds, out RectangleF sequenceBounds, out RectangleF exponentBounds)
         {
-            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out var variableSize, out var sequenceSize, out var exponentSize));
+            var size = Dimensions(graphics, font, scale, out var variableSize, out var sequenceSize, out var exponentSize);
+            Bounds = new RectangleF(location, size);
+
+            sequenceBounds = sequenceSize.Width > 0
+                ? new RectangleF(new(location.X + variableSize.Width, location.Y + variableSize.Height - (sequenceSize.Height * MathConstants.SequenceOffsetScale)), sequenceSize)
+                : RectangleF.Empty;
+
+            if (exponentSize.Width > 0)
+            {
+                exponentBounds = new RectangleF(new(location.X + variableSize.Width, location.Y), exponentSize);
+                location.Y += exponentSize.Height * MathConstants.ExponentOffsetScale;
+            }
+            else exponentBounds = RectangleF.Empty;
+
+            variableBounds = new RectangleF(location, variableSize);
+
             return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            if (Exponent is not null) set.UnionWith(Exponent.Expressions());
+            if (Sequence is not null) set.UnionWith(Sequence.Expressions());
+            return set;
         }
     }
 }

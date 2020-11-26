@@ -28,14 +28,14 @@ $\begin{bmatrix}a&b\\c&d\end{bmatrix}\begin{bmatrix}e&f&g\\h&i&j\end{bmatrix}=\b
 
 ## See Also
 
-[![Extraordinary Conics: The Most Difficult Math Problem I Ever Solved](http://img.youtube.com/vi/rowWM-MijXU/0.jpg)](https://www.youtube.com/embed/rowWM-MijXU "The Applications of Matrices | What I wish my teachers told me way earlier")  
+[![The Applications of Matrices | What I wish my teachers told me way earlier](http://img.youtube.com/vi/rowWM-MijXU/0.jpg)](https://www.youtube.com/embed/rowWM-MijXU "The Applications of Matrices | What I wish my teachers told me way earlier")  
 The Applications of Matrices | What I wish my teachers told me way earlier
 
-[![Extraordinary Conics: The Most Difficult Math Problem I Ever Solved](http://img.youtube.com/vi/4csuTO7UTMo/0.jpg)](https://www.youtube.com/embed/4csuTO7UTMo "Dear linear algebra students, This is what matrices (and matrix manipulation) really look like")  
+[![Dear linear algebra students, This is what matrices (and matrix manipulation) really look like](http://img.youtube.com/vi/4csuTO7UTMo/0.jpg)](https://www.youtube.com/embed/4csuTO7UTMo "Dear linear algebra students, This is what matrices (and matrix manipulation) really look like")  
 Dear linear algebra students, This is what matrices (and matrix manipulation) really look like
 
-[![Extraordinary Conics: The Most Difficult Math Problem I Ever Solved](http://img.youtube.com/vi/XkY2DOUCWMU/0.jpg)](https://www.youtube.com/embed/XkY2DOUCWMU "Matrix multiplication as composition | Essence of linear algebra, chapter 4")  
+[![Matrix multiplication as composition | Essence of linear algebra, chapter 4](http://img.youtube.com/vi/XkY2DOUCWMU/0.jpg)](https://www.youtube.com/embed/XkY2DOUCWMU "Matrix multiplication as composition | Essence of linear algebra, chapter 4")  
 Matrix multiplication as composition | Essence of linear algebra, chapter 4
 
-[![Extraordinary Conics: The Most Difficult Math Problem I Ever Solved](http://img.youtube.com/vi/v8VSDg_WQlA/0.jpg)](https://www.youtube.com/embed/v8VSDg_WQlA "Nonsquare matrices as transformations between dimensions | Essence of linear algebra, chapter 8")  
+[![Nonsquare matrices as transformations between dimensions | Essence of linear algebra, chapter 8](http://img.youtube.com/vi/v8VSDg_WQlA/0.jpg)](https://www.youtube.com/embed/v8VSDg_WQlA "Nonsquare matrices as transformations between dimensions | Essence of linear algebra, chapter 8")  
 Nonsquare matrices as transformations between dimensions | Essence of linear algebra, chapter 8

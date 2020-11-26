@@ -45,7 +45,7 @@ namespace PrimerLibrary
         {
             Parent = null;
             Terms = new List<INegatable>(expressions);
-            for (int i = 0; i < Terms.Count; i++)
+            for (var i = 0; i < Terms.Count; i++)
             {
                 if (Terms[i] is IExpression t) t.Parent = this;
             }
@@ -98,7 +98,7 @@ namespace PrimerLibrary
         /// The sign of the expression. -1 for negative, +1 for positive, 0 for 0.
         /// </value>
         [JsonIgnore]
-        public int Sign { get { return Terms?[0].Sign ?? 1; } set { if (Terms is not null && Terms[0] is INegatable t) t.Sign = value; } }
+        public int Sign { get => Terms?[0].Sign ?? 1; set { if (Terms is not null && Terms[0] is INegatable t) t.Sign = value; } }
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="CoefficientFactor"/> is editable.
@@ -125,7 +125,7 @@ namespace PrimerLibrary
         /// The location.
         /// </value>
         [JsonIgnore]
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -134,7 +134,7 @@ namespace PrimerLibrary
         /// The size.
         /// </value>
         [JsonIgnore]
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -186,7 +186,8 @@ namespace PrimerLibrary
                 leftScale = rightScale = 1f;
             }
 
-            return new SizeF(width, maxHeight);
+            Size = new SizeF(width, maxHeight);
+            return Size.Value;
         }
 
         /// <summary>
@@ -207,12 +208,12 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
+        /// <returns></returns>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBounds = false)
         {
-            var size = Dimensions(graphics, font, scale, out var contentsSize, out var termsSizes, out var leftGroup, out var leftScale, out var rightGroup, out var rightScale);
+            var bounds = Layout(graphics, font, location, scale, out var contentsBounds, out var termsBounds, out var leftGroupBounds, out var leftScale, out var rightGroupBounds, out var rightScale);
 
             if (drawBounds)
             {
@@ -220,32 +221,21 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, size);
-                graphics.DrawRectangle(dashedPen, x + leftGroup.Width, y, contentsSize);
+
+                graphics.DrawRectangle(dashedPen, bounds);
+                graphics.DrawRectangle(dashedPen, contentsBounds);
             }
 
             if (Group)
             {
-                Utilities.DrawLeftBar(graphics, font, pen, brush, leftScale, x, y, GroupingStyle, drawBounds);
-                x += leftGroup.Width;
-                Utilities.DrawRightBar(graphics, font, pen, brush, rightScale, x + contentsSize.Width, y, GroupingStyle, drawBounds);
+                Utilities.DrawLeftBar(graphics, font, pen, brush, leftScale, leftGroupBounds.Location, GroupingStyle, drawBounds);
+                location.X += leftGroupBounds.Width;
+                Utilities.DrawRightBar(graphics, font, pen, brush, rightScale, rightGroupBounds.Location, GroupingStyle, drawBounds);
             }
 
-            using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
-            var term = Terms?.Count > 0 ? Terms[0] : null;
-            var termSize = termsSizes.Length > 0 ? termsSizes[0] : graphics.MeasureString(" ", tempFont);
-
-            // Draw the left.
-            term?.Draw(graphics, font, brush, pen, scale, x, y + ((size.Height - termSize.Height) * 0.5f), drawBounds);
-            x += termSize.Width;
-            for (int i = 1; i < (Terms?.Count ?? 0); i++)
+            for (var i = 0; i < (Terms?.Count ?? 0); i++)
             {
-                term = Terms?[i];
-                termSize = termsSizes[i];
-
-                // Draw the rest.
-                term?.Draw(graphics, font, brush, pen, scale, x, y + ((size.Height - termSize.Height) * 0.5f), drawBounds);
-                x += termSize.Width;
+                Terms?[i]?.Draw(graphics, font, brush, pen, scale, termsBounds[i].Location, drawBounds);
             }
         }
 
@@ -257,10 +247,65 @@ namespace PrimerLibrary
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
         /// <returns></returns>
-        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale) => Layout(graphics, font, location, scale, out _, out _, out _, out _, out _, out _);
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="scale">The scale.</param>
+        /// <param name="contentsBounds">The contents bounds.</param>
+        /// <param name="termsBounds">The terms bounds.</param>
+        /// <param name="leftGroupBounds">The left group bounds.</param>
+        /// <param name="leftScale">The left scale.</param>
+        /// <param name="rightGroupBounds">The right group bounds.</param>
+        /// <param name="rightScale">The right scale.</param>
+        /// <returns></returns>
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale, out RectangleF contentsBounds, out Span<RectangleF> termsBounds, out RectangleF leftGroupBounds, out float leftScale, out RectangleF rightGroupBounds, out float rightScale)
         {
-            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out var contentsSize, out var nomialSizes, out var leftGroup, out var leftScale, out var rightGroup, out var rightScale));
+            var size = Dimensions(graphics, font, scale, out var contentsSize, out var termsSizes, out var leftGroup, out leftScale, out var rightGroup, out rightScale);
+            Bounds = new RectangleF(location, size);
+            contentsBounds = new RectangleF(new PointF(location.X + leftGroup.Width, location.Y), contentsSize);
+
+            if (Group)
+            {
+                leftGroupBounds = new RectangleF(location, leftGroup);
+                location.X += leftGroup.Width;
+                rightGroupBounds = new RectangleF(new(location.X + contentsSize.Width, location.Y), rightGroup);
+            }
+            else
+            {
+                leftGroupBounds = rightGroupBounds = RectangleF.Empty;
+            }
+
+            termsBounds = new RectangleF[termsSizes.Length];
+            for (var i = 0; i < (Terms?.Count ?? 0); i++)
+            {
+                termsBounds[i] = new RectangleF(new(location.X, location.Y + ((size.Height - termsSizes[i].Height) * 0.5f)), termsSizes[i]);
+                location.X += termsSizes[i].Width;
+            }
+
             return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            if (Terms is not null)
+            {
+                foreach (var term in Terms)
+                {
+                    if (term is not null) set.UnionWith(term.Expressions());
+                }
+            }
+
+            return set;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// <copyright file="LongDivisionFigure.cs" company="Shkyrockett" >
+﻿// <copyright file="RadicalFigure.cs" company="Shkyrockett" >
 //     Copyright © 2020 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
@@ -9,6 +9,7 @@
 // <remarks>
 // </remarks>
 
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace PrimerLibrary
@@ -17,14 +18,14 @@ namespace PrimerLibrary
     /// 
     /// </summary>
     /// <seealso cref="PrimerLibrary.IFigure" />
-    public class LongDivisionFigure
+    public class RadicalFigure
         : IFigure
     {
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="LongDivisionFigure"/> class.
+        /// Initializes a new instance of the <see cref="RadicalFigure"/> class.
         /// </summary>
-        public LongDivisionFigure()
+        public RadicalFigure()
         { }
         #endregion
 
@@ -38,20 +39,20 @@ namespace PrimerLibrary
         public IExpression? Parent { get; set; }
 
         /// <summary>
-        /// Gets the dividend bounds.
+        /// Gets the contents bounds.
         /// </summary>
         /// <value>
-        /// The dividend bounds.
+        /// The contents bounds.
         /// </value>
-        public SizeF DividendSize { get { return (Parent is LongDivisionExpression p && p.Dividend is IExpression d) ? d?.Bounds?.Size ?? SizeF.Empty : SizeF.Empty; } }
+        public SizeF RadicandSize { get { return (Parent is RootFactor p && p.Radicand is IExpression r) ? r?.Bounds?.Size ?? SizeF.Empty : SizeF.Empty; } }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="LongDivisionFigure"/> is editable.
+        /// Gets or sets a value indicating whether this <see cref="RadicalFigure"/> is editable.
         /// </summary>
         /// <value>
         ///   <see langword="true" /> if editable; otherwise, <see langword="false" />.
         /// </value>
-        public bool Editable { get { return false; } set {; } }
+        public bool Editable { get => false; set {; } }
 
         /// <summary>
         /// Gets or sets the bounds.
@@ -67,7 +68,7 @@ namespace PrimerLibrary
         /// <value>
         /// The location.
         /// </value>
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -75,7 +76,7 @@ namespace PrimerLibrary
         /// <value>
         /// The size.
         /// </value>
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -106,10 +107,10 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBorders">if set to <see langword="true" /> [draw borders].</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBorders = false)
+        /// <returns></returns>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBorders = false)
         {
         }
 
@@ -125,6 +126,16 @@ namespace PrimerLibrary
         {
             Bounds = new RectangleF(location, Dimensions(graphics, font, scale));
             return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            return set;
         }
     }
 }

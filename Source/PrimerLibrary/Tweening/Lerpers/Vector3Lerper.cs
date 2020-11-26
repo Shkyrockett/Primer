@@ -6,7 +6,7 @@
 //     Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // </license>
 // <summary></summary>
-// <remarks> Based on: https://bitbucket.org/jacobalbano/glide </remarks>
+// <remarks> Based on: https://github.com/jacobalbano/glide </remarks>
 
 using System.Numerics;
 using static System.MathF;
@@ -44,6 +44,20 @@ namespace PrimerLibrary
         {
             from = (Vector3)fromValue;
             to = (Vector3)toValue;
+            range = new Vector3(to.X - from.X, to.Y - from.Y, to.Z - from.Z);
+        }
+
+        /// <summary>
+        /// Initialize.
+        /// </summary>
+        /// <param name="fromValue">The fromValue.</param>
+        /// <param name="toValue">The toValue.</param>
+        /// <param name="behavior">The behavior.</param>
+        public void Initialize(Vector3 fromValue, Vector3 toValue, LerpBehaviors behavior)
+        {
+            _ = behavior;
+            from = fromValue;
+            to = toValue;
             range = new Vector3(to.X - from.X, to.Y - from.Y, to.Z - from.Z);
         }
 

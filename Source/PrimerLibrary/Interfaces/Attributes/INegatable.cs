@@ -34,6 +34,6 @@ namespace PrimerLibrary
         /// <value>
         ///   <see langword="true" /> if this instance is negative; otherwise, <see langword="false" />.
         /// </value>
-        bool IsNegative { get { return Sign(Sign) == -1d; } set { Sign *= value == (Sign(Sign) == -1d) ? 1 : -1; } }
+        bool IsNegative { get => Sign(Sign) == -1d; set => Sign *= value == (Sign(Sign) == -1d) ? 1 : -1; }
     }
 }

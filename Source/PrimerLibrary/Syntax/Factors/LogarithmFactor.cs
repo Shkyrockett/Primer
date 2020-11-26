@@ -11,7 +11,9 @@
 // </remarks>
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
 using static System.Math;
 
@@ -118,7 +120,7 @@ namespace PrimerLibrary
         /// The location.
         /// </value>
         [JsonIgnore]
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -127,7 +129,7 @@ namespace PrimerLibrary
         /// The size.
         /// </value>
         [JsonIgnore]
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -163,10 +165,13 @@ namespace PrimerLibrary
         {
             using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
             using var smallFont = new Font(font.FontFamily, font.Size * MathConstants.SequenceScale, font.Style);
+
             functionSize = graphics.MeasureString(GetFunctionName(), tempFont);
             baseSize = Base?.Dimensions(graphics, font, scale * MathConstants.SequenceScale) ?? graphics.MeasureString(" ", smallFont);
-            argumentSize = Argument?.Dimensions(graphics, tempFont, scale) ?? graphics.MeasureString(" ", tempFont);
-            return new SizeF(functionSize.Width + baseSize.Width + argumentSize.Width, Max(argumentSize.Height, functionSize.Height) + (baseSize.Height * MathConstants.SequenceOffsetScale));
+            argumentSize = Argument?.Dimensions(graphics, font, scale) ?? graphics.MeasureString(" ", tempFont);
+
+            Size = new SizeF(functionSize.Width + baseSize.Width + argumentSize.Width, Max(argumentSize.Height, functionSize.Height + (baseSize.Height * MathConstants.SequenceOffsetScale)));
+            return Size.Value;
         }
 
         /// <summary>
@@ -187,19 +192,31 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
+        /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBounds = false)
         {
-            var size = Dimensions(graphics, font, scale, out var functionSize, out var baseSize, out var argumentSize);
+            var bounds = Layout(graphics, font, location, scale, out var functionBounds, out var baseBounds, out var argumentBounds);
+
+            if (drawBounds)
+            {
+                using var dashedPen = new Pen(Color.DarkBlue, 0)
+                {
+                    DashStyle = DashStyle.Dash
+                };
+
+                graphics.DrawRectangle(dashedPen, functionBounds);
+                graphics.DrawRectangle(dashedPen, baseBounds);
+                graphics.DrawRectangle(dashedPen, argumentBounds);
+                graphics.DrawRectangle(dashedPen, bounds);
+            }
+
             using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
-            graphics.DrawString(GetFunctionName(), tempFont, brush, new PointF(x, y));
-            x += functionSize.Width;
-            Base.Draw(graphics, font, brush, pen, scale * MathConstants.SequenceScale, x, y + (size.Height * MathConstants.SequenceOffsetScale), drawBounds);
-            x += baseSize.Width;
-            Argument.Draw(graphics, font, brush, pen, scale, x, y, drawBounds);
+            graphics.DrawString(GetFunctionName(), tempFont, brush, functionBounds.Location);
+            Base.Draw(graphics, font, brush, pen, scale * MathConstants.SequenceScale, baseBounds.Location, drawBounds);
+            Argument.Draw(graphics, font, brush, pen, scale, argumentBounds.Location, drawBounds);
         }
 
         /// <summary>
@@ -210,10 +227,41 @@ namespace PrimerLibrary
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
         /// <returns></returns>
-        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale) => Layout(graphics, font, location, scale, out _, out _, out _);
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="scale">The scale.</param>
+        /// <param name="functionBounds">The function bounds.</param>
+        /// <param name="baseBounds">The base bounds.</param>
+        /// <param name="argumentBounds">The argument bounds.</param>
+        /// <returns></returns>
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale, out RectangleF functionBounds, out RectangleF baseBounds, out RectangleF argumentBounds)
         {
-            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out var functionSize, out var baseSize, out var argumentSize));
+            var size = Dimensions(graphics, font, scale, out var functionSize, out var baseSize, out var argumentSize);
+            Bounds = new RectangleF(location, size);
+
+            functionBounds = new RectangleF(new PointF(location.X, location.Y + ((size.Height - functionSize.Height) * MathConstants.OneHalf)), functionSize);
+            baseBounds = new RectangleF(new PointF(location.X + functionSize.Width, functionBounds.Y + (functionBounds.Height * MathConstants.SequenceOffsetScale)), baseSize);
+            argumentBounds = new RectangleF(new PointF(location.X + functionSize.Width + baseSize.Width, location.Y + ((size.Height - argumentSize.Height) * MathConstants.OneHalf)), argumentSize);
             return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            if (Argument is not null) set.UnionWith(Argument.Expressions());
+            if (Base is not null) set.UnionWith(Base.Expressions());
+            if (Sequence is not null) set.UnionWith(Sequence.Expressions());
+            return set;
         }
     }
 }

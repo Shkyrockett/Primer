@@ -10,6 +10,7 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.CompilerServices;
@@ -110,7 +111,7 @@ namespace PrimerLibrary
         /// The location.
         /// </value>
         [JsonIgnore]
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -119,7 +120,7 @@ namespace PrimerLibrary
         /// The size.
         /// </value>
         [JsonIgnore]
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -157,7 +158,8 @@ namespace PrimerLibrary
             var height = operatorSize.Height;
             height = Max(height, comparandSize.Height);
             height = Max(height, comparandaSize.Height);
-            return new SizeF(comparandSize.Width + operatorSize.Width + comparandaSize.Width, height);
+            Size = new SizeF(comparandSize.Width + operatorSize.Width + comparandaSize.Width, height);
+            return Size.Value;
         }
 
         /// <summary>
@@ -178,12 +180,12 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
+        /// <returns></returns>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBounds = false)
         {
-            SizeF size = Dimensions(graphics, font, scale, out var comparandSize, out var operatorSize, out var comparandaSize);
+            var bounds = Layout(graphics, font, location, scale, out RectangleF comparandBounds, out RectangleF operatorBounds, out RectangleF comparandaBounds);
 
             if (drawBounds)
             {
@@ -191,13 +193,17 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, size);
+
+                graphics.DrawRectangle(dashedPen, bounds);
+                graphics.DrawRectangle(dashedPen, comparandBounds);
+                graphics.DrawRectangle(dashedPen, operatorBounds);
+                graphics.DrawRectangle(dashedPen, comparandaBounds);
             }
 
             // Draw the left Expression.
             if (Comparand is not null)
             {
-                Comparand?.Draw(graphics, font, brush, pen, scale, x, y + ((size.Height - comparandSize.Height) * MathConstants.OneHalf), drawBounds);
+                Comparand?.Draw(graphics, font, brush, pen, scale, comparandBounds.Location, drawBounds);
             }
             else
             {
@@ -205,23 +211,24 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, comparandSize.Width, comparandSize.Height);
+
+                graphics.DrawRectangle(dashedPen, comparandBounds);
             }
 
             // Advance X.
-            x += comparandSize.Width;
+            location.X += comparandBounds.Width;
 
             // Draw the Operator.
             using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
-            graphics.DrawString(Operator.GetString(), tempFont, brush, x, y + ((size.Height - operatorSize.Height) * MathConstants.OneHalf), StringFormat.GenericTypographic);
+            graphics.DrawString(Operator.GetString(), tempFont, brush, operatorBounds.Location, StringFormat.GenericTypographic);
 
             // Advance X.
-            x += operatorSize.Width;
+            location.X += operatorBounds.Width;
 
             // Draw the right.
             if (Comparanda is not null)
             {
-                Comparanda?.Draw(graphics, font, brush, pen, scale, x, y + ((size.Height - comparandaSize.Height) * MathConstants.OneHalf), drawBounds);
+                Comparanda?.Draw(graphics, font, brush, pen, scale, comparandaBounds.Location, drawBounds);
             }
             else
             {
@@ -229,7 +236,8 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, comparandSize.Width, comparandSize.Height);
+
+                graphics.DrawRectangle(dashedPen, comparandaBounds);
             }
         }
 
@@ -241,10 +249,41 @@ namespace PrimerLibrary
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
         /// <returns></returns>
-        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale) => Layout(graphics, font, location, scale, out _, out _, out _);
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="scale">The scale.</param>
+        /// <param name="comparandBounds">The comparand bounds.</param>
+        /// <param name="operatorBounds">The operator bounds.</param>
+        /// <param name="comparandaBounds">The comparanda bounds.</param>
+        /// <returns></returns>
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale, out RectangleF comparandBounds, out RectangleF operatorBounds, out RectangleF comparandaBounds)
         {
-            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out var comparandSize, out var operatorSize, out var comparandaSize));
+            var size = Dimensions(graphics, font, scale, out var comparandSize, out var operatorSize, out var comparandaSize);
+            Bounds = new RectangleF(location, size);
+            comparandBounds = new RectangleF(new(location.X, location.Y + ((size.Height - comparandSize.Height) * MathConstants.OneHalf)), comparandSize);
+            location.X += comparandSize.Width;
+            operatorBounds = new RectangleF(new(location.X, location.Y + ((size.Height - operatorSize.Height) * MathConstants.OneHalf)), operatorSize);
+            location.X += operatorSize.Width;
+            comparandaBounds = new RectangleF(new(location.X, location.Y + ((size.Height - comparandaSize.Height) * MathConstants.OneHalf)), comparandaSize);
             return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            if (Comparand is not null) set.UnionWith(Comparand.Expressions());
+            if (Comparanda is not null) set.UnionWith(Comparanda.Expressions());
+            return set;
         }
     }
 }

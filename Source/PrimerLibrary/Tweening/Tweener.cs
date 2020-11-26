@@ -6,7 +6,7 @@
 //     Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // </license>
 // <summary></summary>
-// <remarks> Based on: https://bitbucket.org/jacobalbano/glide </remarks>
+// <remarks> Based on: https://github.com/jacobalbano/glide </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -110,7 +110,13 @@ namespace PrimerLibrary
         /// </summary>
         /// <param name="lerperType">The type of the Lerper to use for properties of the given type.</param>
         /// <param name="propertyType">The type of the property to associate the given Lerper with.</param>
-        public static void RegisterLerper(Type lerperType, Type propertyType) => RegisteredLerpers[propertyType] = lerperType?.GetConstructor(Type.EmptyTypes);
+        public static void RegisterLerper(Type lerperType, Type propertyType)
+        {
+            if (lerperType?.GetConstructor(Type.EmptyTypes) is ConstructorInfo constructorInfo)
+            {
+                RegisteredLerpers[propertyType] = constructorInfo;
+            }
+        }
 
         /// <summary>
         /// <para>Tweens a set of properties on an object.</para>
@@ -158,11 +164,13 @@ namespace PrimerLibrary
                 }
 
                 var property = props[i];
-                var info = new MemberAccessor(target, property.Name);
-                var to = new MemberAccessor(dests, property.Name, false);
-                var lerper = CreateLerper(info.MemberType);
-
-                tween.AddLerp(lerper, info, info.Value, to.Value);
+                if (new MemberAccessor(target, property.Name) is MemberAccessor info
+                    && info.MemberType is Type membertype
+                    && info.Value is object infoValue
+                    && new MemberAccessor(dests, property.Name, false)?.Value is object toValue)
+                {
+                    tween.AddLerp(CreateLerper(membertype)!, info, infoValue, toValue);
+                }
             }
 
             AddAndRemove();
@@ -254,7 +262,7 @@ namespace PrimerLibrary
         /// The <see cref="IMemberLerper" />.
         /// </returns>
         /// <exception cref="Exception">No {nameof(IMemberLerper)} found for type {propertyType.FullName}.</exception>
-        private static IMemberLerper CreateLerper(Type propertyType)
+        private static IMemberLerper? CreateLerper(Type propertyType)
         {
             if (!RegisteredLerpers.TryGetValue(propertyType, out var lerper))
             {

@@ -10,6 +10,8 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
+using System.Collections.Generic;
+
 namespace PrimerLibrary
 {
     /// <summary>
@@ -18,5 +20,10 @@ namespace PrimerLibrary
     public interface IExpression
         : IDocumentObjectModel, IEditable, IChild, ILayout
     {
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions();
     }
 }

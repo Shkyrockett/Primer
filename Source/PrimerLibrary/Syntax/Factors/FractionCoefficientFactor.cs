@@ -10,6 +10,7 @@
 // </remarks>
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
@@ -81,7 +82,7 @@ namespace PrimerLibrary
         /// <value>
         /// The value.
         /// </value>
-        public float Value { get { return Numerator / Denominator; } set { (Numerator, Denominator) = FractionConverter.ConvertToFraction(value); } }
+        public float Value { get => Numerator / Denominator; set => (Numerator, Denominator) = FractionConverter.ConvertToFraction(value); }
 
         /// <summary>
         /// Gets or sets the sign of the expression.
@@ -89,7 +90,7 @@ namespace PrimerLibrary
         /// <value>
         /// The sign of the expression. -1 for negative, +1 for positive, 0 for 0.
         /// </value>
-        public int Sign { get { return Math.Sign(Value); } set { Value *= Math.Sign(Value) == Math.Sign(value) ? 1f : -1f; } }
+        public int Sign { get => Math.Sign(Value); set => Value *= Math.Sign(Value) == Math.Sign(value) ? 1f : -1f; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is negative.
@@ -97,7 +98,7 @@ namespace PrimerLibrary
         /// <value>
         ///   <see langword="true" /> if this instance is negative; otherwise, <see langword="false" />.
         /// </value>
-        public bool IsNegative { get { return Math.Sign(Value) == -1d; } set { Value *= (value == (Math.Sign(Value) == -1d)) ? 1f : -1f; } }
+        public bool IsNegative { get => Math.Sign(Value) == -1d; set => Value *= (value == (Math.Sign(Value) == -1d)) ? 1f : -1f; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="IEditable" /> is editable.
@@ -123,7 +124,7 @@ namespace PrimerLibrary
         /// The location.
         /// </value>
         [JsonIgnore]
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -132,7 +133,7 @@ namespace PrimerLibrary
         /// The size.
         /// </value>
         [JsonIgnore]
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -214,13 +215,13 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
+        /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBounds = false)
         {
-            var size = Dimensions(graphics, font, scale, out SizeF fractionSize, out var slashSize, out var numeratorSize, out var denominatorSize, out var exponentSize);
+            var bounds = Layout(graphics, font, location, scale, out var slashBounds, out var numeratorBounds, out var denominatorBounds, out var exponentBounds);
 
             if (drawBounds)
             {
@@ -228,25 +229,22 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, size);
+
+                graphics.DrawRectangle(dashedPen, bounds);
             }
 
-            if (exponentSize.Width > 0)
+            if (exponentBounds.Width > 0)
             {
-                Exponent?.Draw(graphics, font, brush, pen, scale * MathConstants.ExponentScale, x + fractionSize.Width, y, drawBounds);
-                y += exponentSize.Height * MathConstants.ExponentOffsetScale;
+                Exponent?.Draw(graphics, font, brush, pen, scale * MathConstants.ExponentScale, exponentBounds.Location, drawBounds);
             }
 
             using var smallFont = new Font(font.FontFamily, font.Size * scale * MathConstants.ThreeQuarters, font.Style);
-            graphics.DrawString(Numerator.ToString(), smallFont, brush, x, y, StringFormat.GenericTypographic);
-            var left = (numeratorSize.Width * MathConstants.OneThird) < numeratorSize.Width ? numeratorSize.Width - (numeratorSize.Width * MathConstants.OneThird) : 0f;
+            graphics.DrawString(Numerator.ToString(), smallFont, brush, numeratorBounds.Location, StringFormat.GenericTypographic);
 
             using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
-            graphics.DrawString("/", tempFont, brush, x + left, y, StringFormat.GenericTypographic);
+            graphics.DrawString("/", tempFont, brush, slashBounds.Location, StringFormat.GenericTypographic);
 
-            float x1 = x + (fractionSize.Width - denominatorSize.Width);
-            float y1 = y + (slashSize.Height - denominatorSize.Height);
-            graphics.DrawString(Denominator.ToString(), smallFont, brush, x1, y1, StringFormat.GenericTypographic);
+            graphics.DrawString(Denominator.ToString(), smallFont, brush, denominatorBounds.Location, StringFormat.GenericTypographic);
         }
 
         /// <summary>
@@ -257,10 +255,48 @@ namespace PrimerLibrary
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
         /// <returns></returns>
-        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale) => Layout(graphics, font, location, scale, out _, out _, out _, out _);
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="scale">The scale.</param>
+        /// <param name="slashBounds">The slash bounds.</param>
+        /// <param name="numeratorBounds">The numerator bounds.</param>
+        /// <param name="denominatorBounds">The denominator bounds.</param>
+        /// <param name="exponentBounds">The exponent bounds.</param>
+        /// <returns></returns>
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale, out RectangleF slashBounds, out RectangleF numeratorBounds, out RectangleF denominatorBounds, out RectangleF exponentBounds)
         {
-            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out SizeF fractionWidth, out var slashSize, out var numeratorSize, out var denominatorSize, out var exponentSize));
+            var size = Dimensions(graphics, font, scale, out var fractionSize, out var slashSize, out var numeratorSize, out var denominatorSize, out var exponentSize);
+            Bounds = new RectangleF(location, size);
+
+            if (exponentSize.Width > 0)
+            {
+                exponentBounds = new RectangleF(new(location.X + fractionSize.Width, location.Y), exponentSize);
+                location.Y += exponentSize.Height * MathConstants.ExponentOffsetScale;
+            }
+            else exponentBounds = Rectangle.Empty;
+
+            numeratorBounds = new RectangleF(location, numeratorSize);
+            var left = (numeratorSize.Width * MathConstants.OneThird) < numeratorSize.Width ? numeratorSize.Width - (numeratorSize.Width * MathConstants.OneThird) : 0f;
+            slashBounds = new RectangleF(new PointF(location.X + left, location.Y), slashSize);
+            denominatorBounds = new RectangleF(new PointF(location.X + (fractionSize.Width - denominatorSize.Width), location.Y + (slashSize.Height - denominatorSize.Height)), denominatorSize);
             return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            if (Exponent is not null) set.UnionWith(Exponent.Expressions());
+            return set;
         }
     }
 }

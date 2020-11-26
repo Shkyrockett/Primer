@@ -11,6 +11,7 @@
 // </remarks>
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
@@ -139,7 +140,7 @@ namespace PrimerLibrary
         /// The location.
         /// </value>
         [JsonIgnore]
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -148,7 +149,7 @@ namespace PrimerLibrary
         /// The size.
         /// </value>
         [JsonIgnore]
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -226,12 +227,12 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
+        /// <returns></returns>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBounds = false)
         {
-            var size = Dimensions(graphics, font, scale, out var indexSize, out var radicandSize, out SizeF radicalSize, out SizeF radicalFullSize, out var radicalScale, out var barWidth, out var sequenceSize, out var exponentSize);
+            var bounds = Layout(graphics, font, location, scale, out var indexBounds, out var raticandBounds, out var radicalBounds, out var radicalFullSize, out var radicalScale, out var sequenceBounds, out var exponentBounds);
 
             if (drawBounds)
             {
@@ -239,29 +240,37 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                //graphics.DrawRectangle(dashedPen, x, y, indexSize);
-                graphics.DrawRectangle(dashedPen, x, y, size);
+
+                graphics.DrawRectangle(dashedPen, indexBounds);
+                graphics.DrawRectangle(dashedPen, bounds);
             }
 
-            if (sequenceSize.Width > 0)
+            if (sequenceBounds.Width > 0)
             {
-                Sequence?.Draw(graphics, font, brush, pen, scale * MathConstants.SequenceScale, x + radicalSize.Width + radicandSize.Width + barWidth, y + (size.Height - sequenceSize.Height + (sequenceSize.Height * MathConstants.SequenceOffsetScale)), drawBounds);
+                Sequence?.Draw(graphics, font, brush, pen, scale * MathConstants.SequenceScale, sequenceBounds.Location, drawBounds);
             }
 
-            if (exponentSize.Width > 0)
+            if (exponentBounds.Width > 0)
             {
-                Exponent?.Draw(graphics, font, brush, pen, scale * MathConstants.ExponentScale, x + radicalSize.Width + radicandSize.Width + barWidth, y, drawBounds);
-                y += exponentSize.Height * MathConstants.ExponentOffsetScale;
+                Exponent?.Draw(graphics, font, brush, pen, scale * MathConstants.ExponentScale, exponentBounds.Location, drawBounds);
             }
 
-            graphics.DrawRadical(font, pen, brush, x, y, radicandSize, radicalSize, radicalFullSize, radicalScale, drawBounds);
-            y += radicalFullSize.Height - radicalSize.Height;
+            graphics.DrawRadical(font, pen, brush, location, raticandBounds.Size, radicalBounds.Size, radicalFullSize, radicalScale, drawBounds);
 
-            if (!(Index is ICoefficient i && i.Value == MathConstants.Two)) Index?.Draw(graphics, font, brush, pen, scale * MathConstants.IndexScale, x, y, drawBounds);
-            x += radicalSize.Width;
+            if (!(Index is ICoefficient i && i.Value == MathConstants.Two)) Index?.Draw(graphics, font, brush, pen, scale * MathConstants.IndexScale, location, drawBounds);
 
-            Radicand?.Draw(graphics, font, brush, pen, scale, x, y + ((radicandSize.Height - radicalSize.Height) * MathConstants.OneHalf), drawBounds);
+            Radicand?.Draw(graphics, font, brush, pen, scale, raticandBounds.Location, drawBounds);
         }
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="scale">The scale.</param>
+        /// <param name="location">The location.</param>
+        /// <returns></returns>
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale) => (Bounds = Layout(graphics, font, location, scale, out _, out _, out _, out _, out _, out _, out _)) ?? Rectangle.Empty;
 
         /// <summary>
         /// Layouts the specified graphics.
@@ -273,28 +282,43 @@ namespace PrimerLibrary
         /// <param name="indexBounds">The index bounds.</param>
         /// <param name="raticandBounds">The raticand bounds.</param>
         /// <param name="radicalBounds">The radical bounds.</param>
+        /// <param name="radicalFullSize">Full size of the radical.</param>
+        /// <param name="radicalScale">The radical scale.</param>
         /// <param name="sequenceBounds">The sequence bounds.</param>
         /// <param name="exponentBounds">The exponent bounds.</param>
         /// <returns></returns>
-        private RectangleF Layout(Graphics graphics, Font font, PointF location, float scale, out RectangleF indexBounds, out RectangleF raticandBounds, out RectangleF radicalBounds, out RectangleF sequenceBounds, out RectangleF exponentBounds)
+        private RectangleF Layout(Graphics graphics, Font font, PointF location, float scale, out RectangleF indexBounds, out RectangleF raticandBounds, out RectangleF radicalBounds, out SizeF radicalFullSize, out float radicalScale, out RectangleF sequenceBounds, out RectangleF exponentBounds)
         {
-            var bounds = new RectangleF();
-            raticandBounds = Radicand?.Layout(graphics, font, location, scale) ?? RectangleF.Empty;
-            radicalBounds = Radical?.Layout(graphics, font, location, scale) ?? RectangleF.Empty;
-            indexBounds = Index?.Layout(graphics, font, location, scale) ?? RectangleF.Empty;
-            sequenceBounds = Sequence?.Layout(graphics, font, location, scale) ?? RectangleF.Empty;
-            exponentBounds = Exponent?.Layout(graphics, font, location, scale) ?? RectangleF.Empty;
-            return bounds;
+            var size = Dimensions(graphics, font, scale, out var indexSize, out var radicandSize, out var radicalSize, out radicalFullSize, out radicalScale, out var barWidth, out var sequenceSize, out var exponentSize);
+            Bounds = new RectangleF(location, size);
+
+            sequenceBounds = (sequenceSize.Width > 0) ? new RectangleF(new(location.X + radicalSize.Width + radicandSize.Width + barWidth, location.Y + (size.Height - sequenceSize.Height + (sequenceSize.Height * MathConstants.SequenceOffsetScale))), radicandSize) : RectangleF.Empty;
+            if ((exponentSize.Width > 0))
+            {
+                exponentBounds = new RectangleF(new(location.X + radicalSize.Width + radicandSize.Width + barWidth, location.Y), radicalSize);
+                location.Y += radicalFullSize.Height - radicalSize.Height;
+            }
+            else exponentBounds = RectangleF.Empty;
+            radicalBounds = new RectangleF(location, radicalSize);
+            indexBounds = !(Index is ICoefficient i && i.Value == MathConstants.Two) ? new RectangleF(location, indexSize) : RectangleF.Empty;
+            location.X += radicalSize.Width;
+            raticandBounds = new RectangleF(new(location.X, location.Y + ((radicandSize.Height - radicalSize.Height) * MathConstants.OneHalf)), radicandSize);
+            return Bounds.Value;
         }
 
         /// <summary>
-        /// Layouts the specified graphics.
+        /// Expressions of this instance.
         /// </summary>
-        /// <param name="graphics">The graphics.</param>
-        /// <param name="font">The font.</param>
-        /// <param name="scale">The scale.</param>
-        /// <param name="location">The location.</param>
         /// <returns></returns>
-        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale) => (Bounds = Layout(graphics, font, location, scale, out _, out _, out _, out _, out _)) ?? Rectangle.Empty;
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            if (Radical is not null) set.UnionWith(Radical.Expressions());
+            if (Index is not null) set.UnionWith(Index.Expressions());
+            if (Radicand is not null) set.UnionWith(Radicand.Expressions());
+            if (Exponent is not null) set.UnionWith(Exponent.Expressions());
+            if (Sequence is not null) set.UnionWith(Sequence.Expressions());
+            return set;
+        }
     }
 }

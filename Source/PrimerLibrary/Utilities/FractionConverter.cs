@@ -16,92 +16,88 @@ namespace PrimerLibrary
         /// <returns></returns>
         public static (int numerator, int denomenator) ConvertToFraction(float pvalue, bool skipRounding = false, float decimalPlaces = 0.0625f)
         {
-            float value = pvalue;
+            var value = pvalue;
 
             if (!skipRounding)
                 value = DecimalRound(pvalue, decimalPlaces);
 
-            if (value == Math.Round(value, 0)) // whole number check
+            if (value == Math.Round(value, 0)) // Whole number check.
                 return (1, 1);
 
-            // get the whole value of the fraction
-            float mWhole = MathF.Truncate(value);
+            // Get the whole value of the fraction
+            var mWhole = MathF.Truncate(value);
 
-            // get the fractional value
-            float mFraction = value - mWhole;
+            // Get the fractional value.
+            var mFraction = value - mWhole;
 
-            // initialize a numerator and denomintar
-            uint mNumerator = 0;
-            uint mDenomenator = 1;
+            // Initialize a numerator and denominator.
+            var mNumerator = 0u;
+            var mDenomenator = 1u;
 
-            // ensure that there is actual a fraction
+            // Ensure that there is actual a fraction.
             if (mFraction > 0f)
             {
-                // convert the value to a string so that
-                // you can count the number of decimal places there are
-                string strFraction = mFraction.ToString().Remove(0, 2);
+                // Convert the value to a string so that you can count the number of decimal places there are.
+                var strFraction = mFraction.ToString().Remove(0, 2);
 
-                // store the number of decimal places
-                uint intFractLength = (uint)strFraction.Length;
+                // Store the number of decimal places.
+                var intFractLength = (uint)strFraction.Length;
 
-                // set the numerator to have the proper amount of zeros
+                // Set the numerator to have the proper amount of zeros.
                 mNumerator = (uint)Math.Pow(10, intFractLength);
 
-                // parse the fraction value to an integer that equals
-                // [fraction value] * 10^[number of decimal places]
-                uint.TryParse(strFraction, out mDenomenator);
+                // Parse the fraction value to an integer that equals [fraction value] * 10^[number of decimal places].
+                _ = uint.TryParse(strFraction, out mDenomenator);
 
-                // get the greatest common divisor for both numbers
-                uint gcd = GreatestCommonDivisor(mDenomenator, mNumerator);
+                // Get the greatest common divisor for both numbers.
+                var gcd = GreatestCommonDivisor(mDenomenator, mNumerator);
 
-                // divide the numerator and the denominator by the greatest common divisor
-                mNumerator = mNumerator / gcd;
-                mDenomenator = mDenomenator / gcd;
+                // Divide the numerator and the denominator by the greatest common divisor/
+                mNumerator /= gcd;
+                mDenomenator /= gcd;
             }
 
             return ((int)mNumerator, (int)mDenomenator);
         }
 
         /// <summary>
-        /// Greatests the common divisor.
+        /// Greatest the common divisor.
         /// </summary>
         /// <param name="valA">The value a.</param>
         /// <param name="valB">The value b.</param>
         /// <returns></returns>
         private static uint GreatestCommonDivisor(uint valA, uint valB)
         {
-            // return 0 if both values are 0 (no GSD)
-            if (valA == 0 &&
-              valB == 0)
+            if (valA == 0 && valB == 0)
             {
+                // Return 0 if both values are 0 (no GSD).
                 return 0;
             }
-            // return value b if only a == 0
-            else if (valA == 0 &&
-                  valB != 0)
+            else if (valA == 0 && valB != 0)
             {
+                // Return value b if only a == 0.
                 return valB;
             }
-            // return value a if only b == 0
             else if (valA != 0 && valB == 0)
             {
+                // Return value a if only b == 0.
                 return valA;
             }
-            // actually find the GSD
             else
             {
-                uint first = valA;
-                uint second = valB;
+                // Actually find the GSD.
+                var first = valA;
+                var second = valB;
 
                 while (first != second)
                 {
                     if (first > second)
                     {
-                        first = first - second;
+                        first -= second;
                     }
                     else
                     {
-                        second = second - first;
+                        second -= first;
                     }
                 }
 
@@ -124,9 +120,9 @@ namespace PrimerLibrary
         /// <returns></returns>
         private static float DecimalRound(float val, float places)
         {
-            var sPlaces = ConvertToFraction(places, true);
-            var d = MathF.Round(val * sPlaces.denomenator);
-            return d / sPlaces.denomenator;
+            var (_, denomenator) = ConvertToFraction(places, true);
+            var d = MathF.Round(val * denomenator);
+            return d / denomenator;
         }
     }
 }

@@ -70,7 +70,7 @@ namespace Primer
         private async void Button1_ClickAsync(object sender, EventArgs e)
         {
             var json = JsonSerializer.Serialize(canvas1.Expression);
-            await File.WriteAllTextAsync(@"C:\Users\shkyr\Desktop\test.json", json);
+            await File.WriteAllTextAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test.json"), json);
         }
     }
 }

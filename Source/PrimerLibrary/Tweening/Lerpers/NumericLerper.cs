@@ -62,6 +62,39 @@ namespace PrimerLibrary
         }
 
         /// <summary>
+        /// Initialize.
+        /// </summary>
+        /// <param name="fromValue">The fromValue.</param>
+        /// <param name="toValue">The toValue.</param>
+        /// <param name="behavior">The behavior.</param>
+        public void Initialize(float fromValue, float toValue, LerpBehaviors behavior)
+        {
+            from = fromValue;
+            to = toValue;
+            range = to - from;
+
+            if (behavior.HasFlag(LerpBehaviors.Rotation))
+            {
+                var angle = from;
+                if (behavior.HasFlag(LerpBehaviors.RotationRadians))
+                {
+                    angle *= Degree;
+                }
+
+                if (angle < 0d)
+                {
+                    angle = 360f + angle;
+                }
+
+                var r = angle + range;
+                var d = r - angle;
+                var a = Abs(d);
+
+                range = a >= 180f ? (360f - a) * (d > 0f ? -1f : 1f) : d;
+            }
+        }
+
+        /// <summary>
         /// The interpolate.
         /// </summary>
         /// <param name="t">The t.</param>
@@ -97,7 +130,7 @@ namespace PrimerLibrary
             }
 
             var type = currentValue?.GetType() ?? default;
-            return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
+            return Convert.ChangeType(value, type!, CultureInfo.InvariantCulture);
         }
     }
 }

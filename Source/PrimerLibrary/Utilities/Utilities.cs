@@ -28,7 +28,7 @@ namespace PrimerLibrary
         /// <summary>
         /// The comparison operator dictionary
         /// </summary>
-        internal static readonly Dictionary<ComparisonOperators, string> ComparisonOperatorDictionary = new Dictionary<ComparisonOperators, string>
+        internal static readonly Dictionary<ComparisonOperators, string> ComparisonOperatorDictionary = new()
         {
             { ComparisonOperators.Equals,               "=" },
             { ComparisonOperators.NotEquals,            "≠" },
@@ -42,7 +42,7 @@ namespace PrimerLibrary
         /// <summary>
         /// The italic letters
         /// </summary>
-        internal static readonly Dictionary<char, string> ItalicLetterDictionary = new Dictionary<char, string>
+        internal static readonly Dictionary<char, string> ItalicLetterDictionary = new()
         {
             { 'a', "𝑎" },
             { 'b', "𝑏" },
@@ -101,7 +101,7 @@ namespace PrimerLibrary
         /// <summary>
         /// The right bar style dictionary
         /// </summary>
-        internal static readonly Dictionary<BarStyles, string> LeftBarStyleDictionary = new Dictionary<BarStyles, string>
+        internal static readonly Dictionary<BarStyles, string> LeftBarStyleDictionary = new()
         {
             { BarStyles.Bar, "|" },
             { BarStyles.Bracket, "[" },
@@ -113,7 +113,7 @@ namespace PrimerLibrary
         /// <summary>
         /// The left bar style dictionary
         /// </summary>
-        internal static readonly Dictionary<BarStyles, string> RightBarStyleDictionary = new Dictionary<BarStyles, string>
+        internal static readonly Dictionary<BarStyles, string> RightBarStyleDictionary = new()
         {
             { BarStyles.Bar, "|" },
             { BarStyles.Bracket, "]" },
@@ -372,7 +372,7 @@ namespace PrimerLibrary
         /// <returns></returns>
         public static RectangleF MeasureGlyphs(this Graphics graphics, Font font, string text, StringFormat? stringFormat = null)
         {
-            using GraphicsPath textPath = new GraphicsPath();
+            using var textPath = new GraphicsPath();
             textPath.AddString(text, font.FontFamily, (int)font.Style, graphics.DpiY * font.Size / 72f, Point.Empty, stringFormat);
             return textPath.GetBounds();
         }
@@ -384,18 +384,18 @@ namespace PrimerLibrary
         /// <param name="font">The font.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="brush">The brush.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="radicandSize">Size of the radicand.</param>
         /// <param name="radicalSize">Size of the radical.</param>
         /// <param name="radicalFullSize">Full size of the radical.</param>
         /// <param name="radicalScale">The radical scale.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
-        public static void DrawRadical(this Graphics graphics, Font font, Pen pen, Brush brush, float x, float y, SizeF radicandSize, SizeF radicalSize, SizeF radicalFullSize, float radicalScale, bool drawBounds = false)
+        public static void DrawRadical(this Graphics graphics, Font font, Pen pen, Brush brush, PointF location, SizeF radicandSize, SizeF radicalSize, SizeF radicalFullSize, float radicalScale, bool drawBounds = false)
         {
+            _ = pen;
             var diff = radicalFullSize.Height - radicalSize.Height;
-            var offsetRect = new RectangleF(x + radicalSize.Width, y - (diff * 0.5f), diff, diff * 1.5f);
-            y += diff;
+            var offsetRect = new RectangleF(location.X + radicalSize.Width, location.Y - (diff * 0.5f), diff, diff * 1.5f);
+            location.Y += diff;
 
             if (drawBounds)
             {
@@ -404,16 +404,16 @@ namespace PrimerLibrary
                     DashStyle = DashStyle.Dash
                 };
                 //graphics.DrawRectangle(dashedPen, x, y, radicalFullSize);
-                graphics.DrawRectangle(dashedPen, x, y, radicalSize);
+                graphics.DrawRectangle(dashedPen, location.X, location.Y, radicalSize.Width, radicalSize.Height);
                 graphics.DrawRectangle(dashedPen, offsetRect);
             }
 
             using var radicalFont = new Font(font.FontFamily, font.Size * radicalScale, font.Style);
-            using GraphicsPath radicalPath = new GraphicsPath();
+            using var radicalPath = new GraphicsPath();
 
             //graphics.DrawString("√", radicalFont, brush, new PointF(x, y + ((radicandSize.Height - radicalSize.Height) * 0.5f)), StringFormat.GenericTypographic);
-            radicalPath.AddString("√", radicalFont.FontFamily, (int)radicalFont.Style, graphics.ConvertGraphicsUnits(radicalFont.Size, GraphicsUnit.Point, GraphicsUnit.Pixel), new PointF(x, y), StringFormat.GenericTypographic);
-            using GraphicsPath stretchedRadicalPath = UpdateGraphicsPath(radicalPath, offsetRect, new PointF(radicandSize.Width, 0));
+            radicalPath.AddString("√", radicalFont.FontFamily, (int)radicalFont.Style, graphics.ConvertGraphicsUnits(radicalFont.Size, GraphicsUnit.Point, GraphicsUnit.Pixel), location, StringFormat.GenericTypographic);
+            using var stretchedRadicalPath = UpdateGraphicsPath(radicalPath, offsetRect, new PointF(radicandSize.Width, 0));
 
             //graphics.DrawPath(pen, stretchedRadicalPath);
             graphics.FillPath(brush, stretchedRadicalPath);
@@ -427,13 +427,13 @@ namespace PrimerLibrary
         /// <param name="pen">The pen.</param>
         /// <param name="brush">The brush.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="barStyle">The bar style.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
         /// <exception cref="ArgumentOutOfRangeException">LeftBarStyle - Unknown BarStyles value {LeftBarStyle}</exception>
-        public static void DrawLeftBar(this Graphics graphics, Font font, Pen pen, Brush brush, float scale, float x, float y, BarStyles barStyle, bool drawBounds = false)
+        public static void DrawLeftBar(this Graphics graphics, Font font, Pen pen, Brush brush, float scale, PointF location, BarStyles barStyle, bool drawBounds = false)
         {
+            _ = pen;
             var character = BarStyleStringLeft(barStyle);
             using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
             if (drawBounds)
@@ -443,10 +443,10 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, size);
+                graphics.DrawRectangle(dashedPen, location.X, location.Y, size.Width, size.Height);
             }
 
-            graphics.DrawString(character, tempFont, brush, new PointF(x, y), StringFormat.GenericTypographic);
+            graphics.DrawString(character, tempFont, brush, location, StringFormat.GenericTypographic);
         }
 
         /// <summary>
@@ -457,13 +457,13 @@ namespace PrimerLibrary
         /// <param name="pen">The pen.</param>
         /// <param name="brush">The brush.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="barStyle">The bar style.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
         /// <exception cref="ArgumentOutOfRangeException">RightBarStyle - Unknown BarStyles value {RightBarStyle}</exception>
-        public static void DrawRightBar(this Graphics graphics, Font font, Pen pen, Brush brush, float scale, float x, float y, BarStyles barStyle, bool drawBounds = false)
+        public static void DrawRightBar(this Graphics graphics, Font font, Pen pen, Brush brush, float scale, PointF location, BarStyles barStyle, bool drawBounds = false)
         {
+            _ = pen;
             var character = BarStyleStringRight(barStyle);
             using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
             if (drawBounds)
@@ -473,10 +473,10 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, size);
+                graphics.DrawRectangle(dashedPen, location, size);
             }
 
-            graphics.DrawString(character, tempFont, brush, new PointF(x, y), StringFormat.GenericTypographic);
+            graphics.DrawString(character, tempFont, brush, location, StringFormat.GenericTypographic);
         }
         #endregion
 
@@ -526,7 +526,7 @@ namespace PrimerLibrary
             var realSize = graphics.MeasureString(character, font, PointF.Empty, stringFormat);
             var heightScaleRatio = height / realSize.Height;
             var scaleFontSize = font.Size * heightScaleRatio;
-            using Font newFont = new Font(font.FontFamily, scaleFontSize, font.Style/*, GraphicsUnit.Pixel*/);
+            using var newFont = new Font(font.FontFamily, scaleFontSize, font.Style/*, GraphicsUnit.Pixel*/);
             realSize = graphics.MeasureString(character, newFont, PointF.Empty, stringFormat);
             return (realSize, heightScaleRatio);
         }
@@ -632,9 +632,9 @@ namespace PrimerLibrary
         public static GraphicsPath UpdateGraphicsPath(GraphicsPath graphicPath, RectangleF rectangle, PointF delta)
         {
             // Find the points in gP that are inside rF and move them by delta.
-            var updatePoints = graphicPath?.PathData?.Points ?? new PointF[0];
-            byte[] updateTypes = graphicPath?.PathData?.Types ?? new byte[0];
-            for (int i = 0; i < graphicPath?.PointCount; i++)
+            var updatePoints = graphicPath?.PathData?.Points ?? Array.Empty<PointF>();
+            var updateTypes = graphicPath?.PathData?.Types ?? Array.Empty<byte>();
+            for (var i = 0; i < graphicPath?.PointCount; i++)
             {
                 if (rectangle.Contains(updatePoints[i]))
                 {

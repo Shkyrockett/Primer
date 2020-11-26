@@ -12,8 +12,10 @@
         /// <param name="nomial">The nomial.</param>
         public static void Distribute(IExpression expression, NomialExpression nomial)
         {
+            _ = expression;
             foreach (var subExpression in nomial.Terms)
             {
+                _ = subExpression;
                 //subExpression.Multiply(expression);
             }
         }

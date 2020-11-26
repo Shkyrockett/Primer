@@ -6,7 +6,7 @@
 //     Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // </license>
 // <summary></summary>
-// <remarks> Based on: https://bitbucket.org/jacobalbano/glide </remarks>
+// <remarks> Based on: https://github.com/jacobalbano/glide </remarks>
 
 using System;
 using System.Diagnostics;
@@ -26,7 +26,7 @@ namespace PrimerLibrary
         /// The bounce key1 (const). Value: 1d / 2.75d.
         /// </summary>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         private const float bounceKey1 = 1f / 2.75f;
 
@@ -34,7 +34,7 @@ namespace PrimerLibrary
         /// The bounce key2 (const). Value: 2d / 2.75d.
         /// </summary>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         private const float bounceKey2 = 2f / 2.75f;
 
@@ -42,7 +42,7 @@ namespace PrimerLibrary
         /// The bounce key3 (const). Value: 1.5d / 2.75d.
         /// </summary>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         private const float bounceKey3 = 1.5f / 2.75f;
 
@@ -50,7 +50,7 @@ namespace PrimerLibrary
         /// The bounce key4 (const). Value: 2.5d / 2.75d.
         /// </summary>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         private const float bounceKey4 = 2.5f / 2.75f;
 
@@ -58,7 +58,7 @@ namespace PrimerLibrary
         /// The bounce key5 (const). Value: 2.25d / 2.75d.
         /// </summary>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         private const float bounceKey5 = 2.25f / 2.75f;
 
@@ -66,7 +66,7 @@ namespace PrimerLibrary
         /// The bounce key6 (const). Value: 2.625d / 2.75d.
         /// </summary>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         private const float bounceKey6 = 2.625f / 2.75f;
         #endregion Constants
@@ -76,7 +76,7 @@ namespace PrimerLibrary
         /// Ease a value to its target and then back with another easing function. Use this to wrap two other easing functions.
         /// </summary>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -86,7 +86,7 @@ namespace PrimerLibrary
         /// Ease a value to its target and then back with another easing function. Use this to wrap two other easing functions.
         /// </summary>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -96,7 +96,7 @@ namespace PrimerLibrary
         /// Ease a value to its target and then back. Use this to wrap another easing function.
         /// </summary>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -106,7 +106,7 @@ namespace PrimerLibrary
         /// Ease a value to its target and then back. Use this to wrap another easing function.
         /// </summary>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -116,7 +116,7 @@ namespace PrimerLibrary
         /// Ease a value to its target and then back.
         /// </summary>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -126,7 +126,7 @@ namespace PrimerLibrary
         /// Ease a value to its target and then back.
         /// </summary>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -182,7 +182,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>The correct value.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -213,7 +213,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -242,7 +242,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -259,7 +259,7 @@ namespace PrimerLibrary
         /// <returns>The correct value.</returns>
         /// <acknowledgment>
         /// https://github.com/darrendavid/wpf-animation
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -272,7 +272,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -302,7 +302,7 @@ namespace PrimerLibrary
         /// <returns></returns>
         /// <acknowledgment>
         /// https://github.com/darrendavid/wpf-animation
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -333,7 +333,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -361,7 +361,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -389,7 +389,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -419,7 +419,7 @@ namespace PrimerLibrary
         /// <returns></returns>
         /// <acknowledgment>
         /// https://github.com/darrendavid/wpf-animation
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -449,7 +449,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -477,7 +477,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -505,7 +505,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -535,7 +535,7 @@ namespace PrimerLibrary
         /// <returns></returns>
         /// <acknowledgment>
         /// https://github.com/darrendavid/wpf-animation
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -565,7 +565,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -593,7 +593,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -621,7 +621,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -651,7 +651,7 @@ namespace PrimerLibrary
         /// <returns></returns>
         /// <acknowledgment>
         /// https://github.com/darrendavid/wpf-animation
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -681,7 +681,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -709,7 +709,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -737,7 +737,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -767,7 +767,7 @@ namespace PrimerLibrary
         /// <returns></returns>
         /// <acknowledgment>
         /// https://github.com/darrendavid/wpf-animation
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -797,7 +797,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -825,7 +825,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -853,7 +853,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -882,7 +882,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns></returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -912,7 +912,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -940,7 +940,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -968,7 +968,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -997,7 +997,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns></returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1038,7 +1038,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1077,7 +1077,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1121,7 +1121,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1150,7 +1150,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns></returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1180,7 +1180,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1245,7 +1245,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1291,7 +1291,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1360,7 +1360,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns></returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1390,7 +1390,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1418,7 +1418,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1450,7 +1450,7 @@ namespace PrimerLibrary
         /// <param name="t">Current time elapsed in ticks.</param>
         /// <returns>Eased timescale.</returns>
         /// <acknowledgment>
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1490,7 +1490,7 @@ namespace PrimerLibrary
         /// <returns></returns>
         /// <acknowledgment>
         /// https://github.com/darrendavid/wpf-animation
-        /// https://bitbucket.org/jacobalbano/glide
+        /// https://github.com/jacobalbano/glide
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

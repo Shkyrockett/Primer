@@ -10,6 +10,7 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
@@ -119,7 +120,7 @@ namespace PrimerLibrary
         /// The location.
         /// </value>
         [JsonIgnore]
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -128,7 +129,7 @@ namespace PrimerLibrary
         /// The size.
         /// </value>
         [JsonIgnore]
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -175,12 +176,22 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
+        /// <returns></returns>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBounds = false)
         {
-            var size = Dimensions(graphics, font, scale, out SizeF baseSize, out SizeF powerSize);
+            var bounds = Layout(graphics, font, location, scale, out var baseBounds, out var powerBounds);
+
+            if (drawBounds)
+            {
+                using var dashedPen = new Pen(Color.Red, 0)
+                {
+                    DashStyle = DashStyle.Dash
+                };
+
+                graphics.DrawRectangle(dashedPen, bounds);
+            }
 
             if (Base is null && Exponent is null)
             {
@@ -188,14 +199,14 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, size.Width, size.Height);
+
+                graphics.DrawRectangle(dashedPen, bounds);
             }
 
             // Draw the base.
-            var baseY = y + (powerSize.Height * MathConstants.ExponentOffsetScale);
             if (Base is not null)
             {
-                Base.Draw(graphics, font, brush, pen, scale * MathConstants.ExponentScale, x, baseY, drawBounds);
+                Base.Draw(graphics, font, brush, pen, scale * MathConstants.ExponentScale, baseBounds.Location, drawBounds);
             }
             else
             {
@@ -203,14 +214,14 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, baseSize.Width, baseSize.Height);
+
+                graphics.DrawRectangle(dashedPen, baseBounds);
             }
 
             // Draw the power.
-            var powerX = x + baseSize.Width;
             if (Exponent is not null)
             {
-                Exponent?.Draw(graphics, font, brush, pen, scale * MathConstants.ExponentScale, powerX, y, drawBounds);
+                Exponent?.Draw(graphics, font, brush, pen, scale * MathConstants.ExponentScale, powerBounds.Location, drawBounds);
             }
             else
             {
@@ -218,7 +229,8 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, powerSize.Width, powerSize.Height);
+
+                graphics.DrawRectangle(dashedPen, powerBounds);
             }
         }
 
@@ -230,10 +242,39 @@ namespace PrimerLibrary
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
         /// <returns></returns>
-        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale) => Layout(graphics, font, location, scale, out _, out _);
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="scale">The scale.</param>
+        /// <param name="baseBounds">The base bounds.</param>
+        /// <param name="powerBounds">The power bounds.</param>
+        /// <returns></returns>
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale, out RectangleF baseBounds, out RectangleF powerBounds)
         {
-            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out SizeF baseSize, out SizeF powerSize));
+            var size = Dimensions(graphics, font, scale, out var baseSize, out var powerSize);
+            Bounds = new RectangleF(location, size);
+            var baseY = location.Y + (powerSize.Height * MathConstants.ExponentOffsetScale);
+            baseBounds = new RectangleF(new(location.X, baseY), baseSize);
+            var powerX = location.X + baseSize.Width;
+            powerBounds = new RectangleF(new(powerX, location.Y), powerSize);
             return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            if (Base is not null) set.UnionWith(Base.Expressions());
+            if (Exponent is not null) set.UnionWith(Exponent.Expressions());
+            return set;
         }
     }
 }

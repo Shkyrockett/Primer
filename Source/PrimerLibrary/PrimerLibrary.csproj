@@ -1,24 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <LangVersion>preview</LangVersion>
     <UseWindowsForms>true</UseWindowsForms>
+    <Version>0.0.0.1</Version>
     <nullable>enable</nullable>
     <Platforms>AnyCPU;x64;x86</Platforms>
+    <AnalysisLevel>preview</AnalysisLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <Copyright>Copyright (c) 2020 Shkyrockett</Copyright>
     <Authors>Shkyrockett</Authors>
-    <Version>0.0.0.1</Version>
+    <Copyright>Copyright (c) 2020 Shkyrockett</Copyright>
     <PackageProjectUrl>https://github.com/Shkyrockett/Primer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Shkyrockett/Primer</RepositoryUrl>
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-    <DocumentationFile>$(OutputPath)$(Platform)\Primer.xml</DocumentationFile>
+    <DocumentationFile>$(OutputPath)$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <DefineConstants>DEBUG;TRACE;DrawBox</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">

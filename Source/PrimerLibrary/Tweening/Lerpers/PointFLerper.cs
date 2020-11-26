@@ -6,7 +6,7 @@
 //     Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // </license>
 // <summary></summary>
-// <remarks> Based on: https://bitbucket.org/jacobalbano/glide </remarks>
+// <remarks> Based on: https://github.com/jacobalbano/glide </remarks>
 
 using System.Drawing;
 using static System.MathF;
@@ -44,6 +44,20 @@ namespace PrimerLibrary
         {
             from = (PointF)fromValue;
             to = (PointF)toValue;
+            range = new PointF(to.X - from.X, to.Y - from.Y);
+        }
+
+        /// <summary>
+        /// Initialize.
+        /// </summary>
+        /// <param name="fromValue">The fromValue.</param>
+        /// <param name="toValue">The toValue.</param>
+        /// <param name="behavior">The behavior.</param>
+        public void Initialize(PointF fromValue, PointF toValue, LerpBehaviors behavior)
+        {
+            _ = behavior;
+            from = fromValue;
+            to = toValue;
             range = new PointF(to.X - from.X, to.Y - from.Y);
         }
 

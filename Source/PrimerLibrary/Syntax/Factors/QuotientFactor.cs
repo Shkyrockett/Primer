@@ -10,6 +10,7 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
@@ -84,20 +85,20 @@ namespace PrimerLibrary
         public IExpression Divisor { get; }
 
         /// <summary>
-        /// Gets or sets the sequence.
-        /// </summary>
-        /// <value>
-        /// The sequence.
-        /// </value>
-        public ICoefficient? Sequence { get; set; }
-
-        /// <summary>
         /// Gets or sets the exponent.
         /// </summary>
         /// <value>
         /// The exponent.
         /// </value>
         public IExpression? Exponent { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sequence.
+        /// </summary>
+        /// <value>
+        /// The sequence.
+        /// </value>
+        public ICoefficient? Sequence { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether [show horizontal bar].
@@ -163,7 +164,7 @@ namespace PrimerLibrary
         /// The location.
         /// </value>
         [JsonIgnore]
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -172,7 +173,7 @@ namespace PrimerLibrary
         /// The size.
         /// </value>
         [JsonIgnore]
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -223,12 +224,12 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
+        /// <returns></returns>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBounds = false)
         {
-            var size = Dimensions(graphics, font, scale, out var dividendSize, out var divisorSize, out var barSize);
+            var bounds = Layout(graphics, font, location, scale, out var dividendBounds, out var divisorBounds, out var barBounds);
 
             if (drawBounds)
             {
@@ -236,24 +237,23 @@ namespace PrimerLibrary
                 {
                     DashStyle = DashStyle.Dash
                 };
-                graphics.DrawRectangle(dashedPen, x, y, size);
-                graphics.DrawRectangle(dashedPen, x + ((size.Width - dividendSize.Width) * MathConstants.OneHalf), y, dividendSize);
-                graphics.DrawRectangle(dashedPen, x + ((size.Width - divisorSize.Width) * MathConstants.OneHalf), y + dividendSize.Height, divisorSize);
+
+                graphics.DrawRectangle(dashedPen, bounds);
+                graphics.DrawRectangle(dashedPen, dividendBounds);
+                graphics.DrawRectangle(dashedPen, divisorBounds);
             }
 
             // Draw the top.
-            var top_x = x + ((size.Width - dividendSize.Width) * MathConstants.OneHalf);
-            Dividend.Draw(graphics, font, brush, pen, scale, top_x, y, drawBounds);
+            Dividend.Draw(graphics, font, brush, pen, scale, dividendBounds.Location, drawBounds);
 
             // Draw the separator.
             if (ShowHorizontalBar)
             {
-                graphics.FillRectangle(brush, x, y + (dividendSize.Height - (barSize.Height * MathConstants.OneAndAHalf)), barSize.Width, barSize.Height);
-                //y += barSize.Height;
+                graphics.FillRectangle(brush, barBounds);
             }
 
             // Draw the divisor.
-            Divisor.Draw(graphics, font, brush, pen, scale, x + ((size.Width - divisorSize.Width) * MathConstants.OneHalf), y + (size.Height - divisorSize.Height), drawBounds);
+            Divisor.Draw(graphics, font, brush, pen, scale, divisorBounds.Location, drawBounds);
         }
 
         /// <summary>
@@ -264,10 +264,42 @@ namespace PrimerLibrary
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
         /// <returns></returns>
-        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale) => Layout(graphics, font, location, scale, out _, out _, out _);
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="scale">The scale.</param>
+        /// <param name="dividendBounds">The dividend bounds.</param>
+        /// <param name="divisorBounds">The divisor bounds.</param>
+        /// <param name="barBounds">The bar bounds.</param>
+        /// <returns></returns>
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale, out RectangleF dividendBounds, out RectangleF divisorBounds, out RectangleF barBounds)
         {
-            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out var dividendSize, out var divisorSize, out var barSize));
+            var size = Dimensions(graphics, font, scale, out var dividendSize, out var divisorSize, out var barSize);
+            Bounds = new RectangleF(location, size);
+            var top_x = location.X + ((size.Width - dividendSize.Width) * MathConstants.OneHalf);
+            dividendBounds = new RectangleF(new(top_x, location.Y), dividendSize);
+            barBounds = new RectangleF(location.X, location.Y + (dividendSize.Height - (barSize.Height * MathConstants.OneAndAHalf)), barSize.Width, barSize.Height);
+            divisorBounds = new RectangleF(new(location.X + ((size.Width - divisorSize.Width) * MathConstants.OneHalf), location.Y + (size.Height - divisorSize.Height)), divisorSize);
             return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            if (Dividend is not null) set.UnionWith(Dividend.Expressions());
+            if (Divisor is not null) set.UnionWith(Divisor.Expressions());
+            if (Exponent is not null) set.UnionWith(Exponent.Expressions());
+            if (Sequence is not null) set.UnionWith(Sequence.Expressions());
+            return set;
         }
     }
 }

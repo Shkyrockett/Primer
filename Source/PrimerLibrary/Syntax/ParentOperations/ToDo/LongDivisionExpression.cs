@@ -58,7 +58,7 @@ namespace PrimerLibrary
             this.Remainder = remainder;
             if (this.Remainder is IExpression r) r.Parent = this;
             this.Stack = stack;
-            for (int i = 0; i < this.Stack.Count; i++)
+            for (var i = 0; i < this.Stack.Count; i++)
             {
                 if (this.Stack[i] is IExpression s) s.Parent = this;
             }
@@ -163,7 +163,7 @@ namespace PrimerLibrary
         /// The location.
         /// </value>
         [JsonIgnore]
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -172,7 +172,7 @@ namespace PrimerLibrary
         /// The size.
         /// </value>
         [JsonIgnore]
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -231,12 +231,12 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
+        /// <returns></returns>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBounds = false)
         {
-            var size = Dimensions(graphics, font, scale, out SizeF divisorSize, out SizeF dividendSize, out SizeF quotientSize, out SizeF remainderSize, out SizeF stackSize);
+            var size = Dimensions(graphics, font, scale, out var divisorSize, out var dividendSize, out var quotientSize, out var remainderSize, out var stackSize);
             using var tempFont = new Font(font.FontFamily, font.Size * scale, font.Style);
 
             // Draw here.
@@ -246,8 +246,8 @@ namespace PrimerLibrary
             _ = remainderSize;
             _ = stackSize;
 
-            Divisor?.Draw(graphics, font, brush, pen, scale, x, y + remainderSize.Height, drawBounds);
-            Dividend?.Draw(graphics, font, brush, pen, scale, x + divisorSize.Width + ExtraWidth, y + remainderSize.Height, drawBounds);
+            Divisor?.Draw(graphics, font, brush, pen, scale, new(location.X, location.Y + remainderSize.Height), drawBounds);
+            Dividend?.Draw(graphics, font, brush, pen, scale, new(location.X + divisorSize.Width + ExtraWidth, location.Y + remainderSize.Height), drawBounds);
 
         }
 
@@ -261,8 +261,39 @@ namespace PrimerLibrary
         /// <returns></returns>
         public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
         {
-            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out SizeF divisorSize, out SizeF dividendSize, out SizeF quotientSize, out SizeF remainderSize, out SizeF stackSize));
+            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out var divisorSize, out var dividendSize, out var quotientSize, out var remainderSize, out var stackSize));
+
+            // Layout here.
+            _ = divisorSize;
+            _ = dividendSize;
+            _ = quotientSize;
+            _ = remainderSize;
+            _ = stackSize;
+
             return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            if (LongDivision is not null) set.UnionWith(LongDivision.Expressions());
+            if (Dividend is not null) set.UnionWith(Dividend.Expressions());
+            if (Divisor is not null) set.UnionWith(Divisor.Expressions());
+            if (Quotient is not null) set.UnionWith(Quotient.Expressions());
+            if (Remainder is not null) set.UnionWith(Remainder.Expressions());
+            if (Stack is not null)
+            {
+                foreach (var item in Stack)
+                {
+                    if (item is not null) set.UnionWith(item.Expressions());
+                }
+            }
+
+            return set;
         }
     }
 }

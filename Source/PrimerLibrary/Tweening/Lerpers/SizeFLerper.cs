@@ -6,7 +6,7 @@
 //     Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // </license>
 // <summary></summary>
-// <remarks> Based on: https://bitbucket.org/jacobalbano/glide </remarks>
+// <remarks> Based on: https://github.com/jacobalbano/glide </remarks>
 
 using System.Drawing;
 using static System.MathF;
@@ -42,8 +42,23 @@ namespace PrimerLibrary
         /// <param name="behavior">The behavior.</param>
         public void Initialize(object fromValue, object toValue, LerpBehaviors behavior)
         {
+            _ = behavior;
             from = (SizeF)fromValue;
             to = (SizeF)toValue;
+            range = new SizeF(to.Width - from.Width, to.Height - from.Height);
+        }
+
+        /// <summary>
+        /// Initialize.
+        /// </summary>
+        /// <param name="fromValue">The fromValue.</param>
+        /// <param name="toValue">The toValue.</param>
+        /// <param name="behavior">The behavior.</param>
+        public void Initialize(SizeF fromValue, SizeF toValue, LerpBehaviors behavior)
+        {
+            _ = behavior;
+            from = fromValue;
+            to = toValue;
             range = new SizeF(to.Width - from.Width, to.Height - from.Height);
         }
 

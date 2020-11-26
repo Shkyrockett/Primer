@@ -6,7 +6,7 @@
 //     Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // </license>
 // <summary></summary>
-// <remarks> Based on: https://bitbucket.org/jacobalbano/glide </remarks>
+// <remarks> Based on: https://github.com/jacobalbano/glide </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -23,22 +23,22 @@ namespace PrimerLibrary
         /// <summary>
         /// The ease.
         /// </summary>
-        private Func<float, float> ease;
+        private Func<float, float>? ease;
 
         /// <summary>
         /// The begin.
         /// </summary>
-        private Action begin;
+        private Action? begin;
 
         /// <summary>
         /// The update.
         /// </summary>
-        private Action update;
+        private Action? update;
 
         /// <summary>
         /// The complete.
         /// </summary>
-        private Action complete;
+        private Action? complete;
         #endregion Callbacks
 
         #region Timing
@@ -92,22 +92,22 @@ namespace PrimerLibrary
         /// <summary>
         /// The vars.
         /// </summary>
-        private readonly List<IMemberAccessor> vars;
+        private readonly List<IMemberAccessor?> vars;
 
         /// <summary>
         /// The lerpers.
         /// </summary>
-        private readonly List<IMemberLerper> lerpers;
+        private readonly List<IMemberLerper?> lerpers;
 
         /// <summary>
         /// The start.
         /// </summary>
-        private readonly List<object> start;
+        private readonly List<object?> start;
 
         /// <summary>
         /// The end.
         /// </summary>
-        private readonly List<object> end;
+        private readonly List<object?> end;
 
         /// <summary>
         /// The var hash.
@@ -133,9 +133,14 @@ namespace PrimerLibrary
         /// <param name="duration">The duration.</param>
         /// <param name="delay">The delay.</param>
         /// <param name="parent">The parent.</param>
-        internal Tween(object target, float duration, float delay, Tweener parent)
+        internal Tween(object? target, float duration, float delay, Tweener parent)
         {
-            Target = target;
+            ease = null;
+            begin = null;
+            update = null;
+            complete = null;
+
+            Target = target ?? default!;
             this.duration = duration;
             this.delay = delay;
             this.parent = parent;
@@ -143,11 +148,11 @@ namespace PrimerLibrary
 
             firstUpdate = true;
 
-            varHash = new Dictionary<string, int>();
-            vars = new List<IMemberAccessor>();
-            lerpers = new List<IMemberLerper>();
-            start = new List<object>();
-            end = new List<object>();
+            varHash = new();
+            vars = new();
+            lerpers = new();
+            start = new();
+            end = new();
             behavior = LerpBehaviors.None;
         }
         #endregion Constructors
@@ -179,6 +184,14 @@ namespace PrimerLibrary
         /// The object this tween targets. Will be null if the tween represents a timer.
         /// </summary>
         public object Target { get; private set; }
+
+        /// <summary>
+        /// Gets the parent.
+        /// </summary>
+        /// <value>
+        /// The parent.
+        /// </value>
+        public Tweener Parent => parent;
         #endregion Properties
 
         /// <summary>
@@ -212,7 +225,10 @@ namespace PrimerLibrary
                 var i = vars.Count;
                 while (i-- > 0)
                 {
-                    lerpers[i]?.Initialize(start[i], end[i], behavior);
+                    if (start?[i] is not null && end?[i] is not null)
+                    {
+                        lerpers[i]?.Initialize(start[i]!, end[i]!, behavior);
+                    }
                 }
             }
             else
@@ -273,9 +289,9 @@ namespace PrimerLibrary
                 var i = vars.Count;
                 while (i-- > 0)
                 {
-                    if (vars[i] is not null && vars[i]?.Value is not null)
+                    if (vars?[i] is not null && vars[i]?.Value is not null)
                     {
-                        vars[i].Value = lerpers[i]?.Interpolate(t, vars[i].Value, behavior);
+                        vars[i]!.Value = lerpers[i]?.Interpolate(t, vars[i]!.Value!, behavior);
                     }
                 }
 
@@ -305,10 +321,8 @@ namespace PrimerLibrary
         /// <returns>A reference to this.</returns>
         public ITweenable From(object values)
         {
-            var props = values?.GetType().GetProperties();
-            for (var i = 0; i < props.Length; ++i)
+            foreach (var property in values.GetType().GetProperties())
             {
-                var property = props[i];
                 var propValue = property.GetValue(values, null);
 
                 if (varHash.TryGetValue(property.Name, out var index))
@@ -445,7 +459,10 @@ namespace PrimerLibrary
                 start[i] = e;
                 end[i] = s;
 
-                lerpers[i].Initialize(e, s, behavior);
+                if (lerpers?[i] is not null && e is not null && s is not null)
+                {
+                    lerpers[i]!.Initialize(e, s, behavior);
+                }
             }
 
             return this;

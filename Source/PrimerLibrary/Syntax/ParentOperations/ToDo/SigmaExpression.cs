@@ -10,7 +10,9 @@
 //     Based on the code at: http://csharphelper.com/blog/2017/09/recursively-draw-equations-in-c/ by Rod Stephens.
 // </remarks>
 
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Text.Json.Serialization;
 using static System.Math;
 
@@ -131,7 +133,7 @@ namespace PrimerLibrary
         /// The location.
         /// </value>
         [JsonIgnore]
-        public PointF? Location { get { return Bounds?.Location; } set { if (Bounds is RectangleF b && value is PointF p) Bounds = new RectangleF(p, b.Size); } }
+        public PointF? Location { get => Bounds?.Location; set => Bounds = Bounds switch { null when value is PointF p => new RectangleF(p, SizeF.Empty), RectangleF b when value is PointF d => new RectangleF(d, b.Size), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the size.
@@ -140,7 +142,7 @@ namespace PrimerLibrary
         /// The size.
         /// </value>
         [JsonIgnore]
-        public SizeF? Size { get { return Bounds?.Size; } set { if (Bounds is RectangleF b && value is SizeF s) Bounds = new RectangleF(b.Location, s); } }
+        public SizeF? Size { get => Bounds?.Size; set => Bounds = Bounds switch { null when value is SizeF s => new RectangleF(PointF.Empty, s), RectangleF b when value is SizeF s => new RectangleF(b.Location, s), _ => null, }; }
 
         /// <summary>
         /// Gets or sets the scale.
@@ -201,45 +203,52 @@ namespace PrimerLibrary
         /// <param name="brush">The brush.</param>
         /// <param name="pen">The pen.</param>
         /// <param name="scale">The scale.</param>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="location">The location.</param>
         /// <param name="drawBounds">if set to <see langword="true" /> [draw bounds].</param>
-        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, float x, float y, bool drawBounds = false)
+        /// <returns></returns>
+        public void Draw(Graphics graphics, Font font, Brush brush, Pen pen, float scale, PointF location, bool drawBounds = false)
         {
-            var size = Dimensions(graphics, font, scale, out SizeF contents_size, out SizeF above_size, out SizeF below_size, out var symbol_area_width, out var symbol_area_height, out var symbol_width, out var symbol_height);
+            var bounds = Layout(graphics, font, location, scale, out var contentsBounds, out var aboveBounds, out var belowBounds, out var symbolAreaWidth, out _, out var symbolWidth, out var symbolHeight);
+
+            if (drawBounds)
+            {
+                using var dashedPen = new Pen(Color.Orange, 1)
+                {
+                    DashStyle = DashStyle.Dash
+                };
+
+                graphics.DrawRectangle(dashedPen, bounds);
+                graphics.DrawRectangle(dashedPen, contentsBounds);
+                graphics.DrawRectangle(dashedPen, aboveBounds);
+                graphics.DrawRectangle(dashedPen, belowBounds);
+            }
 
             // Draw Above.
-            var above_x = x + ((symbol_area_width - above_size.Width) * 0.5f);
-            var above_y = y + ((size.Height - symbol_area_height) * 0.5f);
-            UpperLimit?.Draw(graphics, font, brush, pen, scale * 0.5f, above_x, above_y, drawBounds);
+            UpperLimit?.Draw(graphics, font, brush, pen, scale * 0.5f, aboveBounds.Location, drawBounds);
 
             // Draw the sigma symbol.
-            var x1 = x + ((symbol_area_width - symbol_width) * 0.5f);
-            var x2 = x1 + symbol_width;
-            var y1 = above_y + above_size.Height;
-            var y2 = y1 + (symbol_height * 0.5f);
-            var y3 = y1 + symbol_height;
+            var x1 = location.X + ((symbolAreaWidth - symbolWidth) * 0.5f);
+            var x2 = x1 + symbolWidth;
+            var y1 = aboveBounds.Y + aboveBounds.Height;
+            var y2 = y1 + (symbolHeight * 0.5f);
+            var y3 = y1 + symbolHeight;
             PointF[] sigma_pts =
                 {
-                    new PointF(x2, y1 + (symbol_height * FootFraction)),
+                    new PointF(x2, y1 + (symbolHeight * FootFraction)),
                     new PointF(x2, y1),
                     new PointF(x1, y1),
                     new PointF(x2, y2),
                     new PointF(x1, y3),
                     new PointF(x2, y3),
-                    new PointF(x2, y3 - (symbol_height * FootFraction)),
+                    new PointF(x2, y3 - (symbolHeight * FootFraction)),
                 };
             graphics.DrawLines(pen, sigma_pts);
 
             // Draw Below.
-            var below_x = x + ((symbol_area_width - below_size.Width) * 0.5f);
-            var below_y = y3;
-            LowerLimit?.Draw(graphics, font, brush, pen, scale * 0.5f, below_x, below_y, drawBounds);
+            LowerLimit?.Draw(graphics, font, brush, pen, scale * 0.5f, belowBounds.Location, drawBounds);
 
             // Draw the contents.
-            var contents_x = x + symbol_area_width;
-            var contents_y = y + ((size.Height - contents_size.Height) * 0.5f);
-            Argument?.Draw(graphics, font, brush, pen, scale, contents_x, contents_y, drawBounds);
+            Argument?.Draw(graphics, font, brush, pen, scale, contentsBounds.Location, drawBounds);
         }
 
         /// <summary>
@@ -250,10 +259,44 @@ namespace PrimerLibrary
         /// <param name="scale">The scale.</param>
         /// <param name="location">The location.</param>
         /// <returns></returns>
-        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale)
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale) => Layout(graphics, font, location, scale, out _, out _, out _, out _, out _, out _, out _);
+
+        /// <summary>
+        /// Layouts the specified graphics.
+        /// </summary>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="scale">The scale.</param>
+        /// <param name="contentsBounds">The contents bounds.</param>
+        /// <param name="aboveBounds">The above bounds.</param>
+        /// <param name="belowBounds">The below bounds.</param>
+        /// <param name="symbolAreaWidth">Width of the symbol area.</param>
+        /// <param name="symbolAreaHeight">Height of the symbol area.</param>
+        /// <param name="symbolWidth">Width of the symbol.</param>
+        /// <param name="symbolHeight">Height of the symbol.</param>
+        /// <returns></returns>
+        public RectangleF Layout(Graphics graphics, Font font, PointF location, float scale, out RectangleF contentsBounds, out RectangleF aboveBounds, out RectangleF belowBounds, out float symbolAreaWidth, out float symbolAreaHeight, out float symbolWidth, out float symbolHeight)
         {
-            Bounds = new RectangleF(location, Dimensions(graphics, font, scale, out SizeF contents_size, out SizeF above_size, out SizeF below_size, out var symbol_area_width, out var symbol_area_height, out var symbol_width, out var symbol_height)); ;
+            var size = Dimensions(graphics, font, scale, out SizeF contentsSize, out SizeF aboveSize, out SizeF belowSize, out symbolAreaWidth, out symbolAreaHeight, out symbolWidth, out symbolHeight);
+            Bounds = new RectangleF(location, size);
+            aboveBounds = new RectangleF(new PointF(location.X + ((symbolAreaWidth - aboveSize.Width) * 0.5f), location.Y + ((size.Height - symbolAreaHeight) * 0.5f)), aboveSize);
+            belowBounds = new RectangleF(new PointF(location.X + ((symbolAreaWidth - belowSize.Width) * 0.5f), aboveBounds.Y + aboveBounds.Height + symbolHeight), belowSize);
+            contentsBounds = new RectangleF(new PointF(location.X + symbolAreaWidth, location.Y + ((size.Height - contentsSize.Height) * 0.5f)), contentsSize);
             return Bounds ?? Rectangle.Empty;
+        }
+
+        /// <summary>
+        /// Expressions of this instance.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<IExpression> Expressions()
+        {
+            var set = new HashSet<IExpression>() { this };
+            if (Argument is not null) set.UnionWith(Argument.Expressions());
+            if (UpperLimit is not null) set.UnionWith(UpperLimit.Expressions());
+            if (LowerLimit is not null) set.UnionWith(LowerLimit.Expressions());
+            return set;
         }
     }
 }
