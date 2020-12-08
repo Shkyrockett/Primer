@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Globalization;
-using static PrimerLibrary.MathConstants;
+using static MathematicsNotationLibrary.Mathematics;
 using static System.MathF;
 
 namespace PrimerLibrary

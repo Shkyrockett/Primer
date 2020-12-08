@@ -46,12 +46,15 @@ namespace PrimerLibrary
         {
             this.SuspendLayout();
             // 
-            // Canvas
+            // CanvasControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Name = "Canvas";
+            this.Name = "CanvasControl";
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Canvas_Paint);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CanvasControl_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.CanvasControl_MouseMove);
+            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.CanvasControl_MouseWheel);
             this.Move += new System.EventHandler(this.Canvas_Move);
             this.Resize += new System.EventHandler(this.Canvas_Resize);
             this.ResumeLayout(false);

@@ -9,7 +9,7 @@
 // <remarks>
 // </remarks>
 
-using PrimerLibrary;
+using MathematicsNotationLibrary;
 using System;
 using System.Drawing;
 using System.IO;
@@ -41,22 +41,22 @@ namespace Primer
             canvas1.Expression = new RelationalOperation(
                 ComparisonOperators.NotEquals,
                 new NomialExpression(
-                new ProductTerm(new FractionCoefficientFactor(1, 2) { Exponent = new CoefficientFactor(2) },
+                new ProductTerm(new FractionFactor(1, 2) { Exponent = new NumericFactor(2) },
                 new QuotientFactor(
-                new NomialExpression(new ProductTerm(new CoefficientFactor(1), new VariableFactor('x', new CoefficientFactor(1), new CoefficientFactor(2))), new ProductTerm(new CoefficientFactor(-1, new CoefficientFactor(2)))),
-                new NomialExpression(new ProductTerm(new CoefficientFactor(1), new VariableFactor('a', new CoefficientFactor(1), new CoefficientFactor(2))))
+                new NomialExpression(new ProductTerm(new NumericFactor(1), new VariableFactor('x', 0, new NumericFactor(2), new NumericFactor(1))), new ProductTerm(new NumericFactor(-1, new NumericFactor(2)))),
+                new NomialExpression(new ProductTerm(new NumericFactor(1), new VariableFactor('a', 0, new NumericFactor(3), new NumericFactor(1))))
                 )
                 ),
-                new ProductTerm(new CoefficientFactor(1),
+                new ProductTerm(new NumericFactor(1),
                 new QuotientFactor(
-                new NomialExpression(new ProductTerm(new CoefficientFactor(1), new VariableFactor('y', new CoefficientFactor(1), new CoefficientFactor(2))), new ProductTerm(new CoefficientFactor(-1, new CoefficientFactor(2)))),
-                new NomialExpression(new ProductTerm(new CoefficientFactor(1), new VariableFactor('b', new CoefficientFactor(1), new CoefficientFactor(2))))
+                new NomialExpression(new ProductTerm(new NumericFactor(1), new VariableFactor('y', 0, new NumericFactor(2), new NumericFactor(1))), new ProductTerm(new NumericFactor(-1, new NumericFactor(4)))),
+                new NomialExpression(new ProductTerm(new NumericFactor(1), new VariableFactor('b', 0, new NumericFactor(5), new NumericFactor(1))))
                 )
                 )
                 ),
                 new NomialExpression(
-                new ProductTerm(new CoefficientFactor(1) { PlusOrMinus = true }, new RootFactor(new CoefficientFactor(3), new CoefficientFactor(2), new CoefficientFactor(1), new CoefficientFactor(2))),
-                new ProductTerm(new CoefficientFactor(1), new MatrixFactor(3, 3, new CoefficientFactor(1), new CoefficientFactor(0), new CoefficientFactor(0), new CoefficientFactor(0), new CoefficientFactor(1), new CoefficientFactor(0), new CoefficientFactor(0), new CoefficientFactor(0), new CoefficientFactor(1)) { Sequence = new CoefficientFactor(1), Exponent = new CoefficientFactor(2) })
+                new ProductTerm(new NumericFactor(1) { PlusOrMinus = true }, new RootFunction(new NumericFactor(3), new NumericFactor(2), new NumericFactor(1), new NumericFactor(6))),
+                new ProductTerm(new NumericFactor(1), new MatrixFactor(3, 3, new ProductTerm(1), new ProductTerm(0), new ProductTerm(0), new ProductTerm(0), new ProductTerm(1), new ProductTerm(0), new ProductTerm(0), new ProductTerm(0), new ProductTerm(1)) { Sequence = new NumericFactor(1), Exponent = new NumericFactor(7) })
                 )
                 );
             canvas1.RenderBoundaries = renderBoundaries;

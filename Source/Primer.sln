@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathematicsNotationLibrary", "MathematicsNotationLibrary\MathematicsNotationLibrary.csproj", "{4131A644-4243-4D82-9988-A43233713576}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,18 @@ Global
 		{16405443-9B96-4AC8-B37A-3ADA0C65E8C8}.Release|x64.Build.0 = Release|x64
 		{16405443-9B96-4AC8-B37A-3ADA0C65E8C8}.Release|x86.ActiveCfg = Release|x86
 		{16405443-9B96-4AC8-B37A-3ADA0C65E8C8}.Release|x86.Build.0 = Release|x86
+		{4131A644-4243-4D82-9988-A43233713576}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4131A644-4243-4D82-9988-A43233713576}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4131A644-4243-4D82-9988-A43233713576}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4131A644-4243-4D82-9988-A43233713576}.Debug|x64.Build.0 = Debug|Any CPU
+		{4131A644-4243-4D82-9988-A43233713576}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4131A644-4243-4D82-9988-A43233713576}.Debug|x86.Build.0 = Debug|Any CPU
+		{4131A644-4243-4D82-9988-A43233713576}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4131A644-4243-4D82-9988-A43233713576}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4131A644-4243-4D82-9988-A43233713576}.Release|x64.ActiveCfg = Release|Any CPU
+		{4131A644-4243-4D82-9988-A43233713576}.Release|x64.Build.0 = Release|Any CPU
+		{4131A644-4243-4D82-9988-A43233713576}.Release|x86.ActiveCfg = Release|Any CPU
+		{4131A644-4243-4D82-9988-A43233713576}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

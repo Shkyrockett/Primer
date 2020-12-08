@@ -11,7 +11,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using static PrimerLibrary.MathConstants;
+using static MathematicsNotationLibrary.Mathematics;
 using static System.MathF;
 
 namespace PrimerLibrary
@@ -789,7 +789,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float SineIn(float t, float b, float c, float d) => (-c * Cos(t / d * HalfPi)) + c + b;
+        public static float SineIn(float t, float b, float c, float d) => (-c * Cos(t / d * Hau)) + c + b;
 
         /// <summary>
         /// Sine in.
@@ -801,7 +801,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float SineIn(float t) => (Abs(t - 1f) < float.Epsilon) ? 1f : (-Cos(HalfPi * t) + 1f);
+        public static float SineIn(float t) => (Abs(t - 1f) < float.Epsilon) ? 1f : (-Cos(Hau * t) + 1f);
 
         /// <summary>
         /// Easing equation function for a sinusoidal (sin(t)) easing out:
@@ -817,7 +817,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float SineOut(float t, float b, float c, float d) => (c * Sin(t / d * HalfPi)) + b;
+        public static float SineOut(float t, float b, float c, float d) => (c * Sin(t / d * Hau)) + b;
 
         /// <summary>
         /// Sine out.
@@ -829,7 +829,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float SineOut(float t) => Sin(HalfPi * t);
+        public static float SineOut(float t) => Sin(Hau * t);
 
         /// <summary>
         /// Easing equation function for a sinusoidal (sin(t)) easing in/out:
@@ -845,7 +845,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float SineInOut(float t, float b, float c, float d) => ((t /= d * 0.5f) < 1f) ? (c * 0.5f * Sin(HalfPi * t)) + b : (-c * 0.5f * (Cos(HalfPi * --t) - 2f)) + b;
+        public static float SineInOut(float t, float b, float c, float d) => ((t /= d * 0.5f) < 1f) ? (c * 0.5f * Sin(Hau * t)) + b : (-c * 0.5f * (Cos(Hau * --t) - 2f)) + b;
 
         /// <summary>
         /// Sine in and out
@@ -1042,7 +1042,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float ElasticIn(float t) => Sin(13f * HalfPi * t) * Pow(2f, 10f * (t - 1f));
+        public static float ElasticIn(float t) => Sin(13f * Hau * t) * Pow(2f, 10f * (t - 1f));
 
         /// <summary>
         /// Easing equation function for an elastic (exponentially decaying sine wave) easing out:
@@ -1081,7 +1081,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float ElasticOut(float t) => (Abs(t - 1f) < float.Epsilon) ? 1f : ((Sin(-13f * HalfPi * (t + 1f)) * Pow(2f, -10f * t)) + 1f);
+        public static float ElasticOut(float t) => (Abs(t - 1f) < float.Epsilon) ? 1f : ((Sin(-13f * Hau * (t + 1f)) * Pow(2f, -10f * t)) + 1f);
 
         /// <summary>
         /// Easing equation function for an elastic (exponentially decaying sine wave) easing in/out:
@@ -1125,7 +1125,7 @@ namespace PrimerLibrary
         /// </acknowledgment>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float ElasticInOut(float t) => (t < 0.5f) ? (0.5f * Sin(13f * HalfPi * (2f * t)) * Pow(2f, 10f * ((2f * t) - 1f))) : (0.5f * ((Sin(-13f * HalfPi * ((2f * t) - 1f + 1f)) * Pow(2f, -10f * ((2f * t) - 1f))) + 2f));
+        public static float ElasticInOut(float t) => (t < 0.5f) ? (0.5f * Sin(13f * Hau * (2f * t)) * Pow(2f, 10f * ((2f * t) - 1f))) : (0.5f * ((Sin(-13f * Hau * ((2f * t) - 1f + 1f)) * Pow(2f, -10f * ((2f * t) - 1f))) + 2f));
 
         /// <summary>
         /// Easing equation function for an elastic (exponentially decaying sine wave) easing out/in:

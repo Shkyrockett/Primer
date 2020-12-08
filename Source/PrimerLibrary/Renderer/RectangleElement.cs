@@ -9,6 +9,7 @@
 // <remarks>
 // </remarks>
 
+using MathematicsNotationLibrary;
 using System.Drawing;
 
 namespace PrimerLibrary
@@ -16,7 +17,7 @@ namespace PrimerLibrary
     /// <summary>
     /// 
     /// </summary>
-    /// <seealso cref="PrimerLibrary.IRenderable" />
+    /// <seealso cref="MathematicsNotationLibrary.IRenderable" />
     internal class RectangleElement
         : IRenderable
     {

@@ -48,6 +48,7 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <ProjectReference Include="..\MathematicsNotationLibrary\MathematicsNotationLibrary.csproj" />
     <ProjectReference Include="..\PrimerLibrary\PrimerLibrary.csproj" />
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>

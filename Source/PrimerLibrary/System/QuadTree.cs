@@ -14,6 +14,7 @@
 //     See also: https://github.com/mikechambers/ExamplesByMesh/tree/master/JavaScript/QuadTree
 // </remarks>
 
+using MathematicsNotationLibrary;
 using System.Collections.Generic;
 using System.Drawing;
 

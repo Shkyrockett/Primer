@@ -3,16 +3,16 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
-    <LangVersion>preview</LangVersion>
-    <UseWindowsForms>true</UseWindowsForms>
-    <Version>0.0.0.1</Version>
-    <nullable>enable</nullable>
-    <Platforms>AnyCPU;x64;x86</Platforms>
-    <AnalysisLevel>preview</AnalysisLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+    <LangVersion>preview</LangVersion>
+    <nullable>enable</nullable>
+    <Version>0.0.0.1</Version>
+    <AnalysisLevel>preview</AnalysisLevel>
     <Authors>Shkyrockett</Authors>
     <Copyright>Copyright (c) 2020 Shkyrockett</Copyright>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/Shkyrockett/Primer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Shkyrockett/Primer</RepositoryUrl>
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
@@ -27,7 +27,7 @@
     <DebugType>None</DebugType>
     <Optimize>true</Optimize>
   </PropertyGroup>
-
+<!--
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PublishTrimmed>true</PublishTrimmed>
     <PublishReadyToRun>true</PublishReadyToRun>
@@ -41,13 +41,14 @@
     <PublishSingleFile>true</PublishSingleFile>
     <RuntimeIdentifier>win10-x86</RuntimeIdentifier>
   </PropertyGroup>
-
+-->
   <ItemGroup>
     <None Include="..\..\.editorconfig" Link="Properties\.editorconfig" />
     <None Include="..\..\LICENSE.md" Link="Properties\LICENSE.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <ProjectReference Include="..\MathematicsNotationLibrary\MathematicsNotationLibrary.csproj" />
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

@@ -1,11 +1,13 @@
-﻿namespace PrimerLibrary
+﻿using MathematicsNotationLibrary;
+
+namespace PrimerLibrary
 {
     /// <summary>
     /// 
     /// </summary>
-    /// <seealso cref="PrimerLibrary.ILocatable" />
-    /// <seealso cref="PrimerLibrary.ISizable" />
-    /// <seealso cref="PrimerLibrary.IBoundable" />
+    /// <seealso cref="MathematicsNotationLibrary.ILocatable" />
+    /// <seealso cref="MathematicsNotationLibrary.ISizable" />
+    /// <seealso cref="MathematicsNotationLibrary.IBoundable" />
     public interface IAnimatable
         : ILocatable, ISizable, IBoundable
     {

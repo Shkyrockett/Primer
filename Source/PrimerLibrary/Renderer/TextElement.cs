@@ -1,11 +1,12 @@
-﻿using System.Drawing;
+﻿using MathematicsNotationLibrary;
+using System.Drawing;
 
 namespace PrimerLibrary
 {
     /// <summary>
     /// 
     /// </summary>
-    /// <seealso cref="PrimerLibrary.IRenderable" />
+    /// <seealso cref="MathematicsNotationLibrary.IRenderable" />
     public class TextElement
         : IRenderable
     {
