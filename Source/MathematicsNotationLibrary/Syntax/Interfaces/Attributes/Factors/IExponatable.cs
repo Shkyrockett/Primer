@@ -1,5 +1,5 @@
 ﻿// <copyright file="IExponentableFactor.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -9,21 +9,20 @@
 // <remarks>
 // </remarks>
 
-namespace MathematicsNotationLibrary
+namespace MathematicsNotationLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+/// <seealso cref="IFactor" />
+public interface IExponatable
+    : IFactor
 {
     /// <summary>
-    /// 
+    /// Gets or sets the exponent.
     /// </summary>
-    /// <seealso cref="MathematicsNotationLibrary.IFactor" />
-    public interface IExponatable
-        : IFactor
-    {
-        /// <summary>
-        /// Gets or sets the exponent.
-        /// </summary>
-        /// <value>
-        /// The exponent.
-        /// </value>
-        IExpression? Exponent { get; set; }
-    }
+    /// <value>
+    /// The exponent.
+    /// </value>
+    IExpression? Exponent { get; set; }
 }

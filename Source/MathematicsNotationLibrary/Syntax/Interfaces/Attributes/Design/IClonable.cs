@@ -1,5 +1,5 @@
 ﻿// <copyright file="IClonable.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -9,19 +9,18 @@
 // <remarks>
 // </remarks>
 
-namespace MathematicsNotationLibrary
+namespace MathematicsNotationLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public interface IClonable<T>
+    where T : IExpression
 {
     /// <summary>
-    /// 
+    /// Clones this instance.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface IClonable<T>
-        where T : IExpression
-    {
-        /// <summary>
-        /// Clones this instance.
-        /// </summary>
-        /// <returns></returns>
-        T Clone();
-    }
+    /// <returns></returns>
+    T Clone();
 }

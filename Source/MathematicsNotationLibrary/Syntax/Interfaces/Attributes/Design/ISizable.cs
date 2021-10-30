@@ -1,5 +1,5 @@
 ﻿// <copyright file="ISizable.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -11,19 +11,18 @@
 
 using System.Drawing;
 
-namespace MathematicsNotationLibrary
+namespace MathematicsNotationLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+public interface ISizable
 {
     /// <summary>
-    /// 
+    /// Gets or sets the size.
     /// </summary>
-    public interface ISizable
-    {
-        /// <summary>
-        /// Gets or sets the size.
-        /// </summary>
-        /// <value>
-        /// The size.
-        /// </value>
-        SizeF? Size { get; set; }
-    }
+    /// <value>
+    /// The size.
+    /// </value>
+    SizeF? Size { get; set; }
 }

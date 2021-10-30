@@ -1,9 +1,8 @@
-﻿namespace PrimerLibrary
+﻿namespace PrimerLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+public class PolygonElement
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class PolygonElement
-    {
-    }
 }

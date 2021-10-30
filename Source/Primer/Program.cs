@@ -1,5 +1,5 @@
 // <copyright file="Program.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -12,24 +12,23 @@
 using System;
 using System.Windows.Forms;
 
-namespace Primer
+namespace Primer;
+
+/// <summary>
+///  The main entry class for the application.
+/// </summary>
+internal static class Program
 {
     /// <summary>
-    ///  The main entry class for the application.
+    ///  The main entry point for the application.
     /// </summary>
-    internal static class Program
+    [STAThread]
+    private static void Main()
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        private static void Main()
-        {
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            using var mainForm = new Form1();
-            Application.Run(mainForm);
-        }
+        Application.SetHighDpiMode(HighDpiMode.SystemAware);
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+        using var mainForm = new Form1();
+        Application.Run(mainForm);
     }
 }

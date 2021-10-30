@@ -1,5 +1,5 @@
 ﻿// <copyright file="ICoefficient.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -9,15 +9,14 @@
 // <remarks>
 // </remarks>
 
-namespace MathematicsNotationLibrary
-{
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <seealso cref="MathematicsNotationLibrary.INumeric" />
-    /// <seealso cref="MathematicsNotationLibrary.ISequenceable" />
-    /// <seealso cref="MathematicsNotationLibrary.IExponatable" />
-    public interface ICoefficient
-        : INumeric, ISequenceable, IExponatable
-    {}
-}
+namespace MathematicsNotationLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+/// <seealso cref="INumeric" />
+/// <seealso cref="ISequenceable" />
+/// <seealso cref="IExponatable" />
+public interface ICoefficient
+    : INumeric, ISequenceable, IExponatable
+{ }

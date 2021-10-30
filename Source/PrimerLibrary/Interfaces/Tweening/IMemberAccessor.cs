@@ -10,43 +10,42 @@
 
 using System;
 
-namespace PrimerLibrary
+namespace PrimerLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+public interface IMemberAccessor
 {
     /// <summary>
-    /// 
+    /// Gets the name of the member.
     /// </summary>
-    public interface IMemberAccessor
-    {
-        /// <summary>
-        /// Gets the name of the member.
-        /// </summary>
-        /// <value>
-        /// The name of the member.
-        /// </value>
-        string? MemberName { get; }
+    /// <value>
+    /// The name of the member.
+    /// </value>
+    string? MemberName { get; }
 
-        /// <summary>
-        /// Gets the type of the member.
-        /// </summary>
-        /// <value>
-        /// The type of the member.
-        /// </value>
-        Type? MemberType { get; }
+    /// <summary>
+    /// Gets the type of the member.
+    /// </summary>
+    /// <value>
+    /// The type of the member.
+    /// </value>
+    Type? MemberType { get; }
 
-        /// <summary>
-        /// Gets the target.
-        /// </summary>
-        /// <value>
-        /// The target.
-        /// </value>
-        object? Target { get; }
+    /// <summary>
+    /// Gets the target.
+    /// </summary>
+    /// <value>
+    /// The target.
+    /// </value>
+    object? Target { get; }
 
-        /// <summary>
-        /// Gets or sets the value.
-        /// </summary>
-        /// <value>
-        /// The value.
-        /// </value>
-        object? Value { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the value.
+    /// </summary>
+    /// <value>
+    /// The value.
+    /// </value>
+    object? Value { get; set; }
 }

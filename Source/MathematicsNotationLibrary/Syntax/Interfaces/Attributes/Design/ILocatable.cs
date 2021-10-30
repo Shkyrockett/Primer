@@ -1,5 +1,5 @@
 ﻿// <copyright file="ILocatable.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -11,17 +11,16 @@
 
 using System.Drawing;
 
-namespace MathematicsNotationLibrary
+namespace MathematicsNotationLibrary;
+
+/// <summary>
+/// An interface that defines and object with a location point.
+/// </summary>
+public interface ILocatable
 {
     /// <summary>
-    /// An interface that defines and object with a location point.
+    /// Gets the point.
     /// </summary>
-    public interface ILocatable
-    {
-        /// <summary>
-        /// Gets the point.
-        /// </summary>
-        /// <value>The <see cref="PointF"/>.</value>
-        PointF? Location { get; set; }
-    }
+    /// <value>The <see cref="PointF"/>.</value>
+    PointF? Location { get; set; }
 }

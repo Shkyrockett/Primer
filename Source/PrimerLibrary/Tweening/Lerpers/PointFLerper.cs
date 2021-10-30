@@ -11,78 +11,77 @@
 using System.Drawing;
 using static System.MathF;
 
-namespace PrimerLibrary
+namespace PrimerLibrary;
+
+/// <summary>
+/// The point2d lerper class.
+/// </summary>
+public class PointFLerper
+    : IMemberLerper
 {
     /// <summary>
-    /// The point2d lerper class.
+    /// The from.
     /// </summary>
-    public class PointFLerper
-        : IMemberLerper
+    private PointF from;
+
+    /// <summary>
+    /// The to.
+    /// </summary>
+    private PointF to;
+
+    /// <summary>
+    /// The range.
+    /// </summary>
+    private PointF range;
+
+    /// <summary>
+    /// Initialize.
+    /// </summary>
+    /// <param name="fromValue">The fromValue.</param>
+    /// <param name="toValue">The toValue.</param>
+    /// <param name="behavior">The behavior.</param>
+    public void Initialize(object fromValue, object toValue, LerpBehaviors behavior)
     {
-        /// <summary>
-        /// The from.
-        /// </summary>
-        private PointF from;
+        from = (PointF)fromValue;
+        to = (PointF)toValue;
+        range = new PointF(to.X - from.X, to.Y - from.Y);
+    }
 
-        /// <summary>
-        /// The to.
-        /// </summary>
-        private PointF to;
+    /// <summary>
+    /// Initialize.
+    /// </summary>
+    /// <param name="fromValue">The fromValue.</param>
+    /// <param name="toValue">The toValue.</param>
+    /// <param name="behavior">The behavior.</param>
+    public void Initialize(PointF fromValue, PointF toValue, LerpBehaviors behavior)
+    {
+        _ = behavior;
+        from = fromValue;
+        to = toValue;
+        range = new PointF(to.X - from.X, to.Y - from.Y);
+    }
 
-        /// <summary>
-        /// The range.
-        /// </summary>
-        private PointF range;
+    /// <summary>
+    /// The interpolate.
+    /// </summary>
+    /// <param name="t">The t.</param>
+    /// <param name="currentValue">The currentValue.</param>
+    /// <param name="behavior">The behavior.</param>
+    /// <returns>The <see cref="object"/>.</returns>
+    public object Interpolate(float t, object currentValue, LerpBehaviors behavior)
+    {
+        var x = from.X + (range.X * t);
+        var y = from.Y + (range.Y * t);
 
-        /// <summary>
-        /// Initialize.
-        /// </summary>
-        /// <param name="fromValue">The fromValue.</param>
-        /// <param name="toValue">The toValue.</param>
-        /// <param name="behavior">The behavior.</param>
-        public void Initialize(object fromValue, object toValue, LerpBehaviors behavior)
+        if (behavior.HasFlag(LerpBehaviors.Round))
         {
-            from = (PointF)fromValue;
-            to = (PointF)toValue;
-            range = new PointF(to.X - from.X, to.Y - from.Y);
+            x = Round(x);
+            y = Round(y);
         }
 
-        /// <summary>
-        /// Initialize.
-        /// </summary>
-        /// <param name="fromValue">The fromValue.</param>
-        /// <param name="toValue">The toValue.</param>
-        /// <param name="behavior">The behavior.</param>
-        public void Initialize(PointF fromValue, PointF toValue, LerpBehaviors behavior)
-        {
-            _ = behavior;
-            from = fromValue;
-            to = toValue;
-            range = new PointF(to.X - from.X, to.Y - from.Y);
-        }
-
-        /// <summary>
-        /// The interpolate.
-        /// </summary>
-        /// <param name="t">The t.</param>
-        /// <param name="currentValue">The currentValue.</param>
-        /// <param name="behavior">The behavior.</param>
-        /// <returns>The <see cref="object"/>.</returns>
-        public object Interpolate(float t, object currentValue, LerpBehaviors behavior)
-        {
-            var x = from.X + (range.X * t);
-            var y = from.Y + (range.Y * t);
-
-            if (behavior.HasFlag(LerpBehaviors.Round))
-            {
-                x = Round(x);
-                y = Round(y);
-            }
-
-            var current = (PointF)currentValue;
-            return new PointF(
-                (Abs(range.X) < float.Epsilon) ? current.X : x,
-                (Abs(range.Y) < float.Epsilon) ? current.X : y);
-        }
+        var current = (PointF)currentValue;
+        return new PointF(
+            (Abs(range.X) < float.Epsilon) ? current.X : x,
+            (Abs(range.Y) < float.Epsilon) ? current.X : y);
     }
 }

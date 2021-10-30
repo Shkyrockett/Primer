@@ -10,42 +10,41 @@
 
 using System;
 
-namespace PrimerLibrary
+namespace PrimerLibrary;
+
+/// <summary>
+/// Lerp behavior 
+/// </summary>
+[Flags]
+public enum LerpBehaviors
 {
     /// <summary>
-    /// Lerp behavior 
+    /// No special behaviors.
     /// </summary>
-    [Flags]
-    public enum LerpBehaviors
-    {
-        /// <summary>
-        /// No special behaviors.
-        /// </summary>
-        None = 0,
+    None = 0,
 
-        /// <summary>
-        /// Reflect the interpolation back at the end.
-        /// </summary>
-        Reflect = 1,
+    /// <summary>
+    /// Reflect the interpolation back at the end.
+    /// </summary>
+    Reflect = 1,
 
-        /// <summary>
-        /// Rotation interpolation.
-        /// </summary>
-        Rotation = 2,
+    /// <summary>
+    /// Rotation interpolation.
+    /// </summary>
+    Rotation = 2,
 
-        /// <summary>
-        /// Use Radians.
-        /// </summary>
-        RotationRadians = 4,
+    /// <summary>
+    /// Use Radians.
+    /// </summary>
+    RotationRadians = 4,
 
-        /// <summary>
-        /// Use Degrees.
-        /// </summary>
-        RotationDegrees = 8,
+    /// <summary>
+    /// Use Degrees.
+    /// </summary>
+    RotationDegrees = 8,
 
-        /// <summary>
-        /// Round result to integers.
-        /// </summary>
-        Round = 16
-    }
+    /// <summary>
+    /// Round result to integers.
+    /// </summary>
+    Round = 16
 }

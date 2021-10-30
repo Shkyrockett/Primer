@@ -1,5 +1,5 @@
 // <copyright file="IFunction.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -9,21 +9,20 @@
 // <remarks>
 // </remarks>
 
-namespace MathematicsNotationLibrary
+namespace MathematicsNotationLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+/// <seealso cref="IFactor" />
+public interface IFunction
+    : IFactor
 {
     /// <summary>
-    /// 
+    /// Gets or sets the argument of the function.
     /// </summary>
-    /// <seealso cref="MathematicsNotationLibrary.IFactor" />
-    public interface IFunction
-        : IFactor
-    {
-        /// <summary>
-        /// Gets or sets the argument of the function.
-        /// </summary>
-        /// <value>
-        /// The argument.
-        /// </value>
-        IExpression? Argument { get; set; }
-    }
+    /// <value>
+    /// The argument.
+    /// </value>
+    IExpression? Argument { get; set; }
 }

@@ -1,5 +1,5 @@
 ﻿// <copyright file="IChild.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -9,19 +9,18 @@
 // <remarks>
 // </remarks>
 
-namespace MathematicsNotationLibrary
+namespace MathematicsNotationLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+public interface IChild
 {
     /// <summary>
-    /// 
+    /// Gets or sets the parent.
     /// </summary>
-    public interface IChild
-    {
-        /// <summary>
-        /// Gets or sets the parent.
-        /// </summary>
-        /// <value>
-        /// The parent.
-        /// </value>
-        IExpression? Parent { get; set; }
-    }
+    /// <value>
+    /// The parent.
+    /// </value>
+    IExpression? Parent { get; set; }
 }

@@ -1,5 +1,5 @@
 ﻿// <copyright file="INumeric.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -11,28 +11,27 @@
 
 using System;
 
-namespace MathematicsNotationLibrary
+namespace MathematicsNotationLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+public interface INumeric
+    : IExpression, INegatable, IFactor
 {
     /// <summary>
-    /// 
+    /// Gets or sets the value.
     /// </summary>
-    public interface INumeric
-        : IExpression, INegatable, IFactor
-    {
-        /// <summary>
-        /// Gets or sets the value.
-        /// </summary>
-        /// <value>
-        /// The value.
-        /// </value>
-        public double Value { get; set; }
+    /// <value>
+    /// The value.
+    /// </value>
+    public double Value { get; set; }
 
-        /// <summary>
-        /// Gets or sets the sign of the number.
-        /// </summary>
-        /// <value>
-        /// The sign.
-        /// </value>
-        public new int Sign { get => Math.Sign(Value); set => Value = (Math.Sign(Value) == Math.Sign(value)) ? Value : -Value; }
-    }
+    /// <summary>
+    /// Gets or sets the sign of the number.
+    /// </summary>
+    /// <value>
+    /// The sign.
+    /// </value>
+    public new int Sign { get => Math.Sign(Value); set => Value = (Math.Sign(Value) == Math.Sign(value)) ? Value : -Value; }
 }

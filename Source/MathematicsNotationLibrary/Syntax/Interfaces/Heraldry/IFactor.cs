@@ -1,5 +1,5 @@
 ﻿// <copyright file="IFactor.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -9,14 +9,13 @@
 // <remarks>
 // </remarks>
 
-namespace MathematicsNotationLibrary
+namespace MathematicsNotationLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+/// <seealso cref="IExpression" />
+public interface IFactor
+    : IExpression
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <seealso cref="MathematicsNotationLibrary.IExpression" />
-    public interface IFactor
-        : IExpression
-    {
-    }
 }

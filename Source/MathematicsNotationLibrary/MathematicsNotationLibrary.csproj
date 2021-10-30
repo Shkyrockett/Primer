@@ -1,21 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseWindowsForms>true</UseWindowsForms>
     <Platforms>AnyCPU;x64;x86</Platforms>
+    <EnablePreviewFeatures>True</EnablePreviewFeatures>
     <LangVersion>preview</LangVersion>
-    <nullable>enable</nullable>
     <Version>0.0.0.1</Version>
+    <nullable>enable</nullable>
     <AnalysisLevel>preview</AnalysisLevel>
+    <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Shkyrockett</Authors>
-    <Copyright>Copyright (c) 2020 Shkyrockett</Copyright>
+    <Copyright>Copyright (c) 2020 - 2021 $(Authors)</Copyright>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/Shkyrockett/Primer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Shkyrockett/Primer</RepositoryUrl>
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <DocumentationFile>$(OutputPath)$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -25,6 +29,10 @@
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <DebugType>None</DebugType>
     <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -54,7 +62,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Toolkit.HighPerformance" Version="7.0.0-preview4" />
+    <PackageReference Include="Microsoft.Toolkit.HighPerformance" Version="7.1.1" />
+    <PackageReference Include="System.Runtime.Experimental" Version="6.0.0-preview.7.21377.19" />
   </ItemGroup>
 
 </Project>

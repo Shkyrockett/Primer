@@ -2,16 +2,18 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseWindowsForms>true</UseWindowsForms>
     <Platforms>AnyCPU;x64;x86</Platforms>
+    <EnablePreviewFeatures>True</EnablePreviewFeatures>
     <LangVersion>preview</LangVersion>
-    <nullable>enable</nullable>
     <Version>0.0.0.1</Version>
+    <nullable>enable</nullable>
     <AnalysisLevel>preview</AnalysisLevel>
+    <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Shkyrockett</Authors>
-    <Copyright>Copyright (c) 2020 Shkyrockett</Copyright>
+    <Copyright>Copyright (c) 2020 - 2021 Shkyrockett</Copyright>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/Shkyrockett/Primer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Shkyrockett/Primer</RepositoryUrl>
@@ -27,18 +29,20 @@
     <DebugType>None</DebugType>
     <Optimize>true</Optimize>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
 <!--
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PublishTrimmed>true</PublishTrimmed>
     <PublishReadyToRun>true</PublishReadyToRun>
-    <PublishSingleFile>true</PublishSingleFile>
     <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <PublishTrimmed>true</PublishTrimmed>
     <PublishReadyToRun>true</PublishReadyToRun>
-    <PublishSingleFile>true</PublishSingleFile>
     <RuntimeIdentifier>win10-x86</RuntimeIdentifier>
   </PropertyGroup>
 -->
@@ -67,6 +71,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Runtime.Experimental" Version="6.0.0-preview.7.21377.19" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
 ﻿// <copyright file="IIdentifier.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -9,13 +9,12 @@
 // <remarks>
 // </remarks>
 
-namespace MathematicsNotationLibrary
-{
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <seealso cref="MathematicsNotationLibrary.IFactor" />
-    public interface IIdentifier
-        : IFactor
-    { }
-}
+namespace MathematicsNotationLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+/// <seealso cref="IFactor" />
+public interface IIdentifier
+    : IFactor
+{ }

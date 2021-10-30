@@ -1,5 +1,5 @@
 ﻿// <copyright file="IEditable.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -9,19 +9,18 @@
 // <remarks>
 // </remarks>
 
-namespace MathematicsNotationLibrary
+namespace MathematicsNotationLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+public interface IEditable
 {
     /// <summary>
-    /// 
+    /// Gets or sets a value indicating whether this <see cref="IEditable"/> is editable.
     /// </summary>
-    public interface IEditable
-    {
-        /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="IEditable"/> is editable.
-        /// </summary>
-        /// <value>
-        ///   <see langword="true" /> if editable; otherwise, <see langword="false" />.
-        /// </value>
-        bool Editable { get; set; }
-    }
+    /// <value>
+    ///   <see langword="true" /> if editable; otherwise, <see langword="false" />.
+    /// </value>
+    bool Editable { get; set; }
 }

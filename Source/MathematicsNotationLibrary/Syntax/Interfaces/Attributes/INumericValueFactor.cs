@@ -1,5 +1,5 @@
 ﻿// <copyright file="IValueFactor.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -9,12 +9,11 @@
 // <remarks>
 // </remarks>
 
-namespace MathematicsNotationLibrary
+namespace MathematicsNotationLibrary;
+
+/// <summary>
+/// Interface representing a factor that only contains numeric values.
+/// </summary>
+public interface INumericValueFactor
 {
-    /// <summary>
-    /// Interface representing a factor that only contains numeric values.
-    /// </summary>
-    public interface INumericValueFactor
-    {
-    }
 }

@@ -1,5 +1,5 @@
 ﻿// <copyright file="IScalable.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -9,19 +9,18 @@
 // <remarks>
 // </remarks>
 
-namespace MathematicsNotationLibrary
+namespace MathematicsNotationLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+public interface IScalable
 {
     /// <summary>
-    /// 
+    /// Gets or sets the scale.
     /// </summary>
-    public interface IScalable
-    {
-        /// <summary>
-        /// Gets or sets the scale.
-        /// </summary>
-        /// <value>
-        /// The scale.
-        /// </value>
-        float? Scale { get; set; }
-    }
+    /// <value>
+    /// The scale.
+    /// </value>
+    float? Scale { get; set; }
 }

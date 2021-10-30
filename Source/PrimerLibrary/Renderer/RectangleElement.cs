@@ -1,5 +1,5 @@
 ﻿// <copyright file="RectangleElement.cs" company="Shkyrockett" >
-//     Copyright © 2020 Shkyrockett. All rights reserved.
+//     Copyright © 2020 - 2021 Shkyrockett. All rights reserved.
 // </copyright>
 // <author id="shkyrockett">Shkyrockett</author>
 // <license>
@@ -12,71 +12,77 @@
 using MathematicsNotationLibrary;
 using System.Drawing;
 
-namespace PrimerLibrary
+namespace PrimerLibrary;
+
+/// <summary>
+/// 
+/// </summary>
+/// <seealso cref="MathematicsNotationLibrary.IRenderable" />
+internal class RectangleElement
+    : IRenderable
 {
     /// <summary>
-    /// 
+    /// Initializes a new instance of the <see cref="RectangleElement" /> class.
     /// </summary>
-    /// <seealso cref="MathematicsNotationLibrary.IRenderable" />
-    internal class RectangleElement
-        : IRenderable
+    /// <param name="location">The location.</param>
+    /// <param name="size">The size.</param>
+    /// <param name="brush">The brush.</param>
+    /// <param name="pen">The pen.</param>
+    public RectangleElement(PointF location, SizeF size, Brush? brush, Pen? pen)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RectangleElement" /> class.
-        /// </summary>
-        /// <param name="location">The location.</param>
-        /// <param name="size">The size.</param>
-        /// <param name="brush">The brush.</param>
-        /// <param name="pen">The pen.</param>
-        public RectangleElement(PointF location, SizeF size, Brush? brush, Pen? pen)
+        Bounds = new RectangleF(location, size);
+        Brush = brush;
+        Pen = pen;
+    }
+
+    /// <summary>
+    /// Gets the bounds.
+    /// </summary>
+    /// <value>
+    /// The bounds.
+    /// </value>
+    public RectangleF? Bounds { get; set; }
+
+    /// <summary>
+    /// Gets or sets the brush.
+    /// </summary>
+    /// <value>
+    /// The brush.
+    /// </value>
+    public Brush? Brush { get; set; }
+
+    /// <summary>
+    /// Gets or sets the pen.
+    /// </summary>
+    /// <value>
+    /// The pen.
+    /// </value>
+    public Pen? Pen { get; set; }
+
+    /// <summary>
+    /// Draws the specified graphics.
+    /// </summary>
+    /// <param name="graphics">The graphics.</param>
+    public void Draw(Graphics graphics) => Draw(graphics, Brush, Pen);
+
+    /// <summary>
+    /// Draws the specified graphics.
+    /// </summary>
+    /// <param name="graphics">The graphics.</param>
+    /// <param name="brush">The brush.</param>
+    /// <param name="pen">The pen.</param>
+    public void Draw(Graphics graphics, Brush? brush, Pen? pen)
+    {
+        if (Bounds is RectangleF b && !b.IsEmpty)
         {
-            Bounds = new RectangleF(location, size);
-            Brush = brush;
-            Pen = pen;
-        }
-
-        /// <summary>
-        /// Gets the bounds.
-        /// </summary>
-        /// <value>
-        /// The bounds.
-        /// </value>
-        public RectangleF? Bounds { get; set; }
-
-        /// <summary>
-        /// Gets or sets the brush.
-        /// </summary>
-        /// <value>
-        /// The brush.
-        /// </value>
-        public Brush? Brush { get; set; }
-
-        /// <summary>
-        /// Gets or sets the pen.
-        /// </summary>
-        /// <value>
-        /// The pen.
-        /// </value>
-        public Pen? Pen { get; set; }
-
-        /// <summary>
-        /// Draws the specified graphics.
-        /// </summary>
-        /// <param name="graphics">The graphics.</param>
-        public void Draw(Graphics graphics) => Draw(graphics, Brush, Pen);
-
-        /// <summary>
-        /// Draws the specified graphics.
-        /// </summary>
-        /// <param name="graphics">The graphics.</param>
-        /// <param name="brush">The brush.</param>
-        /// <param name="pen">The pen.</param>
-        public void Draw(Graphics graphics, Brush? brush, Pen? pen)
-        {
-            if (Bounds is RectangleF b && !b.IsEmpty)
+            if (brush is not null)
             {
-                if (brush is not null) graphics.FillRectangle(brush, b);
-                if (pen is not null) graphics.DrawRectangle(pen, b);
+                graphics.FillRectangle(brush, b);
+            }
+
+            if (pen is not null)
+            {
+                graphics.DrawRectangle(pen, b);
             }
         }
     }

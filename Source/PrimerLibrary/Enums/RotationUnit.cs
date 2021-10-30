@@ -8,21 +8,20 @@
 // <summary></summary>
 // <remarks>Based on: https://github.com/jacobalbano/glide </remarks>
 
-namespace PrimerLibrary
+namespace PrimerLibrary;
+
+/// <summary>
+/// Rotation units to use.
+/// </summary>
+public enum RotationUnit
 {
     /// <summary>
-    /// Rotation units to use.
+    /// Use Degrees.
     /// </summary>
-    public enum RotationUnit
-    {
-        /// <summary>
-        /// Use Degrees.
-        /// </summary>
-        Degrees,
+    Degrees,
 
-        /// <summary>
-        /// Use Radians.
-        /// </summary>
-        Radians
-    }
+    /// <summary>
+    /// Use Radians.
+    /// </summary>
+    Radians
 }
