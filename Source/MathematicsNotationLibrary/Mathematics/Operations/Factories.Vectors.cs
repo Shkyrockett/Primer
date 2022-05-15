@@ -10,6 +10,7 @@
 // </remarks>
 
 using System;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace MathematicsNotationLibrary;
@@ -71,7 +72,7 @@ public static partial class Factories
     /// https://github.com/GeorgiSGeorgiev/ExtendedMatrixCalculator
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T[] RandomNonZeroVector<T>(int length) where T : INumber<T> => RandomNonZeroVector(length, T.Zero, T.One / T.Create(1000));
+    public static T[] RandomNonZeroVector<T>(int length) where T : INumber<T> => RandomNonZeroVector(length, T.Zero, T.One / T.CreateChecked(1000));
 
     /// <summary>
     /// Random vector generator.
@@ -118,7 +119,7 @@ public static partial class Factories
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TResult[] SingularValueDecompositionSingularValues<T, TResult>((int, T[], T[]) sortedEigenvalues, int matrixARank)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
         var Eigenvalues_copy = (sortedEigenvalues.Item1, sortedEigenvalues.Item2, sortedEigenvalues.Item3);
         var the_result_singular_values = new TResult[matrixARank];
@@ -127,7 +128,7 @@ public static partial class Factories
         var multiplicity = Eigenvalues_copy.Item3[j];
         for (var i = 0; i < matrixARank; i++)
         {
-            the_result_singular_values[i] = TResult.Sqrt(TResult.Create(Eigenvalues_copy.Item2[j]));
+            the_result_singular_values[i] = TResult.Sqrt(TResult.CreateChecked(Eigenvalues_copy.Item2[j]));
             multiplicity--;
             if (multiplicity == T.Zero && j < sortedEigenvalues.Item1 - 1)
             {

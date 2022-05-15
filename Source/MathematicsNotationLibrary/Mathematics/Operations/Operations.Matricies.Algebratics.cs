@@ -12,6 +12,7 @@
 using Microsoft.Toolkit.HighPerformance;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace MathematicsNotationLibrary;
@@ -1846,7 +1847,7 @@ public static partial class Operations
     /// <acknowledgment>
     /// https://github.com/GeorgiSGeorgiev/ExtendedMatrixCalculator
     /// </acknowledgment>
-    public static T[,] DiagonalizeMatrix<T>(Span2D<T> originalMatrix, int accuracy) where T : IFloatingPoint<T> => MatrixMatrixScalarMultiplication(Transpose(originalMatrix, accuracy), originalMatrix, accuracy);
+    public static T[,] DiagonalizeMatrix<T>(Span2D<T> originalMatrix, int accuracy) where T : IFloatingPointIeee754<T> => MatrixMatrixScalarMultiplication(Transpose(originalMatrix, accuracy), originalMatrix, accuracy);
 
     /// <summary>
     /// Diagonalizes the matrix.
@@ -1860,7 +1861,7 @@ public static partial class Operations
     /// <acknowledgment>
     /// https://github.com/GeorgiSGeorgiev/ExtendedMatrixCalculator
     /// </acknowledgment>
-    public static T[,] DiagonalizeMatrix<T>(Span2D<T> originalMatrix, int rows, int columns, int accuracy) where T : IFloatingPoint<T> => MatrixMatrixScalarMultiplication(Transpose(originalMatrix, rows, columns, accuracy), columns, rows, originalMatrix, rows, columns, accuracy);
+    public static T[,] DiagonalizeMatrix<T>(Span2D<T> originalMatrix, int rows, int columns, int accuracy) where T : IFloatingPointIeee754<T> => MatrixMatrixScalarMultiplication(Transpose(originalMatrix, rows, columns, accuracy), columns, rows, originalMatrix, rows, columns, accuracy);
     #endregion
 
     #region Decompose to Lower and Upper Matrices
@@ -2672,7 +2673,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool ValidateSpectralDecomposition<T>(Span2D<T> original, Span2D<T> matrix1, Span2D<T> matrix2, Span2D<T> matrix3)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         var N = original.Height;
         var temp_matrix = MatrixMatrixScalarMultiplication(matrix1, N, N, matrix2, N, N, 15);
@@ -2696,7 +2697,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool ValidateSpectralDecomposition<T>(Span2D<T> original, int N, Span2D<T> matrix1, Span2D<T> matrix2, Span2D<T> matrix3)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         var temp_matrix = MatrixMatrixScalarMultiplication(matrix1, N, N, matrix2, N, N, 15);
         var result_matrix = MatrixMatrixScalarMultiplication(temp_matrix, N, N, matrix3, N, N, 5);
@@ -2721,7 +2722,7 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TResult[,]? CreateOrthogonalSpectralDecomposition<T, TResult>(Span2D<T> matrix, Span2D<T> inversedMatrix)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
         var N = matrix.Height;
         var the_result = new TResult[N, N];
@@ -2734,7 +2735,7 @@ public static partial class Operations
             {
                 try
                 {
-                    the_result[i, j] = TResult.Sqrt(TResult.Create(matrix[i, j] * inversedMatrix[j, i]));
+                    the_result[i, j] = TResult.Sqrt(TResult.CreateChecked(matrix[i, j] * inversedMatrix[j, i]));
                 }
                 catch (Exception The_Exception)
                 {
@@ -2773,7 +2774,7 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     private static TResult[,]? CreateOrthogonalSpectralDecomposition<T, TResult>(Span2D<T> matrix, int N, Span2D<T> inversedMatrix)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
         var the_result = new TResult[N, N];
         //MessageBox.Show(Convert_MX_VR_to_string(N, N, the_matrix) + " : the original");
@@ -2785,7 +2786,7 @@ public static partial class Operations
             {
                 try
                 {
-                    the_result[i, j] = TResult.Sqrt(TResult.Create(matrix[i, j] * inversedMatrix[j, i]));
+                    the_result[i, j] = TResult.Sqrt(TResult.CreateChecked(matrix[i, j] * inversedMatrix[j, i]));
                 }
                 catch (Exception The_Exception)
                 {
@@ -2938,7 +2939,7 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static (bool positiveDefiniteness, bool, TResult[,] lowerMatrix, TResult[,] upperMatrix) CholeskyDecomposition<T, TResult>(Span2D<T> matrix, int accuracy)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
         var n = matrix.Height;
         var positiveDefiniteness = true;
@@ -2948,10 +2949,10 @@ public static partial class Operations
             var temporarySum = TResult.Zero;
             for (var j = 0; j <= k - 1; j++)
             {
-                temporarySum += TResult.Pow(TResult.Create(lowerMatrix[k, j]), TResult.Create(2));
+                temporarySum += TResult.Pow(TResult.CreateChecked(lowerMatrix[k, j]), TResult.CreateChecked(2));
             }
 
-            var definitenessCheck = TResult.Create(matrix[k, k]) - temporarySum;
+            var definitenessCheck = TResult.CreateChecked(matrix[k, k]) - temporarySum;
 
             if (definitenessCheck <= TResult.Zero)
             {
@@ -2969,7 +2970,7 @@ public static partial class Operations
                         temporarySum += lowerMatrix[i, j] * lowerMatrix[k, j];
                     }
 
-                    lowerMatrix[i, k] = TResult.One / lowerMatrix[k, k] * (TResult.Create(matrix[i, k]) - temporarySum);
+                    lowerMatrix[i, k] = TResult.One / lowerMatrix[k, k] * (TResult.CreateChecked(matrix[i, k]) - temporarySum);
                 }
             }
         }
@@ -2999,7 +3000,7 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static (bool positiveDefiniteness, bool, TResult[,] lowerMatrix, TResult[,] upperMatrix) CholeskyDecomposition<T, TResult>(Span2D<T> matrix, int n, int accuracy)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
         var positiveDefiniteness = true;
         var lowerMatrix = new TResult[n, n];
@@ -3008,10 +3009,10 @@ public static partial class Operations
             var temporarySum = TResult.Zero;
             for (var j = 0; j <= k - 1; j++)
             {
-                temporarySum += TResult.Pow(lowerMatrix[k, j], TResult.Create(2));
+                temporarySum += TResult.Pow(lowerMatrix[k, j], TResult.CreateChecked(2));
             }
 
-            var definitenessCheck = TResult.Create(matrix[k, k]) - temporarySum;
+            var definitenessCheck = TResult.CreateChecked(matrix[k, k]) - temporarySum;
 
             if (definitenessCheck <= TResult.Zero)
             {
@@ -3029,7 +3030,7 @@ public static partial class Operations
                         temporarySum += lowerMatrix[i, j] * lowerMatrix[k, j];
                     }
 
-                    lowerMatrix[i, k] = TResult.One / lowerMatrix[k, k] * (TResult.Create(matrix[i, k]) - temporarySum);
+                    lowerMatrix[i, k] = TResult.One / lowerMatrix[k, k] * (TResult.CreateChecked(matrix[i, k]) - temporarySum);
                 }
             }
         }

@@ -10,6 +10,7 @@
 // </remarks>
 
 using System;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace MathematicsNotationLibrary;
@@ -33,7 +34,7 @@ public static partial class Operations
     /// <param name="upper">The Upper.</param>
     /// <returns>The random number.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T Random<T>(this T lower, T upper) where T : INumber<T> => (T.Create(RandomNumberGenerator.Next()) * (upper - lower + T.One)) + lower;
+    public static T Random<T>(this T lower, T upper) where T : INumber<T> => (T.CreateChecked(RandomNumberGenerator.Next()) * (upper - lower + T.One)) + lower;
     #endregion
 
     #region Rounding
@@ -44,7 +45,7 @@ public static partial class Operations
     /// <param name="accuracy">The accuracy.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Round<T, TResult>(T number, int accuracy) where T : IFloatingPoint<T> where TResult : INumber<TResult> => (accuracy < 15) ? TResult.Create(T.Round(number, accuracy)) : TResult.Create(number);
+    public static TResult Round<T, TResult>(T number, int accuracy) where T : IFloatingPointIeee754<T> where TResult : INumber<TResult> => (accuracy < 15) ? TResult.CreateChecked(T.Round(number, accuracy)) : TResult.CreateChecked(number);
     #endregion
 
     #region Clamp
@@ -101,7 +102,7 @@ public static partial class Operations
     /// <param name="value"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult? Cast<T, TResult>(this T value) where T : INumber<T> where TResult : INumber<TResult> => TResult.Create(value);
+    public static TResult? Cast<T, TResult>(this T value) where T : INumber<T> where TResult : INumber<TResult> => TResult.CreateChecked(value);
 
     /// <summary>
     /// 

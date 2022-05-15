@@ -12,6 +12,7 @@
 using Microsoft.Toolkit.HighPerformance;
 using System;
 using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace MathematicsNotationLibrary;
@@ -283,7 +284,7 @@ public static partial class Operations
         {
             for (var j = 0; j < columnsAugend; j++)
             {
-                sum[i, j] = TResult.Create(augend[i, j] + addend[i, j]);
+                sum[i, j] = TResult.CreateChecked(augend[i, j] + addend[i, j]);
             }
         }
 
@@ -303,7 +304,7 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TResult[,] Add<T, TResult>(Span2D<T> augend, Span2D<T> addend, int accuracy)
         where T : INumber<T>
-        where TResult : struct, IFloatingPoint<TResult>
+        where TResult : struct, IFloatingPointIeee754<TResult>
     {
         if (augend == null)
         {
@@ -331,7 +332,7 @@ public static partial class Operations
         {
             for (var j = 0; j < columnsAugend; j++)
             {
-                sum[i, j] = TResult.Create(augend[i, j] + addend[i, j]);
+                sum[i, j] = TResult.CreateChecked(augend[i, j] + addend[i, j]);
             }
         }
 
@@ -400,7 +401,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T[,] Add<T>(Span2D<T> augend, Span2D<T> addend, int rows, int columns, int accuracy)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         if (augend == null)
         {
@@ -1005,7 +1006,7 @@ public static partial class Operations
         {
             for (var j = 0; j < columnsMinuend; j++)
             {
-                difference[i, j] = TResult.Create(minuend[i, j] - subtrahend[i, j]);
+                difference[i, j] = TResult.CreateChecked(minuend[i, j] - subtrahend[i, j]);
             }
         }
 
@@ -1073,7 +1074,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T[,] Subtract<T>(Span2D<T> minuend, Span2D<T> subtrahend, int accuracy)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         if (minuend == null)
         {
@@ -1170,7 +1171,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T[,] Subtract<T>(Span2D<T> minuend, Span2D<T> subtrahend, int rows, int columns, int accuracy)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         if (minuend == null)
         {
@@ -1497,7 +1498,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T[,] Scale<T>(T multiplicand, Span2D<T> multiplier, int accuracy)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         if (multiplicand == null)
         {
@@ -1585,7 +1586,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T[,] Scale<T>(T multiplicand, Span2D<T> multiplier, int rows, int columns, int accuracy)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         if (multiplicand == null)
         {
@@ -1889,7 +1890,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T[,] Scale<T>(Span2D<T> multiplicand, T multiplier, int accuracy)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         if (multiplicand == null)
         {
@@ -1932,7 +1933,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T[,] Scale<T>(Span2D<T> multiplicand, T multiplier, int rows, int columns, int accuracy)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         if (multiplicand == null)
         {
@@ -2892,7 +2893,7 @@ public static partial class Operations
 
                 for (int k = 0; k < columnsMultiplicand; k++)
                 {
-                    dotProduct += TResult.Create(multiplicand[i, k] * multiplier[k, j]);
+                    dotProduct += TResult.CreateChecked(multiplicand[i, k] * multiplier[k, j]);
                 }
 
                 product[i, j] = dotProduct;
@@ -3065,7 +3066,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T[,] MatrixMatrixScalarMultiplication<T>(Span2D<T> multiplicand, Span2D<T> multiplier, int accuracy)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         if (multiplicand == null)
         {
@@ -3263,7 +3264,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T[,] MatrixMatrixScalarMultiplication<T>(Span2D<T> multiplicand, int multiplicandRows, int multiplicandColumns, Span2D<T> multiplier, int multiplierRows, int multiplierColumns, int accuracy)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         if (multiplicand == null)
         {
@@ -3624,7 +3625,7 @@ public static partial class Operations
         {
             for (var j = 0; j < ColumnsMultiplier; j++)
             {
-                product[i, j] = TResult.Create(colummnVectorMultiplicand[i] * rowVectorMultiplier[j]);
+                product[i, j] = TResult.CreateChecked(colummnVectorMultiplicand[i] * rowVectorMultiplier[j]);
             }
         }
 

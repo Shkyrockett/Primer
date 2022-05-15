@@ -10,6 +10,7 @@
 // </remarks>
 
 using System;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace MathematicsNotationLibrary;
@@ -39,7 +40,7 @@ public static partial class Operations
 
         foreach (var value in values)
         {
-            result += TResult.Create(value);
+            result += TResult.CreateChecked(value);
         }
 
         return result;
@@ -63,7 +64,7 @@ public static partial class Operations
         where TResult : INumber<TResult>
     {
         var sum = Sum<T, TResult>(values);
-        return TResult.Create(sum) / TResult.Create(values.Length);
+        return TResult.CreateChecked(sum) / TResult.CreateChecked(values.Length);
     }
     #endregion
 
@@ -81,7 +82,7 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TResult StandardDeviation<T, TResult>(Span<T> values)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
         var standardDeviation = TResult.Zero;
 
@@ -90,10 +91,10 @@ public static partial class Operations
             TResult average = Average<T, TResult>(values);
             TResult sum = Sum<TResult, TResult>(values.Select((value) =>
             {
-                var deviation = TResult.Create(value) - average;
+                var deviation = TResult.CreateChecked(value) - average;
                 return deviation * deviation;
             }));
-            standardDeviation = TResult.Sqrt(sum / TResult.Create(values.Length - 1));
+            standardDeviation = TResult.Sqrt(sum / TResult.CreateChecked(values.Length - 1));
         }
 
         return standardDeviation;

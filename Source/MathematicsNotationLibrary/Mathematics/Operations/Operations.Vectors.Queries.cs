@@ -10,7 +10,7 @@
 // </remarks>
 
 using System;
-using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace MathematicsNotationLibrary;
@@ -102,7 +102,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool VectorsEqualityRounded<T>(Span<T> vector1, Span<T> vector2, int accuracy, MidpointRounding mode = MidpointRounding.ToEven)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         if (vector1.Length != vector2.Length)
         {
@@ -136,7 +136,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool VectorsEqualityRounded<T>(Span<T> vector1, Span<T> vector2, int length, int accuracy, MidpointRounding mode = MidpointRounding.ToEven)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         var Equal = true;
         for (var i = 0; i < length; i++)
@@ -214,7 +214,7 @@ public static partial class Operations
     ///   <see langword="true"/> if the vector is only zeros, otherwise <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool IsAdditiveIdentity<T>(T i, T j) where T : IFloatingPoint<T> => T.Abs(i) < T.Epsilon && T.Abs(j) < T.Epsilon;
+    public static bool IsAdditiveIdentity<T>(T i, T j) where T : IFloatingPointIeee754<T> => T.Abs(i) < T.Epsilon && T.Abs(j) < T.Epsilon;
 
     /// <summary>
     /// Determines whether the vector is an empty additive identity vector.
@@ -226,7 +226,7 @@ public static partial class Operations
     ///   <see langword="true"/> if the vector is only zeros, otherwise <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool IsAdditiveIdentity<T>(T i, T j, T k) where T : IFloatingPoint<T> => T.Abs(i) < T.Epsilon && T.Abs(j) < T.Epsilon && T.Abs(k) < T.Epsilon;
+    public static bool IsAdditiveIdentity<T>(T i, T j, T k) where T : IFloatingPointIeee754<T> => T.Abs(i) < T.Epsilon && T.Abs(j) < T.Epsilon && T.Abs(k) < T.Epsilon;
 
     /// <summary>
     /// Determines whether the vector is an empty additive identity vector.
@@ -239,7 +239,7 @@ public static partial class Operations
     ///   <see langword="true"/> if the vector is only zeros, otherwise <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool IsAdditiveIdentity<T>(T i, T j, T k, T l) where T : IFloatingPoint<T> => T.Abs(i) < T.Epsilon && T.Abs(j) < T.Epsilon && T.Abs(k) < T.Epsilon && T.Abs(l) < T.Epsilon;
+    public static bool IsAdditiveIdentity<T>(T i, T j, T k, T l) where T : IFloatingPointIeee754<T> => T.Abs(i) < T.Epsilon && T.Abs(j) < T.Epsilon && T.Abs(k) < T.Epsilon && T.Abs(l) < T.Epsilon;
 
     /// <summary>
     /// Determines whether the vector is an empty additive identity vector.
@@ -253,7 +253,7 @@ public static partial class Operations
     ///   <see langword="true"/> if the vector is only zeros, otherwise <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool IsAdditiveIdentity<T>(T i, T j, T k, T l, T m) where T : IFloatingPoint<T> => T.Abs(i) < T.Epsilon && T.Abs(j) < T.Epsilon && T.Abs(k) < T.Epsilon && T.Abs(l) < T.Epsilon && T.Abs(m) < T.Epsilon;
+    public static bool IsAdditiveIdentity<T>(T i, T j, T k, T l, T m) where T : IFloatingPointIeee754<T> => T.Abs(i) < T.Epsilon && T.Abs(j) < T.Epsilon && T.Abs(k) < T.Epsilon && T.Abs(l) < T.Epsilon && T.Abs(m) < T.Epsilon;
 
     /// <summary>
     /// Determines whether the vector is an empty additive identity vector.
@@ -268,7 +268,7 @@ public static partial class Operations
     ///   <see langword="true"/> if the vector is only zeros, otherwise <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool IsAdditiveIdentity<T>(T i, T j, T k, T l, T m, T n) where T : IFloatingPoint<T> => T.Abs(i) < T.Epsilon && T.Abs(j) < T.Epsilon && T.Abs(k) < T.Epsilon && T.Abs(l) < T.Epsilon && T.Abs(m) < T.Epsilon && T.Abs(n) < T.Epsilon;
+    public static bool IsAdditiveIdentity<T>(T i, T j, T k, T l, T m, T n) where T : IFloatingPointIeee754<T> => T.Abs(i) < T.Epsilon && T.Abs(j) < T.Epsilon && T.Abs(k) < T.Epsilon && T.Abs(l) < T.Epsilon && T.Abs(m) < T.Epsilon && T.Abs(n) < T.Epsilon;
     #endregion
 
     #region Vector Is Zero Rounded
@@ -286,7 +286,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool IsZeroRounded<T>(Span<T> vector, int accuracy, MidpointRounding mode = MidpointRounding.ToEven)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         for (var i = 0; i < vector.Length; i++)
         {
@@ -314,7 +314,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool IsZeroRounded<T>(Span<T> vector, int length, int accuracy, MidpointRounding mode = MidpointRounding.ToEven)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         for (var i = 0; i < length; i++)
         {
@@ -383,7 +383,7 @@ public static partial class Operations
     /// <param name="vector"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool IsUnitVector<T>(Span<T> vector) where T : IFloatingPoint<T> => T.Abs(Magnitude<T, T>(vector) - T.One) < T.Epsilon;
+    public static bool IsUnitVector<T>(Span<T> vector) where T : IFloatingPointIeee754<T> => T.Abs(Magnitude<T, T>(vector) - T.One) < T.Epsilon;
 
     /// <summary>
     /// The is unit vector.
@@ -397,7 +397,7 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool IsUnitVector<T>(T i, T j) where T : IFloatingPoint<T> => T.Abs(Magnitude<T, T>(i, j) - T.One) < T.Epsilon;
+    public static bool IsUnitVector<T>(T i, T j) where T : IFloatingPointIeee754<T> => T.Abs(Magnitude<T, T>(i, j) - T.One) < T.Epsilon;
 
     /// <summary>
     /// The is unit vector.
@@ -412,7 +412,7 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool IsUnitVector<T>(T i, T j, T k) where T : IFloatingPoint<T> => T.Abs(Magnitude<T, T>(i, j, k) - T.One) < T.Epsilon;
+    public static bool IsUnitVector<T>(T i, T j, T k) where T : IFloatingPointIeee754<T> => T.Abs(Magnitude<T, T>(i, j, k) - T.One) < T.Epsilon;
 
     /// <summary>
     /// The is unit vector.
@@ -428,7 +428,7 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool IsUnitVector<T>(T i, T j, T k, T l) where T : IFloatingPoint<T> => T.Abs(Magnitude<T, T>(i, j, k, l) - T.One) < T.Epsilon;
+    public static bool IsUnitVector<T>(T i, T j, T k, T l) where T : IFloatingPointIeee754<T> => T.Abs(Magnitude<T, T>(i, j, k, l) - T.One) < T.Epsilon;
 
     /// <summary>
     /// The is unit vector.
@@ -445,7 +445,7 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool IsUnitVector<T>(T i, T j, T k, T l, T m) where T : IFloatingPoint<T> => T.Abs(Magnitude<T, T>(i, j, k, l, m) - T.One) < T.Epsilon;
+    public static bool IsUnitVector<T>(T i, T j, T k, T l, T m) where T : IFloatingPointIeee754<T> => T.Abs(Magnitude<T, T>(i, j, k, l, m) - T.One) < T.Epsilon;
 
     /// <summary>
     /// The is unit vector.
@@ -463,6 +463,6 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool IsUnitVector<T>(T i, T j, T k, T l, T m, T n) where T : IFloatingPoint<T> => T.Abs(Magnitude<T, T>(i, j, k, l, m, n) - T.One) < T.Epsilon;
+    public static bool IsUnitVector<T>(T i, T j, T k, T l, T m, T n) where T : IFloatingPointIeee754<T> => T.Abs(Magnitude<T, T>(i, j, k, l, m, n) - T.One) < T.Epsilon;
     #endregion
 }

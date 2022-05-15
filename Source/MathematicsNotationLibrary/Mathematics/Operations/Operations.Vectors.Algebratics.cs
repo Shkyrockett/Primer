@@ -10,7 +10,7 @@
 // </remarks>
 
 using System;
-using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace MathematicsNotationLibrary;
@@ -32,7 +32,7 @@ public static partial class Operations
     /// Returns the Angle of a line.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Angle<T, TResult>(T x1, T y1, T x2, T y2) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.Atan2(TResult.Create(y1 - y2), TResult.Create(x1 - x2));
+    public static TResult Angle<T, TResult>(T x1, T y1, T x2, T y2) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.Atan2(TResult.CreateChecked(y1 - y2), TResult.CreateChecked(x1 - x2));
 
     /// <summary>
     /// The angle.
@@ -50,7 +50,7 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Angle<T, TResult>(T x1, T y1, T z1, T x2, T y2, T z2) where T : INumber<T> where TResult : IFloatingPoint<TResult> => (TResult.Abs(TResult.Create(x1 - x2)) < TResult.Epsilon && TResult.Abs(TResult.Create(y1 - y2)) < TResult.Epsilon && TResult.Abs(TResult.Create(z1 - z2)) < TResult.Epsilon) ? TResult.Zero : TResult.Acos(TResult.Min(TResult.One, DotProduct(Normalize<T, TResult>(x1, y1, z1), Normalize<T, TResult>(x2, y2, z2))));
+    public static TResult Angle<T, TResult>(T x1, T y1, T z1, T x2, T y2, T z2) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => (TResult.Abs(TResult.CreateChecked(x1 - x2)) < TResult.Epsilon && TResult.Abs(TResult.CreateChecked(y1 - y2)) < TResult.Epsilon && TResult.Abs(TResult.CreateChecked(z1 - z2)) < TResult.Epsilon) ? TResult.Zero : TResult.Acos(TResult.Min(TResult.One, DotProduct(Normalize<T, TResult>(x1, y1, z1), Normalize<T, TResult>(x2, y2, z2))));
 
     /// <summary>
     /// The angle vector.
@@ -71,7 +71,7 @@ public static partial class Operations
     /// http://csharphelper.com/blog/2014/07/determine-whether-a-point-is-inside-a-polygon-in-c/
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult AngleVector<T, TResult>(T x1, T y1, T x2, T y2, T x3, T y3) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.Atan2(TResult.Create(CrossProductTriple(x1, y1, x2, y2, x3, y3)), TResult.Create(DeltaDotProduct(x1, y1, x2, y2, x3, y3)));
+    public static TResult AngleVector<T, TResult>(T x1, T y1, T x2, T y2, T x3, T y3) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.Atan2(TResult.CreateChecked(CrossProductTriple(x1, y1, x2, y2, x3, y3)), TResult.CreateChecked(DeltaDotProduct(x1, y1, x2, y2, x3, y3)));
 
     /// <summary>
     /// Find the absolute positive value of a radian angle from two points.
@@ -88,7 +88,7 @@ public static partial class Operations
         T x1, T y1,
         T x2, T y2)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
         // Find the angle of point a and point b.
         var test = -Angle<T, TResult>(x1, y1, x2, y2) % TResult.Pi;
@@ -109,7 +109,7 @@ public static partial class Operations
     /// http://james-ramsden.com/angle-between-two-vectors/
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult AngleBetween<T, TResult>(T uX, T uY, T vX, T vY) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.Acos(TResult.Create((uX * vX) + (uY * vY)) / TResult.Sqrt(TResult.Create(((uX * uX) + (uY * uY)) * ((vX * vX) + (vY * vY)))));
+    public static TResult AngleBetween<T, TResult>(T uX, T uY, T vX, T vY) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.Acos(TResult.CreateChecked((uX * vX) + (uY * vY)) / TResult.Sqrt(TResult.CreateChecked(((uX * uX) + (uY * uY)) * ((vX * vX) + (vY * vY)))));
 
     /// <summary>
     /// Finds the angle between two vectors.
@@ -127,7 +127,7 @@ public static partial class Operations
     /// http://james-ramsden.com/angle-between-two-vectors/
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult AngleBetween<T, TResult>(T uX, T uY, T uZ, T vX, T vY, T vZ) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.Acos(TResult.Create((uX * vX) + (uY * vY) + (uZ * vZ)) / TResult.Sqrt(TResult.Create(((uX * uX) + (uY * uY) + (uZ * uZ)) * ((vX * vX) + (vY * vY) + (vZ * vZ)))));
+    public static TResult AngleBetween<T, TResult>(T uX, T uY, T uZ, T vX, T vY, T vZ) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.Acos(TResult.CreateChecked((uX * vX) + (uY * vY) + (uZ * vZ)) / TResult.Sqrt(TResult.CreateChecked(((uX * uX) + (uY * uY) + (uZ * uZ)) * ((vX * vX) + (vY * vY) + (vZ * vZ)))));
     #endregion
 
     #region Angle Vectors
@@ -151,7 +151,7 @@ public static partial class Operations
     /// <param name="sin2">The sin2.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static Incidence AngleVectorIncidence<T>(T cos1, T sin1, T cos2, T sin2) where T : IFloatingPoint<T> => AngleVectorIncidence(cos1, sin1, cos2, sin2, T.Epsilon);
+    public static Incidence AngleVectorIncidence<T>(T cos1, T sin1, T cos2, T sin2) where T : IFloatingPointIeee754<T> => AngleVectorIncidence(cos1, sin1, cos2, sin2, T.Epsilon);
 
     /// <summary>
     /// Find the incidence category of vector Angles.
@@ -164,7 +164,7 @@ public static partial class Operations
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static Incidence AngleVectorIncidence<T>(T cos1, T sin1, T cos2, T sin2, T epsilon)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         var crossProduct = CrossProduct(cos1, sin1, cos2, sin2);
         return T.Abs(crossProduct) < epsilon
@@ -184,7 +184,7 @@ public static partial class Operations
     /// The abs.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Abs<T, TResult>(T i, T j) where T : INumber<T> where TResult : IFloatingPoint<TResult> => Magnitude<T, TResult>(i, j);
+    public static TResult Abs<T, TResult>(T i, T j) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => Magnitude<T, TResult>(i, j);
 
     /// <summary>
     /// The abs.
@@ -196,7 +196,7 @@ public static partial class Operations
     /// The abs.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Abs<T, TResult>(T i, T j, T k) where T : INumber<T> where TResult : IFloatingPoint<TResult> => Magnitude<T, TResult>(i, j, k);
+    public static TResult Abs<T, TResult>(T i, T j, T k) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => Magnitude<T, TResult>(i, j, k);
     #endregion
 
     #region Invert
@@ -264,7 +264,7 @@ public static partial class Operations
     /// <param name="j">The j component of the Vector to Unitize.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult I, TResult J) Unit<T, TResult>(T i, T j) where T : INumber<T> where TResult : IFloatingPoint<TResult> => ScaleVector(TResult.Create(i), TResult.Create(j), TResult.One / TResult.Sqrt(TResult.Create((i * i) + (j * j))));
+    public static (TResult I, TResult J) Unit<T, TResult>(T i, T j) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => ScaleVector(TResult.CreateChecked(i), TResult.CreateChecked(j), TResult.One / TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j))));
 
     /// <summary>
     /// Unit of a 3D Vector.
@@ -274,7 +274,7 @@ public static partial class Operations
     /// <param name="k">The k component of the Vector to Unitize.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult I, TResult J, TResult K) Unit<T, TResult>(T i, T j, T k) where T : INumber<T> where TResult : IFloatingPoint<TResult> => ScaleVector(TResult.Create(i), TResult.Create(j), TResult.Create(k), TResult.One / TResult.Sqrt(TResult.Create((i * i) + (j * j) + (k * k))));
+    public static (TResult I, TResult J, TResult K) Unit<T, TResult>(T i, T j, T k) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => ScaleVector(TResult.CreateChecked(i), TResult.CreateChecked(j), TResult.CreateChecked(k), TResult.One / TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j) + (k * k))));
 
     /// <summary>
     /// Unit of a 4D Vector.
@@ -285,7 +285,7 @@ public static partial class Operations
     /// <param name="l">The l component of the Vector to Unitize.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult I, TResult J, TResult K, TResult L) Unit<T, TResult>(T i, T j, T k, T l) where T : INumber<T> where TResult : IFloatingPoint<TResult> => ScaleVector(TResult.Create(i), TResult.Create(j), TResult.Create(k), TResult.Create(l), TResult.One / TResult.Sqrt(TResult.Create((i * i) + (j * j) + (k * k) + (l * l))));
+    public static (TResult I, TResult J, TResult K, TResult L) Unit<T, TResult>(T i, T j, T k, T l) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => ScaleVector(TResult.CreateChecked(i), TResult.CreateChecked(j), TResult.CreateChecked(k), TResult.CreateChecked(l), TResult.One / TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j) + (k * k) + (l * l))));
     #endregion Unit
 
     #region Magnitude
@@ -299,7 +299,7 @@ public static partial class Operations
     /// Returns the Magnitude of the Vector.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Magnitude<T, TResult>(Span<T> vector) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.Sqrt(TResult.Create(MagnitudeSquared(vector)));
+    public static TResult Magnitude<T, TResult>(Span<T> vector) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.Sqrt(TResult.CreateChecked(MagnitudeSquared(vector)));
 
     /// <summary>
     /// Calculates the magnitude or length of a two dimensional Vector.
@@ -310,7 +310,7 @@ public static partial class Operations
     /// Returns the magnitude of the two dimensional Vector.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Magnitude<T, TResult>(T i, T j) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.Sqrt(TResult.Create((i * i) + (j * j)));
+    public static TResult Magnitude<T, TResult>(T i, T j) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j)));
 
     /// <summary>
     /// Calculates the magnitude or length of a three dimensional Vector.
@@ -322,7 +322,7 @@ public static partial class Operations
     /// Returns the magnitude of the three dimensional Vector.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Magnitude<T, TResult>(T i, T j, T k) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.Sqrt(TResult.Create((i * i) + (j * j) + (k * k)));
+    public static TResult Magnitude<T, TResult>(T i, T j, T k) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j) + (k * k)));
 
     /// <summary>
     /// Calculates the magnitude or length of a four dimensional Vector.
@@ -335,7 +335,7 @@ public static partial class Operations
     /// Returns the magnitude of the four dimensional Vector.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Magnitude<T, TResult>(T i, T j, T k, T l) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.Sqrt(TResult.Create((i * i) + (j * j) + (k * k) + (l * l)));
+    public static TResult Magnitude<T, TResult>(T i, T j, T k, T l) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j) + (k * k) + (l * l)));
 
     /// <summary>
     /// Calculates the magnitude or length of a five dimensional Vector.
@@ -349,7 +349,7 @@ public static partial class Operations
     /// Returns the magnitude of the five dimensional vector.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Magnitude<T, TResult>(T i, T j, T k, T l, T m) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.Sqrt(TResult.Create((i * i) + (j * j) + (k * k) + (l * l) + (m * m)));
+    public static TResult Magnitude<T, TResult>(T i, T j, T k, T l, T m) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j) + (k * k) + (l * l) + (m * m)));
 
     /// <summary>
     /// Calculates the magnitude or length of a six dimensional Vector.
@@ -364,7 +364,7 @@ public static partial class Operations
     /// Returns the magnitude of the six dimensional Vector.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Magnitude<T, TResult>(T i, T j, T k, T l, T m, T n) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.Sqrt(TResult.Create((i * i) + (j * j) + (k * k) + (l * l) + (m * m) + (n * n)));
+    public static TResult Magnitude<T, TResult>(T i, T j, T k, T l, T m, T n) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j) + (k * k) + (l * l) + (m * m) + (n * n)));
     #endregion Modulus Magnitude
 
     #region Magnitude Squared
@@ -469,7 +469,7 @@ public static partial class Operations
         TResult value = TResult.Zero;
         for (int i = 0; i < left.Length; i++)
         {
-            value += TResult.Create(left[i] * right[i]);
+            value += TResult.CreateChecked(left[i] * right[i]);
         }
 
         return value;
@@ -494,7 +494,7 @@ public static partial class Operations
         T value = T.Zero;
         for (int i = 0; i < left.Length; i++)
         {
-            value += T.Create(left[i] * right[i]);
+            value += T.CreateChecked(left[i] * right[i]);
         }
 
         return value;
@@ -710,7 +710,7 @@ public static partial class Operations
         TResult value = TResult.Zero;
         for (int i = 0; i < left.Length; i++)
         {
-            value += TResult.Create((left[i] - middle[i]) * (right[i] - middle[i]));
+            value += TResult.CreateChecked((left[i] - middle[i]) * (right[i] - middle[i]));
         }
 
         return value;
@@ -900,7 +900,7 @@ public static partial class Operations
         var value = new TResult[] { TResult.Zero };
         //for (int i = 0; i < left.Length; i++)
         //{
-        //    value += TResult.Create(left[i] * right[i]);
+        //    value += TResult.CreateChecked(left[i] * right[i]);
         //}
 
         return value;
@@ -925,7 +925,7 @@ public static partial class Operations
         var value = new T[] { T.Zero };
         //for (int i = 0; i < left.Length; i++)
         //{
-        //    value += T.Create(left[i] * right[i]);
+        //    value += T.CreateChecked(left[i] * right[i]);
         //}
 
         return value;
@@ -953,7 +953,7 @@ public static partial class Operations
         var value = new TResult[] { TResult.Zero };
         //for (int i = 0; i < left.Length; i++)
         //{
-        //    value += TResult.Create((left[i] - middle[i]) * (right[i] - middle[i]));
+        //    value += TResult.CreateChecked((left[i] - middle[i]) * (right[i] - middle[i]));
         //}
 
         return value;
@@ -1154,7 +1154,7 @@ public static partial class Operations
     /// <param name="tuple">The tuple.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y) Normalize<T, TResult>((T i, T j) tuple) where T : INumber<T> where TResult : IFloatingPoint<TResult> => Normalize<T, TResult>(tuple.i, tuple.j);
+    public static (TResult X, TResult Y) Normalize<T, TResult>((T i, T j) tuple) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => Normalize<T, TResult>(tuple.i, tuple.j);
 
     /// <summary>
     /// Normalize a Vector.
@@ -1162,7 +1162,7 @@ public static partial class Operations
     /// <param name="tuple">The tuple.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) Normalize<T, TResult>((T i, T j, T k) tuple) where T : INumber<T> where TResult : IFloatingPoint<TResult> => Normalize<T, TResult>(tuple.i, tuple.j, tuple.k);
+    public static (TResult X, TResult Y, TResult Z) Normalize<T, TResult>((T i, T j, T k) tuple) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => Normalize<T, TResult>(tuple.i, tuple.j, tuple.k);
 
     /// <summary>
     /// Normalize a Vector.
@@ -1170,7 +1170,7 @@ public static partial class Operations
     /// <param name="tuple">The tuple.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z, TResult W) Normalize<T, TResult>((T i, T j, T k, T l) tuple) where T : INumber<T> where TResult : IFloatingPoint<TResult> => Normalize<T, TResult>(tuple.i, tuple.j, tuple.k, tuple.l);
+    public static (TResult X, TResult Y, TResult Z, TResult W) Normalize<T, TResult>((T i, T j, T k, T l) tuple) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => Normalize<T, TResult>(tuple.i, tuple.j, tuple.k, tuple.l);
 
     /// <summary>
     /// Normalize a Vector.
@@ -1178,7 +1178,7 @@ public static partial class Operations
     /// <param name="i">The i.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Normalize<T, TResult>(T i) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.Create(i) / TResult.Sqrt(TResult.Create(i * i));
+    public static TResult Normalize<T, TResult>(T i) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.CreateChecked(i) / TResult.Sqrt(TResult.CreateChecked(i * i));
 
     /// <summary>
     /// Normalize a Vector.
@@ -1187,7 +1187,7 @@ public static partial class Operations
     /// <param name="j">The j.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y) Normalize<T, TResult>(T i, T j) where T : INumber<T> where TResult : IFloatingPoint<TResult> => (TResult.Create(i) / TResult.Sqrt(TResult.Create((i * i) + (j * j))), TResult.Create(j) / TResult.Sqrt(TResult.Create((i * i) + (j * j))));
+    public static (TResult X, TResult Y) Normalize<T, TResult>(T i, T j) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => (TResult.CreateChecked(i) / TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j))), TResult.CreateChecked(j) / TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j))));
 
     /// <summary>
     /// Normalize a Vector.
@@ -1197,7 +1197,7 @@ public static partial class Operations
     /// <param name="k">The k.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) Normalize<T, TResult>(T i, T j, T k) where T : INumber<T> where TResult : IFloatingPoint<TResult> => (TResult.Create(i) / TResult.Sqrt(TResult.Create((i * i) + (j * j) + (k * k))), TResult.Create(j) / TResult.Sqrt(TResult.Create((i * i) + (j * j) + (k * k))), TResult.Create(k) / TResult.Sqrt(TResult.Create((i * i) + (j * j) + (k * k))));
+    public static (TResult X, TResult Y, TResult Z) Normalize<T, TResult>(T i, T j, T k) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => (TResult.CreateChecked(i) / TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j) + (k * k))), TResult.CreateChecked(j) / TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j) + (k * k))), TResult.CreateChecked(k) / TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j) + (k * k))));
 
     /// <summary>
     /// Normalize a Vector.
@@ -1208,7 +1208,7 @@ public static partial class Operations
     /// <param name="l">The l.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z, TResult W) Normalize<T, TResult>(T i, T j, T k, T l) where T : INumber<T> where TResult : IFloatingPoint<TResult> => (TResult.Create(i) / TResult.Sqrt(TResult.Create((i * i) + (j * j) + (k * k) + (l * l))), TResult.Create(j) / TResult.Sqrt(TResult.Create((i * i) + (j * j) + (k * k) + (l * l))), TResult.Create(k) / TResult.Sqrt(TResult.Create((i * i) + (j * j) + (k * k) + (l * l))), TResult.Create(l) / TResult.Sqrt(TResult.Create((i * i) + (j * j) + (k * k) + (l * l))));
+    public static (TResult X, TResult Y, TResult Z, TResult W) Normalize<T, TResult>(T i, T j, T k, T l) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => (TResult.CreateChecked(i) / TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j) + (k * k) + (l * l))), TResult.CreateChecked(j) / TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j) + (k * k) + (l * l))), TResult.CreateChecked(k) / TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j) + (k * k) + (l * l))), TResult.CreateChecked(l) / TResult.Sqrt(TResult.CreateChecked((i * i) + (j * j) + (k * k) + (l * l))));
     #endregion
 
     #region Normalize Vectors
@@ -1223,7 +1223,7 @@ public static partial class Operations
     /// The Normal of two Points
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y) NormalizeVectors<T, TResult>(T i1, T j1, T i2, T j2) where T : INumber<T> where TResult : IFloatingPoint<TResult> => (TResult.Create(i1) / TResult.Sqrt(TResult.Create((i1 * i2) + (j1 * j2))), TResult.Create(j1) / TResult.Sqrt(TResult.Create((i1 * i2) + (j1 * j2))));
+    public static (TResult X, TResult Y) NormalizeVectors<T, TResult>(T i1, T j1, T i2, T j2) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => (TResult.CreateChecked(i1) / TResult.Sqrt(TResult.CreateChecked((i1 * i2) + (j1 * j2))), TResult.CreateChecked(j1) / TResult.Sqrt(TResult.CreateChecked((i1 * i2) + (j1 * j2))));
 
     /// <summary>
     /// Find the Normal of Two vectors.
@@ -1238,7 +1238,7 @@ public static partial class Operations
     /// The Normal of two Points
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) NormalizeVectors<T, TResult>(T i1, T j1, T k1, T i2, T j2, T k2) where T : INumber<T> where TResult : IFloatingPoint<TResult> => (TResult.Create(i1) / TResult.Sqrt(TResult.Create((i1 * i2) + (j1 * j2) + (k1 * k2))), TResult.Create(j1) / TResult.Sqrt(TResult.Create((i1 * i2) + (j1 * j2) + (k1 * k2))), TResult.Create(k1) / TResult.Sqrt(TResult.Create((i1 * i2) + (j1 * j2) + (k1 * k2))));
+    public static (TResult X, TResult Y, TResult Z) NormalizeVectors<T, TResult>(T i1, T j1, T k1, T i2, T j2, T k2) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => (TResult.CreateChecked(i1) / TResult.Sqrt(TResult.CreateChecked((i1 * i2) + (j1 * j2) + (k1 * k2))), TResult.CreateChecked(j1) / TResult.Sqrt(TResult.CreateChecked((i1 * i2) + (j1 * j2) + (k1 * k2))), TResult.CreateChecked(k1) / TResult.Sqrt(TResult.CreateChecked((i1 * i2) + (j1 * j2) + (k1 * k2))));
 
     /// <summary>
     /// Find the Normal of Two vectors.
@@ -1258,7 +1258,7 @@ public static partial class Operations
     /// http://www.fundza.com/vectors/normalize/
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z, TResult W) NormalizeVectors<T, TResult>(T i1, T j1, T k1, T l1, T i2, T j2, T k2, T l2) where T : INumber<T> where TResult : IFloatingPoint<TResult> => (TResult.Create(i1) / TResult.Sqrt(TResult.Create((i1 * i2) + (j1 * j2) + (k1 * k2) + (l1 * l2))), TResult.Create(j1) / TResult.Sqrt(TResult.Create((i1 * i2) + (j1 * j2) + (k1 * k2) + (l1 * l2))), TResult.Create(k1) / TResult.Sqrt(TResult.Create((i1 * i2) + (j1 * j2) + (k1 * k2) + (l1 * l2))), TResult.Create(l1) / TResult.Sqrt(TResult.Create((i1 * i2) + (j1 * j2) + (k1 * k2) + (l1 * l2))));
+    public static (TResult X, TResult Y, TResult Z, TResult W) NormalizeVectors<T, TResult>(T i1, T j1, T k1, T l1, T i2, T j2, T k2, T l2) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => (TResult.CreateChecked(i1) / TResult.Sqrt(TResult.CreateChecked((i1 * i2) + (j1 * j2) + (k1 * k2) + (l1 * l2))), TResult.CreateChecked(j1) / TResult.Sqrt(TResult.CreateChecked((i1 * i2) + (j1 * j2) + (k1 * k2) + (l1 * l2))), TResult.CreateChecked(k1) / TResult.Sqrt(TResult.CreateChecked((i1 * i2) + (j1 * j2) + (k1 * k2) + (l1 * l2))), TResult.CreateChecked(l1) / TResult.Sqrt(TResult.CreateChecked((i1 * i2) + (j1 * j2) + (k1 * k2) + (l1 * l2))));
     #endregion Normalize Vectors
 
     #region Unit Normal
@@ -1278,16 +1278,16 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static (TResult X, TResult Y) UnitNormal<T, TResult>(T pt1X, T pt1Y, T pt2X, T pt2Y)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
-        var dx = TResult.Create(pt2X - pt1X);
-        var dy = TResult.Create(pt2Y - pt1Y);
+        var dx = TResult.CreateChecked(pt2X - pt1X);
+        var dy = TResult.CreateChecked(pt2Y - pt1Y);
         if ((dx == TResult.Zero) && (dy == TResult.Zero))
         {
             return (TResult.Zero, TResult.Zero);
         }
 
-        var f = TResult.One / TResult.Sqrt(TResult.Create((dx * dx) + (dy * dy)));
+        var f = TResult.One / TResult.Sqrt(TResult.CreateChecked((dx * dx) + (dy * dy)));
         dx *= f;
         dy *= f;
 
@@ -1334,7 +1334,7 @@ public static partial class Operations
     /// A point rotated about the origin by the specified pi radian angle.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y) RotatePoint2D<T, TResult>(T x, T y, TResult angle) where T : INumber<T> where TResult : IFloatingPoint<TResult> => RotatePoint2D(x, y, TResult.Cos(angle), TResult.Sin(angle), T.Zero, T.Zero);
+    public static (TResult X, TResult Y) RotatePoint2D<T, TResult>(T x, T y, TResult angle) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => RotatePoint2D(x, y, TResult.Cos(angle), TResult.Sin(angle), T.Zero, T.Zero);
 
     /// <summary>
     /// Rotate a point around the world origin.
@@ -1347,7 +1347,7 @@ public static partial class Operations
     /// A point rotated about the origin by the specified pi radian angle.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y) RotatePoint2D<T, TResult>(T x, T y, TResult cos, TResult sin) where T : INumber<T> where TResult : IFloatingPoint<TResult> => RotatePoint2D(x, y, cos, sin, T.Zero, T.Zero);
+    public static (TResult X, TResult Y) RotatePoint2D<T, TResult>(T x, T y, TResult cos, TResult sin) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => RotatePoint2D(x, y, cos, sin, T.Zero, T.Zero);
 
     /// <summary>
     /// Rotate a point around a fulcrum point.
@@ -1361,7 +1361,7 @@ public static partial class Operations
     /// A point rotated about the fulcrum point by the specified pi radian angle.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y) RotatePoint2D<T, TResult>(T x, T y, TResult angle, T cx, T cy) where T : INumber<T> where TResult : IFloatingPoint<TResult> => RotatePoint2D(x, y, TResult.Cos(angle), TResult.Sin(angle), cx, cy);
+    public static (TResult X, TResult Y) RotatePoint2D<T, TResult>(T x, T y, TResult angle, T cx, T cy) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => RotatePoint2D(x, y, TResult.Cos(angle), TResult.Sin(angle), cx, cy);
 
     /// <summary>
     /// Rotate a point around a fulcrum point.
@@ -1377,12 +1377,12 @@ public static partial class Operations
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static (TResult X, TResult Y) RotatePoint2D<T, TResult>(T x, T y, TResult cos, TResult sin, T cx, T cy)
-        where T : INumber<T> where TResult : IFloatingPoint<TResult>
+        where T : INumber<T> where TResult : IFloatingPointIeee754<TResult>
     {
-        var deltaX = TResult.Create(x - cx);
-        var deltaY = TResult.Create(y - cy);
-        return (TResult.Create(cx) + ((deltaX * cos) - (deltaY * sin)),
-                TResult.Create(cy) + ((deltaX * sin) + (deltaY * cos)));
+        var deltaX = TResult.CreateChecked(x - cx);
+        var deltaY = TResult.CreateChecked(y - cy);
+        return (TResult.CreateChecked(cx) + ((deltaX * cos) - (deltaY * sin)),
+                TResult.CreateChecked(cy) + ((deltaX * sin) + (deltaY * cos)));
     }
     #endregion Rotate Point
 
@@ -1400,7 +1400,7 @@ public static partial class Operations
     /// The <see cref="ValueTuple{T1, T2, T3}" />.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) PitchRotateX<T, TResult>(T x1, T y1, T z1, T yOff, T zOff, TResult rad) where T : INumber<T> where TResult : IFloatingPoint<TResult> => PitchRotateX(x1, y1, z1, yOff, zOff, TResult.Sin(rad), TResult.Cos(rad));
+    public static (TResult X, TResult Y, TResult Z) PitchRotateX<T, TResult>(T x1, T y1, T z1, T yOff, T zOff, TResult rad) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => PitchRotateX(x1, y1, z1, yOff, zOff, TResult.Sin(rad), TResult.Cos(rad));
 
     /// <summary>
     /// The rotate x.
@@ -1413,7 +1413,7 @@ public static partial class Operations
     /// The <see cref="ValueTuple{T1, T2, T3}" />.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) PitchRotateX<T, TResult>(T x1, T y1, T z1, TResult rad) where T : INumber<T> where TResult : IFloatingPoint<TResult> => PitchRotateX(x1, y1, z1, TResult.Sin(rad), TResult.Cos(rad));
+    public static (TResult X, TResult Y, TResult Z) PitchRotateX<T, TResult>(T x1, T y1, T z1, TResult rad) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => PitchRotateX(x1, y1, z1, TResult.Sin(rad), TResult.Cos(rad));
 
     /// <summary>
     /// The rotate x.
@@ -1430,7 +1430,7 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) PitchRotateX<T, TResult>(T x1, T y1, T z1, TResult sin, TResult cos) where T : INumber<T> where TResult : IFloatingPoint<TResult> => (TResult.Create(x1), (TResult.Create(y1) * cos) - (TResult.Create(z1) * sin), (TResult.Create(y1) * sin) + (TResult.Create(z1) * cos));
+    public static (TResult X, TResult Y, TResult Z) PitchRotateX<T, TResult>(T x1, T y1, T z1, TResult sin, TResult cos) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => (TResult.CreateChecked(x1), (TResult.CreateChecked(y1) * cos) - (TResult.CreateChecked(z1) * sin), (TResult.CreateChecked(y1) * sin) + (TResult.CreateChecked(z1) * cos));
 
     /// <summary>
     /// The rotate x.
@@ -1449,7 +1449,7 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) PitchRotateX<T, TResult>(T x1, T y1, T z1, T yOff, T zOff, TResult sin, TResult cos) where T : INumber<T> where TResult : IFloatingPoint<TResult> => (TResult.Create(x1), (TResult.Create(y1) * cos) - (TResult.Create(z1) * sin) + ((TResult.Create(yOff) * (TResult.One - cos)) + (TResult.Create(zOff) * sin)), (TResult.Create(y1) * sin) + (TResult.Create(z1) * cos) + ((TResult.Create(zOff) * (TResult.One - cos)) - (TResult.Create(yOff) * sin)));
+    public static (TResult X, TResult Y, TResult Z) PitchRotateX<T, TResult>(T x1, T y1, T z1, T yOff, T zOff, TResult sin, TResult cos) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => (TResult.CreateChecked(x1), (TResult.CreateChecked(y1) * cos) - (TResult.CreateChecked(z1) * sin) + ((TResult.CreateChecked(yOff) * (TResult.One - cos)) + (TResult.CreateChecked(zOff) * sin)), (TResult.CreateChecked(y1) * sin) + (TResult.CreateChecked(z1) * cos) + ((TResult.CreateChecked(zOff) * (TResult.One - cos)) - (TResult.CreateChecked(yOff) * sin)));
     #endregion Pitch Rotate X
 
     #region Yaw Rotate Y
@@ -1464,7 +1464,7 @@ public static partial class Operations
     /// The <see cref="ValueTuple{T1, T2, T3}" />.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) YawRotateY<T, TResult>(T x1, T y1, T z1, TResult rad) where T : INumber<T> where TResult : IFloatingPoint<TResult> => YawRotateY(x1, y1, z1, TResult.Sin(rad), TResult.Cos(rad));
+    public static (TResult X, TResult Y, TResult Z) YawRotateY<T, TResult>(T x1, T y1, T z1, TResult rad) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => YawRotateY(x1, y1, z1, TResult.Sin(rad), TResult.Cos(rad));
 
     /// <summary>
     /// The rotate y.
@@ -1479,7 +1479,7 @@ public static partial class Operations
     /// The <see cref="ValueTuple{T1, T2, T3}" />.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) YawRotateY<T, TResult>(T x1, T y1, T z1, T xOff, T zOff, TResult rad) where T : INumber<T> where TResult : IFloatingPoint<TResult> => YawRotateY(x1, y1, z1, xOff, zOff, TResult.Sin(rad), TResult.Cos(rad));
+    public static (TResult X, TResult Y, TResult Z) YawRotateY<T, TResult>(T x1, T y1, T z1, T xOff, T zOff, TResult rad) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => YawRotateY(x1, y1, z1, xOff, zOff, TResult.Sin(rad), TResult.Cos(rad));
 
     /// <summary>
     /// The rotate y.
@@ -1496,7 +1496,7 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) YawRotateY<T, TResult>(T x1, T y1, T z1, TResult sin, TResult cos) where T : INumber<T> where TResult : IFloatingPoint<TResult> => ((TResult.Create(z1) * sin) + (TResult.Create(x1) * cos), TResult.Create(y1), (TResult.Create(z1) * cos) - (TResult.Create(x1) * sin));
+    public static (TResult X, TResult Y, TResult Z) YawRotateY<T, TResult>(T x1, T y1, T z1, TResult sin, TResult cos) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => ((TResult.CreateChecked(z1) * sin) + (TResult.CreateChecked(x1) * cos), TResult.CreateChecked(y1), (TResult.CreateChecked(z1) * cos) - (TResult.CreateChecked(x1) * sin));
 
     /// <summary>
     /// The rotate y.
@@ -1515,7 +1515,7 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) YawRotateY<T, TResult>(T x1, T y1, T z1, T xOff, T zOff, TResult sin, TResult cos) where T : INumber<T> where TResult : IFloatingPoint<TResult> => ((TResult.Create(z1) * sin) + (TResult.Create(x1) * cos) + ((TResult.Create(xOff) * (TResult.One - cos)) - (TResult.Create(zOff) * sin)), TResult.Create(y1), (TResult.Create(z1) * cos) - (TResult.Create(x1) * sin) + ((TResult.Create(zOff) * (TResult.One - cos)) + (TResult.Create(xOff) * sin)));
+    public static (TResult X, TResult Y, TResult Z) YawRotateY<T, TResult>(T x1, T y1, T z1, T xOff, T zOff, TResult sin, TResult cos) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => ((TResult.CreateChecked(z1) * sin) + (TResult.CreateChecked(x1) * cos) + ((TResult.CreateChecked(xOff) * (TResult.One - cos)) - (TResult.CreateChecked(zOff) * sin)), TResult.CreateChecked(y1), (TResult.CreateChecked(z1) * cos) - (TResult.CreateChecked(x1) * sin) + ((TResult.CreateChecked(zOff) * (TResult.One - cos)) + (TResult.CreateChecked(xOff) * sin)));
     #endregion Yaw Rotate Y
 
     #region Roll Rotate Z
@@ -1530,7 +1530,7 @@ public static partial class Operations
     /// The <see cref="ValueTuple{T1, T2, T3}" />.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) RollRotateZ<T, TResult>(T x1, T y1, T z1, TResult rad) where T : INumber<T> where TResult : IFloatingPoint<TResult> => RollRotateZ(x1, y1, z1, TResult.Sin(rad), TResult.Cos(rad));
+    public static (TResult X, TResult Y, TResult Z) RollRotateZ<T, TResult>(T x1, T y1, T z1, TResult rad) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => RollRotateZ(x1, y1, z1, TResult.Sin(rad), TResult.Cos(rad));
 
     /// <summary>
     /// The rotate z.
@@ -1545,7 +1545,7 @@ public static partial class Operations
     /// The <see cref="ValueTuple{T1, T2, T3}" />.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) RollRotateZ<T, TResult>(T x1, T y1, T z1, T xOff, T yOff, TResult rad) where T : INumber<T> where TResult : IFloatingPoint<TResult> => RollRotateZ(x1, y1, z1, xOff, yOff, TResult.Sin(rad), TResult.Cos(rad));
+    public static (TResult X, TResult Y, TResult Z) RollRotateZ<T, TResult>(T x1, T y1, T z1, T xOff, T yOff, TResult rad) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => RollRotateZ(x1, y1, z1, xOff, yOff, TResult.Sin(rad), TResult.Cos(rad));
 
     /// <summary>
     /// The rotate z.
@@ -1562,7 +1562,7 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) RollRotateZ<T, TResult>(T x1, T y1, T z1, TResult sin, TResult cos) where T : INumber<T> where TResult : IFloatingPoint<TResult> => ((TResult.Create(x1) * cos) - (TResult.Create(y1) * sin), (TResult.Create(x1) * sin) + (TResult.Create(y1) * cos), TResult.Create(z1));
+    public static (TResult X, TResult Y, TResult Z) RollRotateZ<T, TResult>(T x1, T y1, T z1, TResult sin, TResult cos) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => ((TResult.CreateChecked(x1) * cos) - (TResult.CreateChecked(y1) * sin), (TResult.CreateChecked(x1) * sin) + (TResult.CreateChecked(y1) * cos), TResult.CreateChecked(z1));
 
     /// <summary>
     /// The rotate z.
@@ -1581,7 +1581,7 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) RollRotateZ<T, TResult>(T x1, T y1, T z1, T xOff, T yOff, TResult sin, TResult cos) where T : INumber<T> where TResult : IFloatingPoint<TResult> => ((TResult.Create(x1) * cos) - (TResult.Create(y1) * sin) + ((TResult.Create(xOff) * (TResult.One - cos)) + (TResult.Create(yOff) * sin)), (TResult.Create(x1) * sin) + (TResult.Create(y1) * cos) + ((TResult.Create(yOff) * (TResult.One - cos)) - (TResult.Create(xOff) * sin)), TResult.Create(z1));
+    public static (TResult X, TResult Y, TResult Z) RollRotateZ<T, TResult>(T x1, T y1, T z1, T xOff, T yOff, TResult sin, TResult cos) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => ((TResult.CreateChecked(x1) * cos) - (TResult.CreateChecked(y1) * sin) + ((TResult.CreateChecked(xOff) * (TResult.One - cos)) + (TResult.CreateChecked(yOff) * sin)), (TResult.CreateChecked(x1) * sin) + (TResult.CreateChecked(y1) * cos) + ((TResult.CreateChecked(yOff) * (TResult.One - cos)) - (TResult.CreateChecked(xOff) * sin)), TResult.CreateChecked(z1));
     #endregion Roll Rotate Z
 
     #region Projection
@@ -1601,7 +1601,7 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) Projection<T, TResult>(T x1, T y1, T z1, T x2, T y2, T z2) where T : INumber<T> where TResult : IFloatingPoint<TResult> => (TResult.Create(x2 * DotProduct(x1, y1, z1, x2, y2, z2)) / Magnitude<T, TResult>(x2, y2, z2) * Magnitude<T, TResult>(x2, y2, z2), TResult.Create(y2 * DotProduct(x1, y1, z1, x2, y2, z2)) / Magnitude<T, TResult>(x2, y2, z2) * Magnitude<T, TResult>(x2, y2, z2), TResult.Create(z2 * DotProduct(x1, y1, z1, x2, y2, z2)) / Magnitude<T, TResult>(x2, y2, z2) * Magnitude<T, TResult>(x2, y2, z2));
+    public static (TResult X, TResult Y, TResult Z) Projection<T, TResult>(T x1, T y1, T z1, T x2, T y2, T z2) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => (TResult.CreateChecked(x2 * DotProduct(x1, y1, z1, x2, y2, z2)) / Magnitude<T, TResult>(x2, y2, z2) * Magnitude<T, TResult>(x2, y2, z2), TResult.CreateChecked(y2 * DotProduct(x1, y1, z1, x2, y2, z2)) / Magnitude<T, TResult>(x2, y2, z2) * Magnitude<T, TResult>(x2, y2, z2), TResult.CreateChecked(z2 * DotProduct(x1, y1, z1, x2, y2, z2)) / Magnitude<T, TResult>(x2, y2, z2) * Magnitude<T, TResult>(x2, y2, z2));
     #endregion Projection
 
     #region Rejection
@@ -1621,7 +1621,7 @@ public static partial class Operations
     /// http://www.codeproject.com/Articles/17425/A-Vector-Type-for-C
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult X, TResult Y, TResult Z) Rejection<T, TResult>(T x1, T y1, T z1, T x2, T y2, T z2) where T : INumber<T> where TResult : IFloatingPoint<TResult> => (TResult.Create(x1) - (TResult.Create(x2 * DotProduct(x1, y1, z1, x2, y2, z2)) / Magnitude<T, TResult>(x2, y2, z2) * Magnitude<T, TResult>(x2, y2, z2)), TResult.Create(z1) - (TResult.Create(y2 * DotProduct(x1, y1, z1, x2, y2, z2)) / Magnitude<T, TResult>(x2, y2, z2) * Magnitude<T, TResult>(x2, y2, z2)), TResult.Create(z1) - (TResult.Create(z2 * DotProduct(x1, y1, z1, x2, y2, z2)) / Magnitude<T, TResult>(x2, y2, z2) * Magnitude<T, TResult>(x2, y2, z2)));
+    public static (TResult X, TResult Y, TResult Z) Rejection<T, TResult>(T x1, T y1, T z1, T x2, T y2, T z2) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => (TResult.CreateChecked(x1) - (TResult.CreateChecked(x2 * DotProduct(x1, y1, z1, x2, y2, z2)) / Magnitude<T, TResult>(x2, y2, z2) * Magnitude<T, TResult>(x2, y2, z2)), TResult.CreateChecked(z1) - (TResult.CreateChecked(y2 * DotProduct(x1, y1, z1, x2, y2, z2)) / Magnitude<T, TResult>(x2, y2, z2) * Magnitude<T, TResult>(x2, y2, z2)), TResult.CreateChecked(z1) - (TResult.CreateChecked(z2 * DotProduct(x1, y1, z1, x2, y2, z2)) / Magnitude<T, TResult>(x2, y2, z2) * Magnitude<T, TResult>(x2, y2, z2)));
     #endregion Rejection
 
     #region Reflect
@@ -1639,7 +1639,7 @@ public static partial class Operations
     public static (T I, T J) Reflect<T>(T x1, T y1, T x2, T y2, T axisX, T axisY) where T : INumber<T>
     {
         var (i, j) = DeltaVector(x1, y1, x2, y2);
-        var magnatude = DotProduct(i, j, i, j) / T.Create(2);
+        var magnatude = DotProduct(i, j, i, j) / T.CreateChecked(2);
         var reflection = CrossProduct(i, j, CrossProduct(x2, y2, x1, y1), DotProduct(axisX, axisY, i, j));
         return ((magnatude * reflection) - axisX,
                 (magnatude * reflection) - axisY);
@@ -1665,19 +1665,19 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static (TResult X, TResult Y, TResult Z) Reflection<T, TResult>(
         T i1, T j1, T k1,
-        T i2, T j2, T k2) where T : INumber<T> where TResult : IFloatingPoint<TResult>
+        T i2, T j2, T k2) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult>
     {
         // if v2 has a right angle to vector, return -vector and stop
-        if (TResult.Abs(TResult.Abs(Angle<T, TResult>(i1, j1, k1, i2, j2, k2)) - (TResult.Pi / TResult.Create(2))) < TResult.Epsilon)
+        if (TResult.Abs(TResult.Abs(Angle<T, TResult>(i1, j1, k1, i2, j2, k2)) - (TResult.Pi / TResult.CreateChecked(2))) < TResult.Epsilon)
         {
-            return (TResult.Create(-i1), TResult.Create(-j1), TResult.Create(-k1));
+            return (TResult.CreateChecked(-i1), TResult.CreateChecked(-j1), TResult.CreateChecked(-k1));
         }
 
         (var x, var y, var z) = Projection<T, TResult>(i1, j1, k1, i2, j2, k2);
         return (
-            ((TResult.Create(2) * x) - TResult.Create(i1)) * Magnitude<T, TResult>(i1, j1, k1),
-            ((TResult.Create(2) * y) - TResult.Create(j1)) * Magnitude<T, TResult>(i1, j1, k1),
-            ((TResult.Create(2) * z) - TResult.Create(k1)) * Magnitude<T, TResult>(i1, j1, k1)
+            ((TResult.CreateChecked(2) * x) - TResult.CreateChecked(i1)) * Magnitude<T, TResult>(i1, j1, k1),
+            ((TResult.CreateChecked(2) * y) - TResult.CreateChecked(j1)) * Magnitude<T, TResult>(i1, j1, k1),
+            ((TResult.CreateChecked(2) * z) - TResult.CreateChecked(k1)) * Magnitude<T, TResult>(i1, j1, k1)
             );
     }
     #endregion Reflection
@@ -1694,7 +1694,7 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TResult EuclideanNorm<T, TResult>(Span<T> vector)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
         var result = T.Zero;
         for (var i = 0; i < vector.Length; i++)
@@ -1702,7 +1702,7 @@ public static partial class Operations
             result += vector[i] * vector[i];
         }
 
-        return TResult.Sqrt(TResult.Create(result));
+        return TResult.Sqrt(TResult.CreateChecked(result));
     }
 
     /// <summary>
@@ -1717,7 +1717,7 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TResult EuclideanNorm<T, TResult>(Span<T> vector, int length)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
         var result = T.Zero;
         for (var i = 0; i < length; i++)
@@ -1725,7 +1725,7 @@ public static partial class Operations
             result += vector[i] * vector[i];
         }
 
-        return TResult.Sqrt(TResult.Create(result));
+        return TResult.Sqrt(TResult.CreateChecked(result));
     }
     #endregion
 }

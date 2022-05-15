@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using static MathematicsNotationLibrary.Mathematics;
 using static System.Math;
@@ -31,7 +32,7 @@ public static partial class Operations
     /// The inverse sqrt.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult InverseSqrt<T, TResult>(T number) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.One / TResult.Sqrt(TResult.Create(number));
+    public static TResult InverseSqrt<T, TResult>(T number) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.One / TResult.Sqrt(TResult.CreateChecked(number));
 
     /// <summary>
     /// Returns the specified root a specified number.
@@ -44,11 +45,11 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TResult Root<T, TResult>(T x, T y)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
-        TResult ty = TResult.Create(y);
-        TResult tx = TResult.Create(x);
-        return (x < T.Zero && TResult.Abs(ty % TResult.Create(2) - TResult.One) < TResult.Epsilon) ? -TResult.Pow(-tx, TResult.One / ty) : TResult.Pow(tx, TResult.One / ty);
+        TResult ty = TResult.CreateChecked(y);
+        TResult tx = TResult.CreateChecked(x);
+        return (x < T.Zero && TResult.Abs(ty % TResult.CreateChecked(2) - TResult.One) < TResult.Epsilon) ? -TResult.Pow(-tx, TResult.One / ty) : TResult.Pow(tx, TResult.One / ty);
     }
 
     /// <summary>
@@ -61,7 +62,7 @@ public static partial class Operations
     /// http://stackoverflow.com/questions/26823024/cubic-bezier-reverse-getpoint-equation-float-for-vector-vector-for-float?answertab=active#tab-top
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult CubeRoot<T, TResult>(T value) where T : INumber<T> where TResult : IFloatingPoint<TResult> => value < T.Zero ? -TResult.Cbrt(-TResult.Create(value)) : TResult.Cbrt(TResult.Create(value));
+    public static TResult CubeRoot<T, TResult>(T value) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => value < T.Zero ? -TResult.Cbrt(-TResult.CreateChecked(value)) : TResult.Cbrt(TResult.CreateChecked(value));
 
     /// <summary>
     /// The inverse cube root.
@@ -71,7 +72,7 @@ public static partial class Operations
     /// The inverse cube root.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult InverseCubeRoot<T, TResult>(T number) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.One / CubeRoot<T, TResult>(number);
+    public static TResult InverseCubeRoot<T, TResult>(T number) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.One / CubeRoot<T, TResult>(number);
 
     /// <summary>
     /// Newton's (Newton-Raphson) method for finding Real roots on univariate function. <br/>
@@ -92,7 +93,7 @@ public static partial class Operations
     /// http://en.wikipedia.org/wiki/Bisection_method</para>
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult NewtonSecantBisection<T, TResult>(T x0, Func<T, T> f, Func<T, T> df, int maxIterations) where T : struct, INumber<T> where TResult : IFloatingPoint<TResult> => NewtonSecantBisection<T, TResult>(x0, f, df, maxIterations, null, null);
+    public static TResult NewtonSecantBisection<T, TResult>(T x0, Func<T, T> f, Func<T, T> df, int maxIterations) where T : struct, INumber<T> where TResult : IFloatingPointIeee754<TResult> => NewtonSecantBisection<T, TResult>(x0, f, df, maxIterations, null, null);
 
     /// <summary>
     /// Newton's (Newton-Raphson) method for finding Real roots on univariate function. <br/>
@@ -117,7 +118,7 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TResult NewtonSecantBisection<T, TResult>(T x0, Func<T, T> f, Func<T, T> df, int maxIterations, T? min, T? max)
         where T : struct, INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
         if (f is null)
         {
@@ -129,8 +130,8 @@ public static partial class Operations
         var y_atmin = T.Zero;
         var y_atmax = T.Zero;
         var x = x0;
-        TResult ACCURACY = TResult.Create(14);
-        var min_correction_factor = T.Create(TResult.Pow(TResult.Create(10), -ACCURACY));
+        TResult ACCURACY = TResult.CreateChecked(14);
+        var min_correction_factor = T.CreateChecked(TResult.Pow(TResult.CreateChecked(10), -ACCURACY));
         if (min != null && max != null)
         {
             if (min > max)
@@ -190,12 +191,12 @@ public static partial class Operations
             {
                 if (T.Sign(y) == T.Sign(y_atmax))
                 {
-                    max = T.Create(x);
+                    max = T.CreateChecked(x);
                     y_atmax = y;
                 }
                 else if (T.Sign(y) == T.Sign(y_atmin))
                 {
-                    min = T.Create(x);
+                    min = T.CreateChecked(x);
                     y_atmin = y;
                 }
                 else
@@ -212,12 +213,12 @@ public static partial class Operations
                         break;
                     }
 
-                    T RATIO_LIMIT = T.Create(50);
-                    T AIMED_BISECT_OFFSET = T.Create(0.25); // [0, 0.5)
+                    T RATIO_LIMIT = T.CreateChecked(50);
+                    T AIMED_BISECT_OFFSET = T.CreateChecked(0.25); // [0, 0.5)
                     var dy = y_atmax - y_atmin;
                     var dx = max - min;
 
-                    x_correction = dy == T.Zero ? x - (min.Value + (dx.Value / T.Create(2))) : T.Abs(dy / T.Min(y_atmin, y_atmax)) > RATIO_LIMIT ? x - (min.Value + (dx.Value * (T.Create(0.5) + (T.Abs(y_atmin) < T.Abs(y_atmax) ? -AIMED_BISECT_OFFSET : AIMED_BISECT_OFFSET)))) : x - (min.Value - (y_atmin / dy * dx.Value));
+                    x_correction = dy == T.Zero ? x - (min.Value + (dx.Value / T.CreateChecked(2))) : T.Abs(dy / T.Min(y_atmin, y_atmax)) > RATIO_LIMIT ? x - (min.Value + (dx.Value * (T.CreateChecked(0.5) + (T.Abs(y_atmin) < T.Abs(y_atmax) ? -AIMED_BISECT_OFFSET : AIMED_BISECT_OFFSET)))) : x - (min.Value - (y_atmin / dy * dx.Value));
                     x_new = x - x_correction;
 
                     if (isEnoughCorrection())
@@ -234,7 +235,7 @@ public static partial class Operations
         //console.log(details.join('\r\n'));
         //if (i == max_iterations)
         //    console.log('newt: steps=' + ((i==max_iterations)? i:(i + 1)));
-        return TResult.Create(x);
+        return TResult.CreateChecked(x);
     }
 
     #region Polynomial Real Degree Order

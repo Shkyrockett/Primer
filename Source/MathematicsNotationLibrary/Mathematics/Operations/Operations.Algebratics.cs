@@ -10,6 +10,7 @@
 // </remarks>
 
 using System;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace MathematicsNotationLibrary;
@@ -24,14 +25,14 @@ public static partial class Operations
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class FloatingPointConstants<T>
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         /// <summary>
         /// Represents the ratio of the radius of a circle to the first quarter of that circle.
         /// One quarter Tau or half Pi. A right angle in mathematics.
         /// </summary>
         /// <remarks><para>PI / 2</para></remarks>
-        public static T Hau => T.Create(0.5) * T.Pi; // 1.5707963267948966192313216916398d;
+        public static T Hau => T.CreateChecked(0.5) * T.Pi; // 1.5707963267948966192313216916398d;
 
         /// <summary>
         /// Represents the ratio of the radius of a circle to the third quarter of that circle.
@@ -44,13 +45,13 @@ public static partial class Operations
         /// <acknowledgment>
         /// Randal Munro http://xkcd.com/1292/ 
         /// </acknowledgment>
-        public static T Pau => T.Create(1.5) * T.Pi; // 4.7123889803846898576939650749193d;
+        public static T Pau => T.CreateChecked(1.5) * T.Pi; // 4.7123889803846898576939650749193d;
 
         /// <summary>
         /// SlopeMax is a large value "close to infinity" (Close to the largest value allowed for the data
         /// type). Used in the Slope of a LineSeg
         /// </summary>
-        public static T SlopeMax => T.Create(9223372036854775807);
+        public static T SlopeMax => T.CreateChecked(9223372036854775807);
     }
 
     #region Degree Radian Conversion
@@ -62,7 +63,7 @@ public static partial class Operations
     /// Angle in Radians.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static R DegreesToRadians<D, R>(this D degrees) where D : INumber<D> where R : IFloatingPoint<R> => R.Create(degrees) * (R.Pi / R.Create(180));
+    public static R DegreesToRadians<D, R>(this D degrees) where D : INumber<D> where R : IFloatingPointIeee754<R> => R.CreateChecked(degrees) * (R.Pi / R.CreateChecked(180));
 
     /// <summary>
     /// Convert Radians to Degrees.
@@ -72,7 +73,7 @@ public static partial class Operations
     /// Angle in Degrees.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static D RadiansToDegrees<R, D>(this R radians) where D : INumber<D> where R : IFloatingPoint<R> => D.Create(radians * (R.Create(180) / R.Pi));
+    public static D RadiansToDegrees<R, D>(this R radians) where D : INumber<D> where R : IFloatingPointIeee754<R> => D.CreateChecked(radians * (R.CreateChecked(180) / R.Pi));
     #endregion
 
     #region Angle
@@ -85,7 +86,7 @@ public static partial class Operations
     /// The angle.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T Angle<T>(T cos, T sin) where T : IFloatingPoint<T> => T.Atan2(-sin, cos);
+    public static T Angle<T>(T cos, T sin) where T : IFloatingPointIeee754<T> => T.Atan2(-sin, cos);
     #endregion
 
     #region Angle Wrapping
@@ -98,7 +99,7 @@ public static partial class Operations
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T AbsoluteAngle<T>(this T angle)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         if (T.IsNaN(angle))
         {
@@ -109,7 +110,7 @@ public static partial class Operations
         //T value = angle % Tau;
         //T value = IEEERemainder(angle, Tau);
         // The active ingredient of the IEEERemainder method is extracted here.
-        var value = angle - (T.Tau * T.Round(angle * T.Create(T.One / T.Tau)));
+        var value = angle - (T.Tau * T.Round(angle * T.CreateChecked(T.One / T.Tau)));
         return value < T.Zero ? value + T.Tau : value;
     }
 
@@ -122,7 +123,7 @@ public static partial class Operations
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T NormalizeRadian<T>(T angle)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         var value = (angle + T.Pi) % T.Tau;
         value += (value > T.Zero) ? -T.Pi : T.Pi;
@@ -138,7 +139,7 @@ public static partial class Operations
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T WrapAngleModulus<T>(this T angle)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         if (T.IsNaN(angle))
         {
@@ -158,7 +159,7 @@ public static partial class Operations
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T WrapAngle<T>(this T angle)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         if (T.IsNaN(angle))
         {
@@ -180,7 +181,7 @@ public static partial class Operations
     /// <param name="slope">The slope.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T SlopeToRadians<T>(this T slope) where T : IFloatingPoint<T> => T.Atan(slope);
+    public static T SlopeToRadians<T>(this T slope) where T : IFloatingPointIeee754<T> => T.Atan(slope);
 
     /// <summary>
     /// Calculates the Slope of a vector.
@@ -197,7 +198,7 @@ public static partial class Operations
     /// Otherwise calculate and return the slope.</para>
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Slope<T, TResult>(T i, T j) where T : INumber<T> where TResult : IFloatingPoint<TResult> => TResult.Abs(TResult.Create(i)) < TResult.Epsilon ? TResult.Create(FloatingPointConstants<TResult>.SlopeMax) : TResult.Create(j / i);
+    public static TResult Slope<T, TResult>(T i, T j) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => TResult.Abs(TResult.CreateChecked(i)) < TResult.Epsilon ? TResult.CreateChecked(FloatingPointConstants<TResult>.SlopeMax) : TResult.CreateChecked(j / i);
 
     /// <summary>
     /// Returns the slope angle of a line.
@@ -215,7 +216,7 @@ public static partial class Operations
     /// Otherwise calculate and return the slope.</para>
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult Slope<T, TResult>(T x1, T y1, T x2, T y2) where T : INumber<T> where TResult : IFloatingPoint<TResult> => (TResult.Abs(TResult.Create(x1 - x2)) < TResult.Epsilon) ? TResult.Create(FloatingPointConstants<TResult>.SlopeMax) : TResult.Create((y2 - y1) / (x2 - x1));
+    public static TResult Slope<T, TResult>(T x1, T y1, T x2, T y2) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => (TResult.Abs(TResult.CreateChecked(x1 - x2)) < TResult.Epsilon) ? TResult.CreateChecked(FloatingPointConstants<TResult>.SlopeMax) : TResult.CreateChecked((y2 - y1) / (x2 - x1));
     #endregion Slope
 
     #region Hypotenuse
@@ -228,19 +229,19 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TResult Hypotenuse<T, TResult>(T a, T b)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
         TResult hypotenuse;
 
         switch ((a, b))
         {
             case var tuple when T.Abs(tuple.a) > T.Abs(tuple.b):
-                hypotenuse = TResult.Create(b / a);
-                hypotenuse = TResult.Abs(TResult.Create(a)) * TResult.Sqrt(TResult.One + hypotenuse * hypotenuse);
+                hypotenuse = TResult.CreateChecked(b / a);
+                hypotenuse = TResult.Abs(TResult.CreateChecked(a)) * TResult.Sqrt(TResult.One + hypotenuse * hypotenuse);
                 break;
             case var tuple when tuple.b != T.Zero:
-                hypotenuse = TResult.Create(a / b);
-                hypotenuse = TResult.Abs(TResult.Create(b)) * TResult.Sqrt(TResult.One + hypotenuse * hypotenuse);
+                hypotenuse = TResult.CreateChecked(a / b);
+                hypotenuse = TResult.Abs(TResult.CreateChecked(b)) * TResult.Sqrt(TResult.One + hypotenuse * hypotenuse);
                 break;
             default:
                 hypotenuse = TResult.Zero;
@@ -265,12 +266,12 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TResult EllipticalPolarAngle<T, TResult>(TResult angle, T rx, T ry)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
-        var rxt = TResult.Create(rx);
-        var ryt = TResult.Create(ry);
-        var hau = TResult.Create(FloatingPointConstants<TResult>.Hau);
-        var pau = TResult.Create(FloatingPointConstants<TResult>.Pau);
+        var rxt = TResult.CreateChecked(rx);
+        var ryt = TResult.CreateChecked(ry);
+        var hau = TResult.CreateChecked(FloatingPointConstants<TResult>.Hau);
+        var pau = TResult.CreateChecked(FloatingPointConstants<TResult>.Pau);
 
         // Wrap the angle between -2PI and 2PI.
         var theta = angle % TResult.Tau;
@@ -299,16 +300,16 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static (TResult cosT, TResult sinT) EllipticalPolarVector<T, TResult>(TResult cosA, TResult sinA, T rx, T ry)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
         // Find the elliptical t that matches the circular angle.
         if (cosA > TResult.NegativeOne && cosA < TResult.Zero || cosA > TResult.Zero && cosA < TResult.One)
         {
-            var sign = TResult.Sign(cosA);
-            var eCos = TResult.Sqrt(TResult.One + (TResult.Create(rx * rx) * sinA * sinA / (TResult.Create(ry * ry) * cosA * cosA)));
+            var sign = TResult.CreateChecked(TResult.Sign(cosA));
+            var eCos = TResult.Sqrt(TResult.One + (TResult.CreateChecked(rx * rx) * sinA * sinA / (TResult.CreateChecked(ry * ry) * cosA * cosA)));
             return (
                 sign / eCos,
-                sign * (TResult.Create(rx) * sinA / (TResult.Create(ry) * cosA * eCos))
+                sign * (TResult.CreateChecked(rx) * sinA / (TResult.CreateChecked(ry) * cosA * eCos))
                 );
         }
 
@@ -324,7 +325,7 @@ public static partial class Operations
     /// <param name="b">The b.</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TResult SubtendedToParametric<T, TResult>(TResult subtendedAngle, T a, T b) where T : INumber<T> where TResult : IFloatingPoint<TResult> => SubtendedToParametric(TResult.Cos(subtendedAngle), TResult.Sin(subtendedAngle), a, b);
+    public static TResult SubtendedToParametric<T, TResult>(TResult subtendedAngle, T a, T b) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => SubtendedToParametric(TResult.Cos(subtendedAngle), TResult.Sin(subtendedAngle), a, b);
 
     /// <summary>
     /// Return a "correction" angle that converts a subtended angle to a parametric angle for an
@@ -342,7 +343,7 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TResult SubtendedToParametric<T, TResult>(TResult subtendedCos, TResult subtendedSin, T a, T b)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
         if (a == b)
         {
@@ -354,14 +355,14 @@ public static partial class Operations
         }
 
         // A ray from the origin.
-        var e = TResult.Create(a * b) / TResult.Sqrt((TResult.Create(a * a) * subtendedSin * subtendedSin) + (TResult.Create(b * b) * subtendedCos * subtendedCos));
+        var e = TResult.CreateChecked(a * b) / TResult.Sqrt((TResult.CreateChecked(a * a) * subtendedSin * subtendedSin) + (TResult.CreateChecked(b * b) * subtendedCos * subtendedCos));
 
         // Where ray intersects ellipse.
         var ex = e * subtendedCos;
         var ey = e * subtendedSin;
 
         // Normalized.
-        var parametric = TResult.Atan2(TResult.Create(a) * ey, TResult.Create(b) * ex);
+        var parametric = TResult.Atan2(TResult.CreateChecked(a) * ey, TResult.CreateChecked(b) * ex);
         var subtended = TResult.Atan2(subtendedSin, subtendedCos);
         return parametric - subtended;
     }
@@ -383,7 +384,7 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static (T X, T Y) PolarToCartesian<T>(T centerX, T centerY, T radius, T theta)
-        where T : IFloatingPoint<T>
+        where T : IFloatingPointIeee754<T>
     {
         var sin = T.Sin(theta);
 
@@ -409,7 +410,7 @@ public static partial class Operations
     /// https://stackoverflow.com/a/34315013
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static (TResult Radius, TResult Theta) CartesianToPolar<T, TResult>(T x, T y) where T : INumber<T> where TResult : IFloatingPoint<TResult> => CartesianToPolar<T, TResult>(x, y, T.Zero, T.Zero);
+    public static (TResult Radius, TResult Theta) CartesianToPolar<T, TResult>(T x, T y) where T : INumber<T> where TResult : IFloatingPointIeee754<TResult> => CartesianToPolar<T, TResult>(x, y, T.Zero, T.Zero);
 
     /// <summary>
     /// The Cartesian to polar.
@@ -427,10 +428,10 @@ public static partial class Operations
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static (TResult Radius, TResult Theta) CartesianToPolar<T, TResult>(T x, T y, T centerX, T centerY)
         where T : INumber<T>
-        where TResult : IFloatingPoint<TResult>
+        where TResult : IFloatingPointIeee754<TResult>
     {
-        var dx = TResult.Create(x - centerX);
-        var dy = TResult.Create(y - centerY);
+        var dx = TResult.CreateChecked(x - centerX);
+        var dy = TResult.CreateChecked(y - centerY);
         var radius = TResult.Sqrt((dx * dx) + (dy * dy));
         var angle = TResult.Atan2(dy, dx);
         return (radius, angle);
@@ -448,9 +449,9 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T Secant<T>(T value) where T : IFloatingPoint<T>
-        => (value % T.Pi == T.Create(FloatingPointConstants<T>.Hau))
-        && (value % T.Pi == -T.Create(FloatingPointConstants<T>.Hau))
+    public static T Secant<T>(T value) where T : IFloatingPointIeee754<T>
+        => (value % T.Pi == T.CreateChecked(FloatingPointConstants<T>.Hau))
+        && (value % T.Pi == -T.CreateChecked(FloatingPointConstants<T>.Hau))
         ? (T.One / T.Cos(value)) : T.Zero;
 
     /// <summary>
@@ -463,7 +464,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T Cosecant<T>(T Value) where T : IFloatingPoint<T>
+    public static T Cosecant<T>(T Value) where T : IFloatingPointIeee754<T>
         => (Value % T.Pi == T.Zero)
         && (Value % T.Pi == T.Pi)
         ? (T.One / T.Sin(Value)) : T.Zero;
@@ -478,7 +479,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T Cotangent<T>(T Value) where T : IFloatingPoint<T>
+    public static T Cotangent<T>(T Value) where T : IFloatingPointIeee754<T>
         => (Value % T.Pi == T.Zero)
         && (Value % T.Pi == T.Pi)
         ? (T.One / T.Tan(Value)) : T.Zero;
@@ -493,10 +494,10 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T InverseSine<T>(T value) where T : IFloatingPoint<T> => value switch
+    public static T InverseSine<T>(T value) where T : IFloatingPointIeee754<T> => value switch
     {
-        var v when v == T.One => T.Create(FloatingPointConstants<T>.Hau),
-        var v when v == T.NegativeOne => -T.Create(FloatingPointConstants<T>.Hau),
+        var v when v == T.One => T.CreateChecked(FloatingPointConstants<T>.Hau),
+        var v when v == T.NegativeOne => -T.CreateChecked(FloatingPointConstants<T>.Hau),
         var v when T.Abs(v) < T.One => T.Atan(value / T.Sqrt((-value * value) + T.One)),// Arc-sin(X)
         _ => T.Zero,
     };
@@ -511,11 +512,11 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T InverseCosine<T>(T value) where T : IFloatingPoint<T> => value switch
+    public static T InverseCosine<T>(T value) where T : IFloatingPointIeee754<T> => value switch
     {
         var v when v == T.One => T.Zero,
         var v when v == T.NegativeOne => T.Pi,
-        var v when T.Abs(v) < T.One => T.Atan(-value / T.Sqrt((-value * value) + T.One)) + (T.Create(2) * T.Atan(T.One)),// Arc-cos(X)
+        var v when T.Abs(v) < T.One => T.Atan(-value / T.Sqrt((-value * value) + T.One)) + (T.CreateChecked(2) * T.Atan(T.One)),// Arc-cos(X)
         _ => T.Zero,
     };
 
@@ -529,11 +530,11 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T InverseSecant<T>(T value) where T : IFloatingPoint<T> => value switch
+    public static T InverseSecant<T>(T value) where T : IFloatingPointIeee754<T> => value switch
     {
         var v when v == T.One => T.Zero,
         var v when v == T.NegativeOne => T.Pi,
-        var v when T.Abs(v) < T.One => T.Atan(value / T.Sqrt((value * value) - T.One)) + (T.Sin(value - T.One) * (T.Create(2) * T.Atan(T.One))),// Arc-sec(X)
+        var v when T.Abs(v) < T.One => T.Atan(value / T.Sqrt((value * value) - T.One)) + (T.Sin(value - T.One) * (T.CreateChecked(2) * T.Atan(T.One))),// Arc-sec(X)
         _ => T.Zero,
     };
 
@@ -548,11 +549,11 @@ public static partial class Operations
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static T InverseCosecant<T>(T value)
-        where T : IFloatingPoint<T> => value switch
+        where T : IFloatingPointIeee754<T> => value switch
         {
-            var v when v == T.One => T.Create(FloatingPointConstants<T>.Hau),
-            var v when v == T.NegativeOne => -T.Create(FloatingPointConstants<T>.Hau),
-            var v when T.Abs(v) < T.One => T.Atan(value / T.Sqrt((value * value) - T.One)) + ((T.Sin(value) - T.One) * (T.Create(2) * T.Atan(T.One))),// Arc-co-sec(X)
+            var v when v == T.One => T.CreateChecked(FloatingPointConstants<T>.Hau),
+            var v when v == T.NegativeOne => -T.CreateChecked(FloatingPointConstants<T>.Hau),
+            var v when T.Abs(v) < T.One => T.Atan(value / T.Sqrt((value * value) - T.One)) + ((T.Sin(value) - T.One) * (T.CreateChecked(2) * T.Atan(T.One))),// Arc-co-sec(X)
             _ => T.Zero,
         };
 
@@ -569,7 +570,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T InverseCotangent<T>(T value) where T : IFloatingPoint<T> => T.Atan(value) + (T.Create(2) * T.Atan(T.One));
+    public static T InverseCotangent<T>(T value) where T : IFloatingPointIeee754<T> => T.Atan(value) + (T.CreateChecked(2) * T.Atan(T.One));
 
     /// <summary>
     /// Derived math functions equivalent Hyperbolic Sine
@@ -584,7 +585,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T HyperbolicSine<T>(T value) where T : IFloatingPoint<T> => (T.Exp(value) - T.Exp(-value)) / T.Create(2);
+    public static T HyperbolicSine<T>(T value) where T : IFloatingPointIeee754<T> => (T.Exp(value) - T.Exp(-value)) / T.CreateChecked(2);
 
     /// <summary>
     /// Derived math functions equivalent Hyperbolic Cosine
@@ -599,7 +600,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T HyperbolicCosine<T>(T value) where T : IFloatingPoint<T> => (T.Exp(value) + T.Exp(-value)) / T.Create(2);
+    public static T HyperbolicCosine<T>(T value) where T : IFloatingPointIeee754<T> => (T.Exp(value) + T.Exp(-value)) / T.CreateChecked(2);
 
     /// <summary>
     /// Derived math functions equivalent Hyperbolic Tangent
@@ -614,7 +615,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T HyperbolicTangent<T>(T value) where T : IFloatingPoint<T> => (T.Exp(value) - T.Exp(-value)) / (T.Exp(value) + T.Exp(-value));
+    public static T HyperbolicTangent<T>(T value) where T : IFloatingPointIeee754<T> => (T.Exp(value) - T.Exp(-value)) / (T.Exp(value) + T.Exp(-value));
 
     /// <summary>
     /// Derived math functions equivalent Hyperbolic Secant
@@ -629,7 +630,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T HyperbolicSecant<T>(T value) where T : IFloatingPoint<T> => (T.Exp(value) + T.Exp(-value)) / T.Create(2);
+    public static T HyperbolicSecant<T>(T value) where T : IFloatingPointIeee754<T> => (T.Exp(value) + T.Exp(-value)) / T.CreateChecked(2);
 
     /// <summary>
     /// Derived math functions equivalent Hyperbolic Co-secant
@@ -644,7 +645,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T HyperbolicCosecant<T>(T value) where T : IFloatingPoint<T> => (T.Exp(value) - T.Exp(-value)) / T.Create(2);
+    public static T HyperbolicCosecant<T>(T value) where T : IFloatingPointIeee754<T> => (T.Exp(value) - T.Exp(-value)) / T.CreateChecked(2);
 
     /// <summary>
     /// Derived math functions equivalent Hyperbolic Cotangent
@@ -659,7 +660,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T HyperbolicCotangent<T>(T value) where T : IFloatingPoint<T> => (T.Exp(value) + T.Exp(-value)) / (T.Exp(value) - T.Exp(-value));
+    public static T HyperbolicCotangent<T>(T value) where T : IFloatingPointIeee754<T> => (T.Exp(value) + T.Exp(-value)) / (T.Exp(value) - T.Exp(-value));
 
     /// <summary>
     /// Derived math functions equivalent Inverse Hyperbolic Sine
@@ -674,7 +675,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T InverseHyperbolicSine<T>(T value) where T : IFloatingPoint<T> => T.Log(value + T.Sqrt((value * value) + T.One));
+    public static T InverseHyperbolicSine<T>(T value) where T : IFloatingPointIeee754<T> => T.Log(value + T.Sqrt((value * value) + T.One));
 
     /// <summary>
     /// Derived math functions equivalent Inverse Hyperbolic Cosine
@@ -689,7 +690,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T InverseHyperbolicCosine<T>(T value) where T : IFloatingPoint<T> => T.Log(value + T.Sqrt((value * value) - T.One));
+    public static T InverseHyperbolicCosine<T>(T value) where T : IFloatingPointIeee754<T> => T.Log(value + T.Sqrt((value * value) - T.One));
 
     /// <summary>
     /// Derived math functions equivalent Inverse Hyperbolic Tangent
@@ -704,7 +705,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T InverseHyperbolicTangent<T>(T value) where T : IFloatingPoint<T> => T.Log((T.One + value) / (T.One - value)) / T.Create(2);
+    public static T InverseHyperbolicTangent<T>(T value) where T : IFloatingPointIeee754<T> => T.Log((T.One + value) / (T.One - value)) / T.CreateChecked(2);
 
     /// <summary>
     /// Derived math functions equivalent Inverse Hyperbolic Secant
@@ -719,7 +720,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T InverseHyperbolicSecant<T>(T value) where T : IFloatingPoint<T> => T.Log((T.Sqrt((value * value * T.NegativeOne) + T.One) + T.One) / value);
+    public static T InverseHyperbolicSecant<T>(T value) where T : IFloatingPointIeee754<T> => T.Log((T.Sqrt((value * value * T.NegativeOne) + T.One) + T.One) / value);
 
     /// <summary>
     /// Derived math functions equivalent Inverse Hyperbolic Co-secant
@@ -734,7 +735,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T InverseHyperbolicCosecant<T>(T value) where T : IFloatingPoint<T> => T.Log(((T.Sin(value) * T.Sqrt((value * value) + T.One)) + T.One) / value);
+    public static T InverseHyperbolicCosecant<T>(T value) where T : IFloatingPointIeee754<T> => T.Log(((T.Sin(value) * T.Sqrt((value * value) + T.One)) + T.One) / value);
 
     /// <summary>
     /// Derived math functions equivalent Inverse Hyperbolic Cotangent
@@ -749,7 +750,7 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T InverseHyperbolicCotangent<T>(T value) where T : IFloatingPoint<T> => T.Log((value + T.One) / (value - T.One)) / T.Create(2);
+    public static T InverseHyperbolicCotangent<T>(T value) where T : IFloatingPointIeee754<T> => T.Log((value + T.One) / (value - T.One)) / T.CreateChecked(2);
 
     /// <summary>
     /// Derived math functions equivalent Base N Logarithm
@@ -766,6 +767,6 @@ public static partial class Operations
     /// The latest incarnation seems to be: https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/keywords/derived-math-functions
     /// </acknowledgment>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static T LogarithmTobaseN<T>(T value, T numberBase) where T : IFloatingPoint<T> => (numberBase == T.One) ? (T.Log(value) / T.Log(numberBase)) : T.Zero;
+    public static T LogarithmTobaseN<T>(T value, T numberBase) where T : IFloatingPointIeee754<T> => (numberBase == T.One) ? (T.Log(value) / T.Log(numberBase)) : T.Zero;
     #endregion Derived Equivalent Math Functions
 }
